@@ -1,1 +1,51 @@
+# Author: Tsong
 
+# 服务器配置
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 800
+      min-spare: 50
+    uri-encoding: UTF-8
+    accept-count: 500
+    max-connections: 8192
+    connection-timeout: 30000ms
+
+# 项目全局配置
+project:
+  # 项目名称
+  name: CMall
+  # 上传文件的默认url前缀，根据部署设置自行修改
+  fileUploadPath:
+  # 订单未支付超期时间，单位秒
+  orderUnpaidOverTime: 300
+  # 服务器地址
+  serverUrl: http://localhost:8080
+
+
+# 防止XSS攻击
+xss:
+  # 过滤开关
+  enabled: true
+  # 排除链接（多个用逗号分隔）
+  excludes:
+  # 匹配链接
+  urlPatterns: /admin/*,
+
+# spring配置
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  profiles:
+    active: dev
+  session:
+    timeout: 3600S
+    redis:
+      namespace: cmall:session
+
+# mybatis配置
+mybatis:
+  # mapper映射文件位置
+  mapper-locations: classpath:mapper/*Mapper.xml
