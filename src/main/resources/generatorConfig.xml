@@ -5,7 +5,7 @@
 
 <generatorConfiguration>
 
-    <context id="mysql" targetRuntime="MyBatis3Simple">
+    <context id="mysql" targetRuntime="MyBatis3">
 
         <plugin type="org.mybatis.generator.plugins.LombokPlugin" >
             <property name="hasLombok" value="true"/>
@@ -15,6 +15,8 @@
         <commentGenerator>
             <!-- 将数据库中表的字段描述信息添加到注释 -->
             <property name="addRemarkComments" value="true"/>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="true" />
         </commentGenerator>
 
         <!--数据库连接信息 -->
@@ -40,7 +42,44 @@
         </javaClientGenerator>
 
         <!--对应数据库表名 -->
-        <table tableName="tb_admin_user" domainObjectName="AdminUser">
+        <table tableName="tb_admin_user" domainObjectName="AdminUser" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_carousel" domainObjectName="Carousel" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_coupon" domainObjectName="Coupon" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_goods_category" domainObjectName="GoodsCategory" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_goods_info" domainObjectName="GoodsInfo" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_home_page_config" domainObjectName="HomePageConfig" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_order" domainObjectName="Order" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_order_item" domainObjectName="OrderItem" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_seckill" domainObjectName="Seckill" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_seckill_success" domainObjectName="SeckillSuccess" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_shopping_cart_item" domainObjectName="ShoppingCartItem" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_mall_user" domainObjectName="MallUser" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
+        </table>
+        <table tableName="tb_user_coupon_record" domainObjectName="UserCouponRecord" enableSelectByExample="false"
+               enableDeleteByExample="false" enableCountByExample="false" enableUpdateByExample="false" selectByExampleQueryId="false">
         </table>
 
     </context>
