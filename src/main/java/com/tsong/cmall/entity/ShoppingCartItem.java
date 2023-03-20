@@ -1,5 +1,6 @@
 package com.tsong.cmall.entity;
 
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +14,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminUser {
-    private Integer adminUserId;
+public class ShoppingCartItem {
+    private Long cartItemId;
 
-    private String loginUserName;
+    private Long userId;
 
-    private String loginPassword;
+    private Long goodsId;
 
-    private String nickName;
+    private Integer goodsCount;
 
-    private Byte locked;
+    private Byte isDeleted;
+
+    private Date createTime;
+
+    private Date updateTime;
 }

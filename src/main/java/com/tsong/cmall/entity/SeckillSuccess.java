@@ -1,5 +1,6 @@
 package com.tsong.cmall.entity;
 
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +14,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminUser {
-    private Integer adminUserId;
+public class SeckillSuccess {
+    private Long secId;
 
-    private String loginUserName;
+    private Long seckillId;
 
-    private String loginPassword;
+    private Long userId;
 
-    private String nickName;
+    private Byte state;
 
-    private Byte locked;
+    private Date createTime;
 }
