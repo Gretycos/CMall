@@ -1,6 +1,9 @@
 package com.tsong.cmall.dao;
 
 import com.tsong.cmall.entity.Carousel;
+import com.tsong.cmall.util.PageQueryUtil;
+
+import java.util.List;
 
 /**
  * @Author: Tsong
@@ -18,4 +21,12 @@ public interface CarouselMapper {
     int updateByPrimaryKeySelective(Carousel row);
 
     int updateByPrimaryKey(Carousel row);
+
+    List<Carousel> findCarouselList(PageQueryUtil pageUtil);
+
+    int getTotalCarousels(PageQueryUtil pageUtil);
+
+    List<Carousel> findCarouselsByNum(int number);
+
+    int deleteBatch(Integer[] ids);
 }
