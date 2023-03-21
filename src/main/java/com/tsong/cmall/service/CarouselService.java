@@ -23,6 +23,5 @@ public interface CarouselService {
      * @Param [number]
      * @Return java.util.List<com.tsong.cmall.controller.vo.HomePageCarouselVO>
      */
-
-    List<HomePageCarouselVO> getCarouselsForIndex(int number);
+    List<HomePageCarouselVO> getCarouselsForHomePage(int number);
 }
