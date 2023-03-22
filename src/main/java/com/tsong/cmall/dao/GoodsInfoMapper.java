@@ -1,6 +1,11 @@
 package com.tsong.cmall.dao;
 
 import com.tsong.cmall.entity.GoodsInfo;
+import com.tsong.cmall.entity.StockNumDTO;
+import com.tsong.cmall.util.PageQueryUtil;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @Author: Tsong
@@ -20,4 +25,24 @@ public interface GoodsInfoMapper {
     int updateByPrimaryKeyWithBLOBs(GoodsInfo row);
 
     int updateByPrimaryKey(GoodsInfo row);
+
+    GoodsInfo selectByCategoryIdAndName(String goodsName, Long goodsCategoryId);
+
+    List<GoodsInfo> findGoodsList(PageQueryUtil pageUtil);
+
+    int getTotalGoods(PageQueryUtil pageUtil);
+
+    List<GoodsInfo> selectByPrimaryKeys(List<Long> goodsIds);
+
+    List<GoodsInfo> findGoodsListBySearch(PageQueryUtil pageUtil);
+
+    int getTotalGoodsBySearch(PageQueryUtil pageUtil);
+
+    int batchInsert(List<GoodsInfo> GoodsList);
+
+    int updateStockNum(List<StockNumDTO> stockNumDTOS);
+
+    int batchUpdateSellStatus(Long[] orderIds,int sellStatus);
+
+    boolean addStock(Long goodsId, Integer goodsCount);
 }
