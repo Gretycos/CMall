@@ -1,6 +1,7 @@
 package com.tsong.cmall.service;
 
 import com.tsong.cmall.controller.vo.CouponVO;
+import com.tsong.cmall.controller.vo.MyCouponVO;
 import com.tsong.cmall.controller.vo.ShoppingCartItemVO;
 import com.tsong.cmall.entity.Coupon;
 import com.tsong.cmall.util.PageQueryUtil;
@@ -24,7 +25,6 @@ public interface CouponService {
      * @Param [userId]
      * @Return java.util.List<com.tsong.cmall.controller.vo.CouponVO>
      */
-
     List<CouponVO> selectAvailableCoupon(Long userId);
 
     /**
@@ -32,7 +32,6 @@ public interface CouponService {
      * @Param [couponId, userId]
      * @Return boolean
      */
-
     boolean saveCouponUser(Long couponId, Long userId);
 
     /**
@@ -40,7 +39,6 @@ public interface CouponService {
      * @Param [pageQueryUtil]
      * @Return com.tsong.cmall.util.PageResult<com.tsong.cmall.controller.vo.CouponVO>
      */
-
     PageResult<CouponVO> selectMyCoupons(PageQueryUtil pageQueryUtil);
 
     /**
@@ -48,15 +46,13 @@ public interface CouponService {
      * @Param [myShoppingCartItems, priceTotal, userId]
      * @Return java.util.List<com.tsong.cmall.controller.vo.CouponVO>
      */
-
-    List<CouponVO> selectOrderCanUseCoupons(List<ShoppingCartItemVO> myShoppingCartItems, int priceTotal, Long userId);
+    List<MyCouponVO> selectCouponsForOrder(List<ShoppingCartItemVO> myShoppingCartItems, int priceTotal, Long userId);
 
     /**
      * @Description 删除优惠券
      * @Param [couponUserId]
      * @Return boolean
      */
-
     boolean deleteCouponUser(Long couponUserId);
 
     /**
@@ -64,6 +60,5 @@ public interface CouponService {
      * @Param [orderId]
      * @Return void
      */
-
     void releaseCoupon(Long orderId);
 }

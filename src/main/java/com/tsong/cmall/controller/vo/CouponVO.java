@@ -21,7 +21,7 @@ public class CouponVO implements Serializable {
 
     private Integer couponTotal;
 
-    private boolean saleOut;
+    private boolean soldOut;
 
     private boolean isUsed;
 

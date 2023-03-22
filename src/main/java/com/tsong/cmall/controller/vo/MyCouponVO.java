@@ -6,6 +6,10 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+
+/**
+ * 购物车所用的优惠券VO
+ */
 @Data
 public class MyCouponVO implements Serializable {
     private static final long serialVersionUID = -8182785776876066101L;

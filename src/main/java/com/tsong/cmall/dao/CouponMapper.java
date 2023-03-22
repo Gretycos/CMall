@@ -1,6 +1,9 @@
 package com.tsong.cmall.dao;
 
 import com.tsong.cmall.entity.Coupon;
+import com.tsong.cmall.util.PageQueryUtil;
+
+import java.util.List;
 
 /**
  * @Author: Tsong
@@ -18,4 +21,18 @@ public interface CouponMapper {
     int updateByPrimaryKeySelective(Coupon row);
 
     int updateByPrimaryKey(Coupon row);
+
+    int deleteBatch(Integer[] couponIds);
+
+    List<Coupon> findCouponList(PageQueryUtil pageUtil);
+
+    int getTotalCoupons(PageQueryUtil pageUtil);
+
+    List<Coupon> selectAvailableCoupon();
+
+    int reduceCouponTotal(Long couponId);
+
+    List<Coupon> selectByIds(List<Long> couponIds);
+
+    List<Coupon> selectAvailableGivenCoupon();
 }

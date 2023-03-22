@@ -31,6 +31,101 @@
     from tb_coupon
     where coupon_id = #{couponId,jdbcType=BIGINT}
   </select>
+
+  <select id="findCouponList" parameterType="Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_coupon
+    where is_deleted = 0
+    <if test="couponName != null and couponName != ''">
+      and coupon_name LIKE CONCAT('%',#{couponName},'%')
+    </if>
+    <if test="couponType != null and couponType != ''">
+      and coupon_type = #{couponType}
+    </if>
+    <if test="couponStatus != null and couponStatus != ''">
+      and coupon_status = #{couponStatus}
+    </if>
+    <if test="startTime != null and startTime != ''">
+      and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+    </if>
+    <if test="endTime != null and endTime != ''">
+      and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endTime},'%Y-%m-%d')
+    </if>
+    order by create_time desc
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="getTotalCoupons" parameterType="Map" resultType="int">
+    select count(*)
+    from tb_newbee_mall_coupon
+    where is_deleted = 0
+    <if test="couponName != null and couponName != ''">
+      and coupon_name LIKE CONCAT('%',#{couponName},'%')
+    </if>
+    <if test="couponType != null and couponType != ''">
+      and coupon_type = #{couponType}
+    </if>
+    <if test="couponStatus != null and couponStatus != ''">
+      and coupon_status = #{couponStatus}
+    </if>
+    <if test="startTime != null and startTime != ''">
+      and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+    </if>
+    <if test="endTime != null and endTime != ''">
+      and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(#{endTime},'%Y-%m-%d')
+    </if>
+  </select>
+
+  <update id="deleteBatch">
+    update tb_coupon
+    set is_deleted=1,update_time=now() where coupon_id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+
+  <update id="reduceCouponTotal">
+    update tb_coupon
+    set coupon_total = coupon_total - 1
+    where coupon_id = #{couponId}
+      and coupon_total > 1
+  </update>
+
+  <select id="selectAvailableCoupon" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_coupon t
+    <where>
+      t.is_deleted = 0
+      AND t.coupon_type = 0
+      AND t.coupon_status = 0
+      and DATE_FORMAT(t.coupon_start_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
+      and DATE_FORMAT(t.coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
+    </where>
+  </select>
+
+  <select id="selectByIds" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_coupon
+    where coupon_id in
+    <foreach item="id" collection="list" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <select id="selectAvailableGivenCoupon" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_coupon
+    where is_deleted = 0 and coupon_type = 1
+    and coupon_start_time <![CDATA[ < ]]> now()
+    and coupon_end_time <![CDATA[ > ]]> now()
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from tb_coupon
     where coupon_id = #{couponId,jdbcType=BIGINT}
