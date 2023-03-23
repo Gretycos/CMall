@@ -39,10 +39,10 @@ public interface GoodsInfoService {
 
     /**
      * @Description 批量修改销售状态（上架/下架）
-     * @Param [ids, sellStatus]
+     * @Param [ids, saleStatus]
      * @Return java.lang.Boolean
      */
-    Boolean batchUpdateSellStatus(Long[] ids,int sellStatus);
+    Boolean batchUpdateSaleStatus(Long[] ids, int saleStatus);
 
     /**
      * @Description 商品搜索

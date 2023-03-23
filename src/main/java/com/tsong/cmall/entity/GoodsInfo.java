@@ -35,7 +35,7 @@ public class GoodsInfo {
 
     private String tag;
 
-    private Byte goodsSellStatus;
+    private Byte goodsSaleStatus;
 
     private Integer createUser;
 
