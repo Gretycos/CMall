@@ -76,9 +76,9 @@ public class CouponServiceImpl implements CouponService {
                     couponVO.setHasReceived(true);
                 }
             }
-            if (couponVO.getCouponTotal() != 0) {
-                int count = userCouponRecordMapper.getCouponCount(couponVO.getCouponId());
-                if (count >= couponVO.getCouponTotal()) {
+            if (couponVO.getCouponTotal() != 0) { // 0 是无限的意思
+                // 没有库存了
+                if (couponVO.getCouponTotal() == 1) {
                     couponVO.setSoldOut(true);
                 }
             }
