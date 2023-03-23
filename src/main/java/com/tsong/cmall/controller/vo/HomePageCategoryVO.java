@@ -1,8 +1,11 @@
 package com.tsong.cmall.controller.vo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
 
+@Data
 public class HomePageCategoryVO implements Serializable {
     private Long categoryId;
 
@@ -10,5 +13,5 @@ public class HomePageCategoryVO implements Serializable {
 
     private String categoryName;
 
-    private List<HomePageLv2CategoryVO> homePageLv2CategoryVOList;
+    private List<SecondLevelCategoryVO> secondLevelCategoryVOList;
 }

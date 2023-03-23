@@ -31,7 +31,7 @@ public interface GoodsCategoryService {
      * @Return java.util.List<com.tsong.cmall.controller.vo.HomePageCategoryVO>
      */
 
-    List<HomePageCategoryVO> getCategoriesForIndex();
+    List<HomePageCategoryVO> getCategoriesForHomePage();
 
     /**
      * @Description 搜索页分类数据
@@ -39,7 +39,7 @@ public interface GoodsCategoryService {
      * @Return com.tsong.cmall.controller.vo.SearchPageCategoryVO
      */
 
-    SearchPageCategoryVO getCategoriesForSearch(Long categoryId);
+    SearchPageCategoryVO getCategoriesForSearchPage(Long categoryId);
 
     /**
      * @Description 根据parentId和level获取分类列表
