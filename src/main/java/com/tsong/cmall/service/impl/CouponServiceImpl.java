@@ -15,6 +15,7 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -30,6 +31,7 @@ import static java.util.stream.Collectors.toMap;
  * @Author Tsong
  * @Date 2023/3/21 22:58
  */
+@Service
 public class CouponServiceImpl implements CouponService {
     @Autowired
     private CouponMapper couponMapper;
