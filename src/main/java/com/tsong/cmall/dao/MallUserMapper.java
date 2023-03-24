@@ -1,6 +1,9 @@
 package com.tsong.cmall.dao;
 
 import com.tsong.cmall.entity.MallUser;
+import com.tsong.cmall.util.PageQueryUtil;
+
+import java.util.List;
 
 /**
  * @Author: Tsong
@@ -18,4 +21,14 @@ public interface MallUserMapper {
     int updateByPrimaryKeySelective(MallUser row);
 
     int updateByPrimaryKey(MallUser row);
+
+    MallUser selectByLoginName(String loginName);
+
+    MallUser selectByLoginNameAndPasswd(String loginName, String password);
+
+    List<MallUser> findMallUserList(PageQueryUtil pageUtil);
+
+    int getTotalMallUsers(PageQueryUtil pageUtil);
+
+    int lockUserBatch(Integer[] ids, int lockStatus);
 }
