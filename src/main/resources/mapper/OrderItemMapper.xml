@@ -16,6 +16,38 @@
     order_item_id, order_id, seckill_id, goods_id, goods_name, goods_cover_img, selling_price, 
     goods_count, create_time
   </sql>
+
+  <select id="selectByOrderId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_order_item
+    where order_id = #{orderItemId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByOrderIds" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_order_item
+    where order_id in
+    <foreach item="id" collection="orderIds" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <insert id="insertBatch" parameterType="com.tsong.cmall.entity.OrderItem">
+    insert into tb_order_item (order_id, goods_id , seckill_id,
+    goods_name, goods_cover_img, selling_price,
+    goods_count)
+    values
+    <foreach collection="orderItems" item="orderItem" separator=",">
+      (#{orderItem.orderId,jdbcType=BIGINT},
+      #{orderItem.goodsId,jdbcType=BIGINT},#{orderItem.seckillId,jdbcType=BIGINT},
+      #{orderItem.goodsName,jdbcType=VARCHAR}, #{orderItem.goodsCoverImg,jdbcType=VARCHAR},
+      #{orderItem.sellingPrice,jdbcType=INTEGER},
+      #{orderItem.goodsCount,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
