@@ -22,6 +22,125 @@
     order_id, order_no, user_id, total_price, pay_status, pay_type, pay_time, order_status, 
     extra_info, user_name, user_phone, user_address, is_deleted, create_time, update_time
   </sql>
+
+  <select id="selectByOrderNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_order
+    where order_no = #{orderNo,jdbcType=VARCHAR} and is_deleted=0 limit 1
+  </select>
+
+  <select id="findOrderList" parameterType="Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_order
+    <where>
+      <if test="orderNo!=null and orderNo!=''">
+        and order_no = #{orderNo}
+      </if>
+      <if test="userId!=null and userId!=''">
+        and user_id = #{userId}
+      </if>
+      <if test="payType!=null and payType!=''">
+        and pay_type = #{payType}
+      </if>
+      <if test="orderStatus!=null and orderStatus!=''">
+        and order_status = #{orderStatus}
+      </if>
+      <if test="isDeleted!=null and isDeleted!=''">
+        and is_deleted = #{isDeleted}
+      </if>
+      <if test="startTime != null and startTime.trim() != ''">
+        and create_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null and endTime.trim() != ''">
+        and create_time &lt; #{endTime}
+      </if>
+    </where>
+    <if test="sortField!=null and order!=null">
+      order by ${sortField} ${order}
+    </if>
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="getTotalOrders" parameterType="Map" resultType="int">
+    select count(*)
+    from tb_order
+    <where>
+      <if test="orderNo!=null and orderNo!=''">
+        and order_no = #{orderNo}
+      </if>
+      <if test="userId!=null and userId!=''">
+        and user_id = #{userId}
+      </if>
+      <if test="payType!=null and payType!=''">
+        and pay_type = #{payType}
+      </if>
+      <if test="orderStatus!=null and orderStatus!=''">
+        and order_status = #{orderStatus}
+      </if>
+      <if test="isDeleted!=null and isDeleted!=''">
+        and is_deleted = #{isDeleted}
+      </if>
+      <if test="startTime != null and startTime.trim() != ''">
+        and create_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null and endTime.trim() != ''">
+        and create_time &lt; #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectByPrimaryKeys" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_order
+    where order_id in
+    <foreach collection="orderIds" item="item" index="index"
+             open="(" separator="," close=")">
+          #{item}
+    </foreach>
+  </select>
+
+  <update id="checkOut">
+    update tb_order
+    set order_status = 3,update_time = now()
+    where order_id in
+    <foreach collection="orderIds" item="item" index="index"
+             open="(" separator="," close=")">
+          #{item}
+    </foreach>
+  </update>
+
+  <update id="closeOrder">
+    update tb_order
+    set order_status = #{orderStatus},update_time = now()
+    where order_id in
+    <foreach collection="orderIds" item="item" index="index"
+             open="(" separator="," close=")">
+          #{item}
+    </foreach>
+  </update>
+
+  <update id="checkDone">
+    update tb_order
+    set order_status = 2,update_time = now()
+    where order_id in
+    <foreach collection="orderIds" item="item" index="index"
+             open="(" separator="," close=")">
+          #{item}
+    </foreach>
+  </update>
+
+  <select id="selectPrePaidOrders" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_order
+    where is_deleted = 0 and order_status = 0
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

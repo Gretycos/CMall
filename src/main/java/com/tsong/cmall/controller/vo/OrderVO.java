@@ -6,21 +6,20 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 订单列表的VO
+ * @Author Tsong
+ * @Date 2023/3/24 22:49
+ */
 @Data
-public class OrderDetailVO implements Serializable {
+public class OrderVO implements Serializable {
+    private Long orderId;
+
     private String orderNo;
 
     private Integer totalPrice;
 
-    private Byte payStatus;
-
-    private String payStatusString;
-
     private Byte payType;
-
-    private String paymentTypeString;
-
-    private Date payTime;
 
     private Byte orderStatus;
 
@@ -29,8 +28,6 @@ public class OrderDetailVO implements Serializable {
     private String userAddress;
 
     private Date createTime;
-
-    private Integer discount;
 
     private List<OrderItemVO> orderItemVOList;
 }

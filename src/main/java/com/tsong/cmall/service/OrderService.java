@@ -11,7 +11,7 @@ import com.tsong.cmall.util.PageResult;
 import java.util.List;
 
 public interface OrderService {
-    PageResult<Order> getNewBeeMallOrdersPage(PageQueryUtil pageUtil);
+    PageResult<Order> getOrdersPage(PageQueryUtil pageUtil);
 
     /**
      * @Description 订单信息修改
