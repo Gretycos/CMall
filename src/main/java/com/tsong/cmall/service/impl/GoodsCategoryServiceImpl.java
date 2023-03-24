@@ -14,6 +14,7 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -25,6 +26,7 @@ import static java.util.stream.Collectors.groupingBy;
  * @Author Tsong
  * @Date 2023/3/23 15:13
  */
+@Service
 public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     @Autowired
     private GoodsCategoryMapper goodsCategoryMapper;
