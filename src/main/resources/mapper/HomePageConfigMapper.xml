@@ -18,6 +18,61 @@
     config_id, config_name, config_type, goods_id, redirect_url, config_rank, is_deleted, 
     create_time, create_user, update_time, update_user
   </sql>
+
+  <select id="selectByTypeAndGoodsId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_home_page_config
+    where config_type = #{configType,jdbcType=BIGINT}
+      and goods_id=#{goodsId,jdbcType=BIGINT}
+      and is_deleted=0
+    limit 1
+  </select>
+
+  <select id="findHomePageConfigList" parameterType="Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_home_page_config
+    <where>
+      <if test="configType!=null and configType!=''">
+        and config_type = #{configType}
+      </if>
+      and is_deleted = 0
+    </where>
+    order by config_rank desc
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="getTotalHomePageConfigs" parameterType="Map" resultType="int">
+    select count(*)
+    from tb_home_page_config
+    <where>
+      <if test="configType!=null and configType!=''">
+        and config_type = #{configType}
+      </if>
+      and is_deleted = 0
+    </where>
+  </select>
+
+  <update id="deleteBatch">
+    update tb_home_page_config
+    set is_deleted=1,update_time=now() where is_deleted=0 and config_id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+
+  <select id="findHomePageConfigsByTypeAndNum" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_home_page_config
+    where config_type = #{configType} and is_deleted = 0
+    order by config_rank desc
+    limit #{number}
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

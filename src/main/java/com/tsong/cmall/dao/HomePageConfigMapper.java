@@ -1,6 +1,9 @@
 package com.tsong.cmall.dao;
 
 import com.tsong.cmall.entity.HomePageConfig;
+import com.tsong.cmall.util.PageQueryUtil;
+
+import java.util.List;
 
 /**
  * @Author: Tsong
@@ -18,4 +21,14 @@ public interface HomePageConfigMapper {
     int updateByPrimaryKeySelective(HomePageConfig row);
 
     int updateByPrimaryKey(HomePageConfig row);
+
+    HomePageConfig selectByTypeAndGoodsId(int configType, Long goodsId);
+
+    List<HomePageConfig> findHomePageConfigList(PageQueryUtil pageUtil);
+
+    int getTotalHomePageConfigs(PageQueryUtil pageUtil);
+
+    int deleteBatch(Long[] ids);
+
+    List<HomePageConfig> findHomePageConfigsByTypeAndNum(int configType, int number);
 }
