@@ -11,6 +11,16 @@
   <sql id="Base_Column_List">
     sec_id, seckill_id, user_id, state, create_time
   </sql>
+
+  <select id="getSeckillSuccessByUserIdAndSeckillId"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_seckill_success
+    where seckill_id = #{seckillId}
+    and user_id = #{userId}
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

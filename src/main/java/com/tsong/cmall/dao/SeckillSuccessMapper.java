@@ -18,4 +18,6 @@ public interface SeckillSuccessMapper {
     int updateByPrimaryKeySelective(SeckillSuccess row);
 
     int updateByPrimaryKey(SeckillSuccess row);
+
+    SeckillSuccess getSeckillSuccessByUserIdAndSeckillId(Long userId, Long seckillId);
 }
