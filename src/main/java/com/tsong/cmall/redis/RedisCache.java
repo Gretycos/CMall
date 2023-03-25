@@ -59,6 +59,7 @@ public class RedisCache {
      * lua原子自减脚本
      */
     private String buildLuaDecrScript() {
+        // 大于等于0才自减
         return """
                 local c
                 c = redis.call('get',KEYS[1])
