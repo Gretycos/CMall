@@ -64,6 +64,18 @@
             <artifactId>commons-text</artifactId>
             <version>1.10.0</version>
         </dependency>
+        <!-- 令牌桶限流工具 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
+        </dependency>
+        <!--    集合工具    -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.mybatis.generator</groupId>
