@@ -11,7 +11,7 @@ public interface AdminUserMapper {
 
     int insertSelective(AdminUser row);
 
-    AdminUser selectByPrimaryKey(Integer adminUserId);
+    AdminUser selectByPrimaryKey(Long adminUserId);
 
     int updateByPrimaryKeySelective(AdminUser row);
 
