@@ -3,6 +3,7 @@ package com.tsong.cmall.dao;
 import com.tsong.cmall.entity.GoodsInfo;
 import com.tsong.cmall.entity.StockNumDTO;
 import com.tsong.cmall.util.PageQueryUtil;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -40,6 +41,8 @@ public interface GoodsInfoMapper {
     int batchInsert(List<GoodsInfo> goodsList);
 
     int updateStockNum(List<StockNumDTO> stockNumDTOS);
+
+    int recoverStockNum(List<StockNumDTO> stockNumDTOS);
 
     int batchUpdateSaleStatus(Long[] orderIds, int saleStatus);
 
