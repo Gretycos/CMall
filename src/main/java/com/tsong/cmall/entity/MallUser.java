@@ -25,8 +25,6 @@ public class MallUser {
 
     private String introduceSign;
 
-    private String address;
-
     private Byte isDeleted;
 
     private Byte lockedFlag;

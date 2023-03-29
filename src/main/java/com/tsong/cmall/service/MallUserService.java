@@ -1,10 +1,8 @@
 package com.tsong.cmall.service;
 
-import com.tsong.cmall.controller.vo.MallUserVO;
-import com.tsong.cmall.entity.MallUser;
+import com.tsong.cmall.controller.mall.param.UserInfoUpdateParam;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
-import jakarta.servlet.http.HttpSession;
 
 public interface MallUserService {
     PageResult getMallUsersPage(PageQueryUtil pageUtil);
@@ -21,14 +19,28 @@ public interface MallUserService {
      * @Param [loginName, passwordMD5, httpSession]
      * @Return java.lang.String
      */
-    String login(String loginName, String passwordMD5, HttpSession httpSession);
+    String login(String loginName, String passwordMD5);
 
     /**
      * @Description 用户信息修改并返回最新的用户信息
-     * @Param [mallUser, httpSession]
-     * @Return com.tsong.cmall.controller.vo.MallUserVO
+     * @Param [userId, newNickName, newIntroduceSign]
+     * @Return java.lang.Boolean
      */
-    MallUserVO updateUserInfo(MallUser mallUser, HttpSession httpSession);
+    Boolean updateUserInfo(Long userId, String newNickName, String newIntroduceSign);
+
+    /**
+     * @Description 用户修改密码
+     * @Param [loginUserId, originalPassword, newPassword]
+     * @Return java.lang.Boolean
+     */
+    Boolean updateUserPassword(Long loginUserId, String originalPassword, String newPassword);
+
+    /**
+     * @Description 登出接口
+     * @Param [userId]
+     * @Return java.lang.Boolean
+     */
+    Boolean logout(Long userId);
 
     /**
      * @Description 用户禁用与解除禁用(0-未锁定 1-已锁定)

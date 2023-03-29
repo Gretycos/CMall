@@ -2,22 +2,23 @@ package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
-import com.tsong.cmall.controller.vo.MallUserVO;
+import com.tsong.cmall.controller.mall.param.UserInfoUpdateParam;
 import com.tsong.cmall.dao.CouponMapper;
 import com.tsong.cmall.dao.MallUserMapper;
 import com.tsong.cmall.dao.UserCouponRecordMapper;
+import com.tsong.cmall.dao.UserTokenMapper;
 import com.tsong.cmall.entity.Coupon;
 import com.tsong.cmall.entity.MallUser;
 import com.tsong.cmall.entity.UserCouponRecord;
+import com.tsong.cmall.entity.UserToken;
 import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.MallUserService;
 import com.tsong.cmall.util.*;
-import jakarta.servlet.http.HttpSession;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,6 +29,10 @@ import java.util.List;
 public class MallUserServiceImpl implements MallUserService {
     @Autowired
     private MallUserMapper mallUserMapper;
+
+    @Autowired
+    private UserTokenMapper userTokenMapper;
+
     @Autowired
     private CouponMapper couponMapper;
     @Autowired
@@ -46,11 +51,13 @@ public class MallUserServiceImpl implements MallUserService {
         if (mallUserMapper.selectByLoginName(loginName) != null) {
             return ServiceResultEnum.SAME_LOGIN_NAME_EXIST.getResult();
         }
-        MallUser registerUser = new MallUser();
-        registerUser.setLoginName(loginName);
-        registerUser.setNickName(loginName);
         String passwordMD5 = MD5Util.MD5Encode(password, Constants.UTF_ENCODING);
-        registerUser.setPasswordMd5(passwordMD5);
+
+        MallUser registerUser = MallUser.builder()
+                .loginName(loginName)
+                .nickName(loginName)
+                .passwordMd5(passwordMD5)
+                .build();
         if (mallUserMapper.insertSelective(registerUser) <= 0) {
             return ServiceResultEnum.DB_ERROR.getResult();
         }
@@ -58,70 +65,98 @@ public class MallUserServiceImpl implements MallUserService {
         List<Coupon> coupons = couponMapper.selectAvailableGivenCoupon();
         // 添加领券记录
         for (Coupon coupon : coupons) {
-            UserCouponRecord userCouponRecord = new UserCouponRecord();
-            userCouponRecord.setUserId(registerUser.getUserId());
-            userCouponRecord.setCouponId(coupon.getCouponId());
+            UserCouponRecord userCouponRecord = UserCouponRecord.builder()
+                    .userId(registerUser.getUserId())
+                    .couponId(coupon.getCouponId())
+                    .build();
             userCouponRecordMapper.insertSelective(userCouponRecord);
         }
         return ServiceResultEnum.SUCCESS.getResult();
     }
 
     @Override
-    public String login(String loginName, String passwordMD5, HttpSession httpSession) {
+    public String login(String loginName, String passwordMD5) {
         MallUser user = mallUserMapper.selectByLoginNameAndPasswd(loginName, passwordMD5);
-        if (user != null && httpSession != null) {
+        if (user != null) {
             if (user.getLockedFlag() == 1) {
                 return ServiceResultEnum.LOGIN_USER_LOCKED.getResult();
             }
-            // 昵称太长 影响页面展示
-            if (user.getNickName() != null && user.getNickName().length() > 7) {
-                String tempNickName = user.getNickName().substring(0, 7) + "..";
-                user.setNickName(tempNickName);
+            // 新token
+            String token = getNewToken(System.currentTimeMillis() + "", user.getUserId());
+            // 当前时间
+            Date now = new Date();
+            // 过期时间
+            Date expireTime = new Date(now.getTime() + 2 * 24 * 3600 * 1000); // 过期时间 48 小时
+
+            UserToken userToken = userTokenMapper.selectByPrimaryKey(user.getUserId());
+            if (userToken == null) {
+                // 用户没登录过
+                userToken = UserToken.builder()
+                        .userId(user.getUserId())
+                        .token(token)
+                        .updateTime(now)
+                        .expireTime(expireTime)
+                        .build();
+                //新增一条token数据
+                if (userTokenMapper.insertSelective(userToken) > 0) {
+                    //新增成功后返回
+                    return token;
+                }
+            } else {
+                // 用户登录过，修改token
+                userToken.setToken(token);
+                userToken.setUpdateTime(now);
+                userToken.setExpireTime(expireTime);
+                //更新
+                if (userTokenMapper.updateByPrimaryKeySelective(userToken) > 0) {
+                    //修改成功后返回
+                    return token;
+                }
             }
-            MallUserVO newBeeMallUserVO = new MallUserVO();
-            BeanUtil.copyProperties(user, newBeeMallUserVO);
-            // 设置购物车中的数量
-            httpSession.setAttribute(Constants.MALL_USER_SESSION_KEY, newBeeMallUserVO);
-            return ServiceResultEnum.SUCCESS.getResult();
         }
         return ServiceResultEnum.LOGIN_ERROR.getResult();
     }
 
+    /**
+     * @Description 获取token值
+     * @Param [timeStr, userId]
+     * @Return java.lang.String
+     */
+    private String getNewToken(String timeStr, Long userId) {
+        String src = timeStr + userId + NumberUtil.genRandomNum(4);
+        return SystemUtil.genToken(src);
+    }
+
     @Override
-    public MallUserVO updateUserInfo(MallUser mallUser, HttpSession httpSession) {
-        MallUserVO userSignedIn = (MallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        MallUser userFromDB = mallUserMapper.selectByPrimaryKey(userSignedIn.getUserId());
-        if (userFromDB == null) {
-            return null;
+    public Boolean updateUserInfo(Long userId, String newNickName, String newIntroduceSign) {
+        MallUser user = mallUserMapper.selectByPrimaryKey(userId);
+        if (user == null) {
+            CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
-        if (StringUtils.equals(mallUser.getNickName(), userFromDB.getNickName())
-                && StringUtils.equals(mallUser.getAddress(), userFromDB.getAddress())
-                && StringUtils.equals(mallUser.getIntroduceSign(), userFromDB.getIntroduceSign())) {
-            throw new CMallException("个人信息无变更！");
-        }
+        user.setNickName(newNickName);
+        user.setIntroduceSign(newIntroduceSign);
+        return mallUserMapper.updateByPrimaryKeySelective(user) > 0;
+    }
 
-        if (StringUtils.equals(mallUser.getAddress(), userFromDB.getAddress())
-                && mallUser.getNickName() == null
-                && mallUser.getIntroduceSign() == null) {
-            throw new CMallException("个人信息无变更！");
+    @Override
+    public Boolean updateUserPassword(Long loginUserId, String originalPassword, String newPassword) {
+        MallUser user = mallUserMapper.selectByPrimaryKey(loginUserId);
+        if (user == null){
+            CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
+        String originalPasswordMD5 = MD5Util.MD5Encode(originalPassword, Constants.UTF_ENCODING);
+        String newPasswordMD5 = MD5Util.MD5Encode(newPassword, Constants.UTF_ENCODING);
+        if (originalPasswordMD5.equals(user.getPasswordMd5())){
+            user.setPasswordMd5(newPasswordMD5);
+            return mallUserMapper.updateByPrimaryKeySelective(user) > 0
+                    && logout(loginUserId);
+        }
+        return false;
+    }
 
-        if (!StringUtils.isEmpty(mallUser.getNickName())) {
-            userFromDB.setNickName(MallUtils.cleanString(mallUser.getNickName()));
-        }
-        if (!StringUtils.isEmpty(mallUser.getAddress())) {
-            userFromDB.setAddress(MallUtils.cleanString(mallUser.getAddress()));
-        }
-        if (!StringUtils.isEmpty(mallUser.getIntroduceSign())) {
-            userFromDB.setIntroduceSign(MallUtils.cleanString(mallUser.getIntroduceSign()));
-        }
-        if (mallUserMapper.updateByPrimaryKeySelective(userFromDB) > 0) {
-            MallUserVO mallUserVO = new MallUserVO();
-            BeanUtil.copyProperties(userFromDB, mallUserVO);
-            httpSession.setAttribute(Constants.MALL_USER_SESSION_KEY, mallUserVO);
-            return mallUserVO;
-        }
-        return null;
+    @Override
+    public Boolean logout(Long userId) {
+        return userTokenMapper.deleteByPrimaryKey(userId) > 0;
     }
 
     @Override
