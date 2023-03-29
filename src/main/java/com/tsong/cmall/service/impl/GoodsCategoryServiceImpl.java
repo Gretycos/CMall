@@ -64,7 +64,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
         GoodsCategory temp2 = goodsCategoryMapper.selectByLevelAndName(
                 goodsCategory.getCategoryLevel(), goodsCategory.getCategoryName());
         if (temp2 != null && !temp2.getCategoryId().equals(goodsCategory.getCategoryId())) {
-            //同名且不同id 不能继续修改
+            // 同名且不同id 不能继续修改
             return ServiceResultEnum.SAME_CATEGORY_EXIST.getResult();
         }
         goodsCategory.setUpdateTime(new Date());
@@ -113,7 +113,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
                     for (GoodsCategory secondLevelCategory : secondLevelCategories) {
                         SecondLevelCategoryVO secondLevelCategoryVO = new SecondLevelCategoryVO();
                         BeanUtil.copyProperties(secondLevelCategory, secondLevelCategoryVO);
-                        //根据二级分类的id取出 thirdLevelCategoryVOMap 分组中的三级级分类list
+                        // 根据二级分类的id取出 thirdLevelCategoryVOMap 分组中的三级级分类list
                         List<GoodsCategory> tempGoodsCategories = thirdLevelCategoryMap.get(secondLevelCategory.getCategoryId());
                         // 如果该二级分类下有数据则放入 secondLevelCategoryVOList 对象中
                         if (tempGoodsCategories != null) {
@@ -121,17 +121,17 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
                             secondLevelCategoryVOList.add(secondLevelCategoryVO);
                         }
                     }
-                    //处理一级分类
+                    // 处理一级分类
                     if (!CollectionUtils.isEmpty(secondLevelCategoryVOList)) {
-                        //根据 parentId 将 thirdLevelCategories 分组
+                        // 根据 parentId 将 secondLevelCategories 分组
                         Map<Long, List<SecondLevelCategoryVO>> secondLevelCategoryVOMap = secondLevelCategoryVOList.stream()
                                 .collect(groupingBy(SecondLevelCategoryVO::getParentId));
                         for (GoodsCategory firstCategory : firstLevelCategories) {
                             HomePageCategoryVO homePageCategoryVO = new HomePageCategoryVO();
                             BeanUtil.copyProperties(firstCategory, homePageCategoryVO);
-                            //根据一级分类的id取出 secondLevelCategoryVOMap 分组中的二级级分类list
+                            // 根据一级分类的id取出 secondLevelCategoryVOMap 分组中的二级级分类list
                             List<SecondLevelCategoryVO> tempGoodsCategories = secondLevelCategoryVOMap.get(firstCategory.getCategoryId());
-                            //如果该一级分类下有数据则放入 homePageCategoryVOList 对象中
+                            // 如果该一级分类下有数据则放入 homePageCategoryVOList 对象中
                             if (tempGoodsCategories != null) {
                                 homePageCategoryVO.setSecondLevelCategoryVOList(tempGoodsCategories);
                                 homePageCategoryVOList.add(homePageCategoryVO);
