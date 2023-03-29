@@ -33,9 +33,9 @@ public class HomePageConfigServiceImpl implements HomePageConfigService {
 
     @Override
     public PageResult getConfigsPage(PageQueryUtil pageUtil) {
-        List<HomePageConfig> indexConfigs = homePageConfigMapper.findHomePageConfigList(pageUtil);
+        List<HomePageConfig> homePageConfigList = homePageConfigMapper.findHomePageConfigList(pageUtil);
         int total = homePageConfigMapper.getTotalHomePageConfigs(pageUtil);
-        return new PageResult(indexConfigs, total, pageUtil.getLimit(), pageUtil.getPage());
+        return new PageResult(homePageConfigList, total, pageUtil.getLimit(), pageUtil.getPage());
     }
 
     @Override
