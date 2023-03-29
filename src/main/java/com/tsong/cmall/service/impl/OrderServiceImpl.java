@@ -50,6 +50,9 @@ public class OrderServiceImpl implements OrderService {
     private CouponMapper couponMapper;
 
     @Autowired
+    private OrderAddressMapper orderAddressMapper;
+
+    @Autowired
     private SeckillMapper seckillMapper;
 
     @Autowired
@@ -72,7 +75,6 @@ public class OrderServiceImpl implements OrderService {
         // 不为空 且 orderStatus >= 0 且 状态为出库之前 可以修改部分信息（总价、地址）
         if (temp != null && temp.getOrderStatus() >= 0 && temp.getOrderStatus() < 3) {
             temp.setTotalPrice(order.getTotalPrice());
-            temp.setUserAddress(order.getUserAddress());
             temp.setUpdateTime(new Date());
             if (orderMapper.updateByPrimaryKeySelective(temp) > 0) {
                 return ServiceResultEnum.SUCCESS.getResult();
@@ -199,7 +201,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String saveOrder(MallUserVO user, Long couponUserId, List<ShoppingCartItemVO> myShoppingCartItems) {
+    public String saveOrder(MallUserVO user, Long couponUserId, UserAddress address, List<ShoppingCartItemVO> myShoppingCartItems) {
         // 购物车项目id表
         List<Long> itemIdList = myShoppingCartItems.stream()
                 .map(ShoppingCartItemVO::getCartItemId).collect(Collectors.toList());
@@ -247,10 +249,10 @@ public class OrderServiceImpl implements OrderService {
         String orderNo = NumberUtil.genOrderNo();
         int priceTotal = 0;
         // 保存订单
-        Order order = new Order();
-        order.setOrderNo(orderNo);
-        order.setUserId(user.getUserId());
-        order.setUserAddress(user.getAddress());
+        Order order = Order.builder()
+                .orderNo(orderNo)
+                .userId(user.getUserId())
+                .build();
         // 总价
         for (ShoppingCartItemVO shoppingCartItemVO : myShoppingCartItems) {
             priceTotal += shoppingCartItemVO.getGoodsCount() * shoppingCartItemVO.getSellingPrice();
@@ -267,34 +269,51 @@ public class OrderServiceImpl implements OrderService {
         order.setTotalPrice(priceTotal);
         String extraInfo = "cmall-支付宝沙箱支付";
         order.setExtraInfo(extraInfo);
-        // 生成订单并保存订单项纪录
+        // 生成订单并保存订单纪录
         if (orderMapper.insertSelective(order) <= 0) {
             CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
         }
+
         // 如果使用了优惠券，则更新优惠券状态
         if (couponUserId != null) {
-            UserCouponRecord userCouponRecord = new UserCouponRecord();
-            userCouponRecord.setCouponUserId(couponUserId);
-            userCouponRecord.setOrderId(order.getOrderId());
-            userCouponRecord.setUseStatus((byte) 1);
-            userCouponRecord.setUsedTime(new Date());
-            userCouponRecord.setUpdateTime(new Date());
-            userCouponRecordMapper.updateByPrimaryKeySelective(userCouponRecord);
+            UserCouponRecord userCouponRecord = UserCouponRecord.builder()
+                    .couponUserId(couponUserId)
+                    .orderId(order.getOrderId())
+                    .useStatus((byte) 1)
+                    .usedTime(new Date())
+                    .updateTime(new Date())
+                    .build();
+            if (userCouponRecordMapper.updateByPrimaryKeySelective(userCouponRecord) <= 0){
+                CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
+            }
         }
+
+        // 生成订单地址快照，并保存至数据库
+        OrderAddress orderAddress = new OrderAddress();
+        // 用户地址->订单地址
+        BeanUtil.copyProperties(address, orderAddress);
+        // OrderMapper文件insert()方法中使用了useGeneratedKeys因此orderId可以获取到
+        orderAddress.setOrderId(order.getOrderId());
+        // 保存订单地址快照至数据库
+        if (orderAddressMapper.insertSelective(orderAddress) <= 0){
+            CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
+        }
+
         // 生成所有的订单项快照，并保存至数据库
         List<OrderItem> orderItemList = new ArrayList<>();
         for (ShoppingCartItemVO shoppingCartItemVO : myShoppingCartItems) {
             OrderItem orderItem = new OrderItem();
-            // 使用BeanUtil工具类将newBeeMallShoppingCartItemVO中的属性复制到newBeeMallOrderItem对象中
+            // 使用BeanUtil工具类将ShoppingCartItemVO中的属性复制到OrderItem对象中
             BeanUtil.copyProperties(shoppingCartItemVO, orderItem);
             // OrderMapper文件insert()方法中使用了useGeneratedKeys因此orderId可以获取到
             orderItem.setOrderId(order.getOrderId());
             orderItemList.add(orderItem);
         }
-        // 保存至数据库
+        // 保存订单项快照至数据库
         if (orderItemMapper.insertBatch(orderItemList) <= 0) {
             CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
         }
+
         // 订单支付超期任务，超过300秒自动取消订单
         taskService.addTask(new OrderUnpaidTask(order.getOrderId(), ProjectConfig.getOrderUnpaidOverTime() * 1000));
         // 所有操作成功后，将订单号返回，以供Controller方法跳转到订单详情
@@ -302,7 +321,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String seckillSaveOrder(Long seckillSuccessId, Long userId) {
+    public String seckillSaveOrder(Long seckillSuccessId, Long userId, UserAddress address) {
         SeckillSuccess seckillSuccess = seckillSuccessMapper.selectByPrimaryKey(seckillSuccessId);
         if (!seckillSuccess.getUserId().equals(userId)) {
             throw new CMallException("当前登陆用户与抢购秒杀商品的用户不匹配");
@@ -314,36 +333,68 @@ public class OrderServiceImpl implements OrderService {
         // 生成订单号
         String orderNo = NumberUtil.genOrderNo();
         // 保存订单
-        Order order = new Order();
-        order.setOrderNo(orderNo);
-        order.setTotalPrice(seckill.getSeckillPrice());
-        order.setUserId(userId);
-        order.setUserAddress("秒杀测试地址");
-        order.setOrderStatus((byte) OrderStatusEnum.ORDER_PAID.getOrderStatus());
-        order.setPayStatus((byte) PayStatusEnum.PAY_SUCCESSFUL.getPayStatus());
-        order.setPayType((byte) PayTypeEnum.NOT_PAY.getPayType());
-        order.setPayTime(new Date());
+        Order order = Order.builder()
+                .orderNo(orderNo)
+                .totalPrice(seckill.getSeckillPrice())
+                .userId(userId)
+                .orderStatus((byte) OrderStatusEnum.ORDER_PAID.getOrderStatus())
+                .payType((byte) PayTypeEnum.NOT_PAY.getPayType())
+                .payTime(new Date())
+                .build();
         String extraInfo = "";
         order.setExtraInfo(extraInfo);
         if (orderMapper.insertSelective(order) <= 0) {
-            throw new CMallException("生成订单内部异常");
+            throw new CMallException("生成秒杀订单内部异常");
         }
+
+        // 生成订单地址快照，并保存至数据库
+        OrderAddress orderAddress = new OrderAddress();
+        // 用户地址->订单地址
+        BeanUtil.copyProperties(address, orderAddress);
+        orderAddress.setOrderId(order.getOrderId());
+        // 保存订单地址快照至数据库
+        if (orderAddressMapper.insertSelective(orderAddress) <= 0){
+            CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
+        }
+
         // 保存订单商品项
-        OrderItem orderItem = new OrderItem();
-        Long orderId = order.getOrderId();
-        orderItem.setOrderId(orderId);
-        orderItem.setSeckillId(seckillId);
-        orderItem.setGoodsId(goodsInfo.getGoodsId());
-        orderItem.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
-        orderItem.setGoodsName(goodsInfo.getGoodsName());
-        orderItem.setGoodsCount(1);
-        orderItem.setSellingPrice(seckill.getSeckillPrice());
+        OrderItem orderItem = OrderItem.builder()
+                .orderId(order.getOrderId())
+                .seckillId(seckillId)
+                .goodsId(goodsInfo.getGoodsId())
+                .goodsCoverImg(goodsInfo.getGoodsCoverImg())
+                .goodsCount(1)
+                .sellingPrice(seckill.getSeckillPrice())
+                .build();
         if (orderItemMapper.insert(orderItem) <= 0) {
-            throw new CMallException("生成订单内部异常");
+            throw new CMallException("生成秒杀订单内部异常");
         }
         // 订单支付超期任务
         taskService.addTask(new OrderUnpaidTask(order.getOrderId(), 30 * 1000));
         return orderNo;
+    }
+
+    @Override
+    public OrderDetailVO getOrderDetailByOrderId(Long orderId) {
+        Order order = orderMapper.selectByPrimaryKey(orderId);
+        if (order == null) {
+            CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderId(order.getOrderId());
+        //获取订单项数据
+        if (!CollectionUtils.isEmpty(orderItemList)) {
+            List<OrderItemVO> orderItemVOList = BeanUtil.copyList(orderItemList, OrderItemVO.class);
+            OrderDetailVO orderDetailVO = new OrderDetailVO();
+            BeanUtil.copyProperties(order, orderDetailVO);
+            orderDetailVO.setOrderStatusString(OrderStatusEnum.getOrderStatusEnumByStatus(
+                    orderDetailVO.getOrderStatus()).getName());
+            orderDetailVO.setPayTypeString(PayTypeEnum.getPayTypeEnumByType(orderDetailVO.getPayType()).getName());
+            orderDetailVO.setOrderItemVOList(orderItemVOList);
+            return orderDetailVO;
+        } else {
+            CMallException.fail(ServiceResultEnum.ORDER_ITEM_NULL_ERROR.getResult());
+            return null;
+        }
     }
 
     @Override
@@ -367,7 +418,7 @@ public class OrderServiceImpl implements OrderService {
         OrderDetailVO orderDetailVO = new OrderDetailVO();
         BeanUtil.copyProperties(order, orderDetailVO);
         orderDetailVO.setOrderStatusString(OrderStatusEnum.getOrderStatusEnumByStatus(orderDetailVO.getOrderStatus()).getName());
-        orderDetailVO.setPaymentTypeString(PayTypeEnum.getPayTypeEnumByType(orderDetailVO.getPayType()).getName());
+        orderDetailVO.setPayTypeString(PayTypeEnum.getPayTypeEnumByType(orderDetailVO.getPayType()).getName());
         orderDetailVO.setOrderItemVOList(orderItemVOList);
         return orderDetailVO;
     }
@@ -391,9 +442,9 @@ public class OrderServiceImpl implements OrderService {
             }
             List<Long> orderIds = orderList.stream().map(Order::getOrderId).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(orderIds)) {
-                List<OrderItem> orderItems = orderItemMapper.selectByOrderIds(orderIds);
+                List<OrderItem> orderItemList = orderItemMapper.selectByOrderIds(orderIds);
                 // orderId->此order包含的item表
-                Map<Long, List<OrderItem>> itemByOrderIdMap = orderItems.stream().collect(groupingBy(OrderItem::getOrderId));
+                Map<Long, List<OrderItem>> itemByOrderIdMap = orderItemList.stream().collect(groupingBy(OrderItem::getOrderId));
                 for (OrderVO orderVO : orderVOList) {
                     // 封装每个订单列表对象的订单项数据
                     if (itemByOrderIdMap.containsKey(orderVO.getOrderId())) {
@@ -409,6 +460,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public String cancelOrder(String orderNo, Long userId) {
         Order order = orderMapper.selectByOrderNo(orderNo);
         if (order != null) {
@@ -423,9 +475,11 @@ public class OrderServiceImpl implements OrderService {
                     || order.getOrderStatus().intValue() == OrderStatusEnum.ORDER_CLOSED_BY_JUDGE.getOrderStatus()) {
                 return ServiceResultEnum.ORDER_STATUS_ERROR.getResult();
             }
+            //修改订单状态 && 恢复库存
             if (orderMapper.closeOrder(
                     Collections.singletonList(order.getOrderId()),
-                    OrderStatusEnum.ORDER_CLOSED_BY_MALLUSER.getOrderStatus()) > 0) {
+                    OrderStatusEnum.ORDER_CLOSED_BY_MALLUSER.getOrderStatus()) > 0
+            && recoverStockNum(Collections.singletonList(order.getOrderId()))) {
                 return ServiceResultEnum.SUCCESS.getResult();
             } else {
                 return ServiceResultEnum.DB_ERROR.getResult();
@@ -491,5 +545,25 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return null;
+    }
+
+    /**
+     * @Description 恢复库存
+     * @Param [orderIds]
+     * @Return java.lang.Boolean
+     */
+    private Boolean recoverStockNum(List<Long> orderIds) {
+        //查询对应的订单项
+        List<OrderItem> orderItemList = orderItemMapper.selectByOrderIds(orderIds);
+        //获取对应的商品id和商品数量并赋值到StockNumDTO对象中
+        List<StockNumDTO> stockNumDTOS = BeanUtil.copyList(orderItemList, StockNumDTO.class);
+        //执行恢复库存的操作
+        int updateStockNumResult = goodsInfoMapper.recoverStockNum(stockNumDTOS);
+        if (updateStockNumResult < 1) {
+            CMallException.fail(ServiceResultEnum.CLOSE_ORDER_ERROR.getResult());
+            return false;
+        } else {
+            return true;
+        }
     }
 }

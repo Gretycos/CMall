@@ -5,6 +5,7 @@ import com.tsong.cmall.controller.vo.OrderDetailVO;
 import com.tsong.cmall.controller.vo.OrderItemVO;
 import com.tsong.cmall.controller.vo.ShoppingCartItemVO;
 import com.tsong.cmall.entity.Order;
+import com.tsong.cmall.entity.UserAddress;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
 
@@ -59,7 +60,7 @@ public interface OrderService {
      * @Return java.lang.String
      */
 
-    String saveOrder(MallUserVO user, Long couponUserId, List<ShoppingCartItemVO> myShoppingCartItems);
+    String saveOrder(MallUserVO user, Long couponUserId, UserAddress address, List<ShoppingCartItemVO> myShoppingCartItems);
 
     /**
      * @Description 生成秒杀订单
@@ -67,7 +68,14 @@ public interface OrderService {
      * @Return java.lang.String
      */
 
-    String seckillSaveOrder(Long seckillSuccessId, Long userId);
+    String seckillSaveOrder(Long seckillSuccessId, Long userId, UserAddress address);
+
+    /**
+     * @Description 用订单id获取订单详情
+     * @Param [orderId]
+     * @Return com.tsong.cmall.controller.vo.OrderDetailVO
+     */
+    OrderDetailVO getOrderDetailByOrderId(Long orderId);
 
     /**
      * @Description 获取订单详情，用于返回前端
