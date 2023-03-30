@@ -93,8 +93,8 @@ public class CouponServiceImpl implements CouponService {
      * @Param [couponId, userId]
      * @Return boolean
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
+    @Transactional
     public boolean saveCouponUser(Long couponId, Long userId) {
         Coupon coupon = couponMapper.selectByPrimaryKey(couponId);
         if (coupon.getCouponLimit() != 0) { // 0 是该用户可以不限次数领该券
