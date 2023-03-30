@@ -1,5 +1,7 @@
 package com.tsong.cmall.service;
 
+import com.tsong.cmall.controller.mall.param.SaveCartItemParam;
+import com.tsong.cmall.controller.mall.param.UpdateCartItemParam;
 import com.tsong.cmall.controller.vo.ShoppingCartItemVO;
 import com.tsong.cmall.entity.ShoppingCartItem;
 
@@ -11,14 +13,14 @@ public interface ShoppingCartItemService {
      * @Param [shoppingCartItem]
      * @Return java.lang.String
      */
-    String saveShoppingCartItem(ShoppingCartItem shoppingCartItem);
+    String saveShoppingCartItem(SaveCartItemParam saveCartItemParam, Long userId);
 
     /**
      * @Description 修改购物车中的属性
      * @Param [shoppingCartItem]
      * @Return java.lang.String
      */
-    String updateShoppingCartItem(ShoppingCartItem shoppingCartItem);
+    String updateShoppingCartItem(UpdateCartItemParam updateCartItemParam, Long userId);
 
     /**
      * @Description 获取购物项详情
@@ -26,6 +28,13 @@ public interface ShoppingCartItemService {
      * @Return com.tsong.cmall.entity.ShoppingCartItem
      */
     ShoppingCartItem getShoppingCartItemById(Long shoppingCartItemId);
+
+    /**
+     * @Description 结算页购物项列表
+     * @Param [cartItemIds, userId]
+     * @Return java.util.List<com.tsong.cmall.controller.vo.ShoppingCartItemVO>
+     */
+    List<ShoppingCartItemVO> getCartItemsForConfirmPage(List<Long> cartItemIds, Long userId);
 
     /**
      * @Description 删除购物车中的商品

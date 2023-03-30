@@ -2,11 +2,14 @@ package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.controller.mall.param.SaveCartItemParam;
+import com.tsong.cmall.controller.mall.param.UpdateCartItemParam;
 import com.tsong.cmall.controller.vo.ShoppingCartItemVO;
 import com.tsong.cmall.dao.GoodsInfoMapper;
 import com.tsong.cmall.dao.ShoppingCartItemMapper;
 import com.tsong.cmall.entity.GoodsInfo;
 import com.tsong.cmall.entity.ShoppingCartItem;
+import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.ShoppingCartItemService;
 import com.tsong.cmall.util.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,28 +32,40 @@ public class ShoppingCartItemServiceImpl implements ShoppingCartItemService {
     private GoodsInfoMapper goodsInfoMapper;
 
     @Override
-    public String saveShoppingCartItem(ShoppingCartItem shoppingCartItem) {
+    public String saveShoppingCartItem(SaveCartItemParam saveCartItemParam, Long userId) {
         ShoppingCartItem temp = shoppingCartItemMapper.selectByUserIdAndGoodsId(
-                shoppingCartItem.getUserId(), shoppingCartItem.getGoodsId());
+                userId, saveCartItemParam.getGoodsId());
+        // 已存在该购物车项目
         if (temp != null) {
-            //已存在则修改该记录
-            temp.setGoodsCount(shoppingCartItem.getGoodsCount());
-            return updateShoppingCartItem(temp);
+            UpdateCartItemParam updateCartItemParam = new UpdateCartItemParam();
+            updateCartItemParam.setCartItemId(saveCartItemParam.getGoodsId());
+            // 叠加数量
+            updateCartItemParam.setGoodsCount(temp.getGoodsCount() + saveCartItemParam.getGoodsCount());
+            return updateShoppingCartItem(updateCartItemParam, userId);
         }
-        GoodsInfo goodsInfo = goodsInfoMapper.selectByPrimaryKey(shoppingCartItem.getGoodsId());
+
+        // 不存在该购物车项目
+        // 查找物品
+        GoodsInfo goodsInfo = goodsInfoMapper.selectByPrimaryKey(saveCartItemParam.getGoodsId());
         // 商品为空
         if (goodsInfo == null) {
             return ServiceResultEnum.GOODS_NOT_EXIST.getResult();
         }
+
         // 超出单个商品的最大数量
-        if (shoppingCartItem.getGoodsCount() > Constants.SHOPPING_CART_ITEM_LIMIT_NUMBER) {
+        if (saveCartItemParam.getGoodsCount() > Constants.SHOPPING_CART_ITEM_LIMIT_NUMBER) {
             return ServiceResultEnum.SHOPPING_CART_ITEM_LIMIT_NUMBER_ERROR.getResult();
         }
-        int totalItem = shoppingCartItemMapper.selectCountByUserId(shoppingCartItem.getUserId()) + 1;
+
+        int totalItem = shoppingCartItemMapper.selectCountByUserId(userId) + 1;
         // 购物车总数量超出最大数量
         if (totalItem > Constants.SHOPPING_CART_ITEM_TOTAL_NUMBER) {
             return ServiceResultEnum.SHOPPING_CART_ITEM_TOTAL_NUMBER_ERROR.getResult();
         }
+
+        ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
+        BeanUtil.copyProperties(saveCartItemParam, shoppingCartItem);
+        shoppingCartItem.setUserId(userId);
         // 保存购物车项
         if (shoppingCartItemMapper.insertSelective(shoppingCartItem) > 0) {
             return ServiceResultEnum.SUCCESS.getResult();
@@ -59,25 +74,25 @@ public class ShoppingCartItemServiceImpl implements ShoppingCartItemService {
     }
 
     @Override
-    public String updateShoppingCartItem(ShoppingCartItem shoppingCartItem) {
-        ShoppingCartItem temp = shoppingCartItemMapper.selectByPrimaryKey(shoppingCartItem.getCartItemId());
+    public String updateShoppingCartItem(UpdateCartItemParam updateCartItemParam, Long userId) {
+        ShoppingCartItem temp = shoppingCartItemMapper.selectByPrimaryKey(updateCartItemParam.getCartItemId());
         // 数据库中不存在
         if (temp == null) {
             return ServiceResultEnum.DATA_NOT_EXIST.getResult();
         }
         // 超出单个商品的最大数量
-        if (shoppingCartItem.getGoodsCount() > Constants.SHOPPING_CART_ITEM_LIMIT_NUMBER) {
+        if (updateCartItemParam.getGoodsCount() > Constants.SHOPPING_CART_ITEM_LIMIT_NUMBER) {
             return ServiceResultEnum.SHOPPING_CART_ITEM_LIMIT_NUMBER_ERROR.getResult();
         }
         // 数量相同不会进行修改
-        if (temp.getGoodsCount().equals(shoppingCartItem.getGoodsCount())) {
+        if (temp.getGoodsCount().equals(updateCartItemParam.getGoodsCount())) {
             return ServiceResultEnum.SUCCESS.getResult();
         }
         // userId不同不能修改
-        if (!shoppingCartItem.getUserId().equals(temp.getUserId())) {
+        if (!userId.equals(temp.getUserId())) {
             return ServiceResultEnum.NO_PERMISSION_ERROR.getResult();
         }
-        temp.setGoodsCount(shoppingCartItem.getGoodsCount());
+        temp.setGoodsCount(updateCartItemParam.getGoodsCount());
         temp.setUpdateTime(new Date());
         // 修改记录
         if (shoppingCartItemMapper.updateByPrimaryKeySelective(temp) > 0) {
@@ -88,7 +103,23 @@ public class ShoppingCartItemServiceImpl implements ShoppingCartItemService {
 
     @Override
     public ShoppingCartItem getShoppingCartItemById(Long shoppingCartItemId) {
-        return shoppingCartItemMapper.selectByPrimaryKey(shoppingCartItemId);
+        ShoppingCartItem shoppingCartItem = shoppingCartItemMapper.selectByPrimaryKey(shoppingCartItemId);
+        if (shoppingCartItem == null){
+            CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+        }
+        return shoppingCartItem;
+    }
+
+    @Override
+    public List<ShoppingCartItemVO> getCartItemsForConfirmPage(List<Long> cartItemIds, Long userId) {
+        List<ShoppingCartItemVO> shoppingCartItemVOList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(cartItemIds)) {
+            CMallException.fail("购物项不能为空");
+        }
+        List<ShoppingCartItem> shoppingCartItemList = shoppingCartItemMapper
+                .selectByUserIdAndCartItemIds(userId, cartItemIds);
+        transformToVO(shoppingCartItemList,shoppingCartItemVOList);
+        return shoppingCartItemVOList;
     }
 
     @Override
@@ -109,6 +140,11 @@ public class ShoppingCartItemServiceImpl implements ShoppingCartItemService {
         List<ShoppingCartItemVO> shoppingCartItemVOList = new ArrayList<>();
         List<ShoppingCartItem> shoppingCartItemList = shoppingCartItemMapper.selectByUserId(
                 mallUserId, Constants.SHOPPING_CART_ITEM_TOTAL_NUMBER);
+        transformToVO(shoppingCartItemList, shoppingCartItemVOList);
+        return shoppingCartItemVOList;
+    }
+
+    private void transformToVO(List<ShoppingCartItem> shoppingCartItemList, List<ShoppingCartItemVO> shoppingCartItemVOList){
         if (!CollectionUtils.isEmpty(shoppingCartItemList)) {
             // 商品id表
             List<Long> goodsIds = shoppingCartItemList.stream()
@@ -140,6 +176,5 @@ public class ShoppingCartItemServiceImpl implements ShoppingCartItemService {
                 }
             }
         }
-        return shoppingCartItemVOList;
     }
 }

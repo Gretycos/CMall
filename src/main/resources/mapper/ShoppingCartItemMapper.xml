@@ -21,6 +21,7 @@
     where user_id = #{mallUserId,jdbcType=BIGINT} and goods_id=#{goodsId,jdbcType=BIGINT} and is_deleted = 0
     limit 1
   </select>
+
   <select id="selectByUserId" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
@@ -28,6 +29,19 @@
     where user_id = #{mallUserId,jdbcType=BIGINT} and is_deleted = 0
     limit #{number}
   </select>
+
+  <select id="selectByUserIdAndCartItemIds" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_shopping_cart_item
+    where
+    cart_item_id in
+    <foreach item="id" collection="cartItemIds" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    and user_id = #{mallUserId,jdbcType=BIGINT} and is_deleted = 0
+  </select>
+
   <select id="selectCountByUserId" resultType="int">
     select count(*)
     from tb_shopping_cart_item

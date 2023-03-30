@@ -23,6 +23,8 @@ public interface ShoppingCartItemMapper {
 
     ShoppingCartItem selectByUserIdAndGoodsId(Long mallUserId, Long goodsId);
 
+    List<ShoppingCartItem> selectByUserIdAndCartItemIds(Long mallUserId, List<Long> cartItemIds);
+
     List<ShoppingCartItem> selectByUserId(Long mallUserId, int number);
 
     int selectCountByUserId(Long mallUserId);
