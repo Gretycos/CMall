@@ -69,7 +69,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
     public String updateOrderInfo(Order order) {
         Order temp = orderMapper.selectByPrimaryKey(order.getOrderId());
         // 不为空 且 orderStatus >= 0 且 状态为出库之前 可以修改部分信息（总价、地址）
@@ -90,7 +89,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
     public String checkDone(Long[] ids) {
         // 查询所有的订单 判断状态 修改状态和更新时间
         List<Order> orderList = orderMapper.selectByPrimaryKeys(Arrays.asList(ids));
@@ -126,7 +124,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
     public String checkOut(Long[] ids) {
         // 查询所有的订单 判断状态 修改状态和更新时间
         List<Order> orderList = orderMapper.selectByPrimaryKeys(Arrays.asList(ids));
@@ -162,7 +159,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
     public String closeOrder(Long[] ids) {
         // 查询所有的订单 判断状态 修改状态和更新时间
         List<Order> orderList = orderMapper.selectByPrimaryKeys(Arrays.asList(ids));
@@ -321,6 +317,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String seckillSaveOrder(Long seckillSuccessId, Long userId, UserAddress address) {
         SeckillSuccess seckillSuccess = seckillSuccessMapper.selectByPrimaryKey(seckillSuccessId);
         if (!seckillSuccess.getUserId().equals(userId)) {
