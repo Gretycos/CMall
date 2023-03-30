@@ -51,6 +51,7 @@ public class UserAddressServiceImpl implements UserAddressService {
     }
 
     @Override
+    @Transactional
     public Boolean updateUserAddress(UserAddress userAddress) {
         UserAddress tempAddress = getUserAddressById(userAddress.getAddressId());
         Date now = new Date();
