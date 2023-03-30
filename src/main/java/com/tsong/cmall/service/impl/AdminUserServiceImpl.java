@@ -13,6 +13,7 @@ import com.tsong.cmall.util.NumberUtil;
 import com.tsong.cmall.util.SystemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -77,6 +78,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
+    @Transactional
     public Boolean updatePassword(Long loginUserId, String originalPassword, String newPassword) {
         AdminUser adminUser = adminUserMapper.selectByPrimaryKey(loginUserId);
         if (adminUser == null){
@@ -90,8 +92,13 @@ public class AdminUserServiceImpl implements AdminUserService {
             // 设置新密码并修改
             adminUser.setLoginPassword(newPasswordMD5);
             // 修改成功则清空token并返回true
-            return adminUserMapper.updateByPrimaryKeySelective(adminUser) > 0
-                    && logout(loginUserId);
+            if (adminUserMapper.updateByPrimaryKeySelective(adminUser) <= 0){
+                CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
+            }
+            if (!logout(loginUserId)){
+                CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
+            }
+            return true;
         }
         return false;
     }
