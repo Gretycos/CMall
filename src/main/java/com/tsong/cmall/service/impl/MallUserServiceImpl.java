@@ -69,7 +69,9 @@ public class MallUserServiceImpl implements MallUserService {
                     .userId(registerUser.getUserId())
                     .couponId(coupon.getCouponId())
                     .build();
-            userCouponRecordMapper.insertSelective(userCouponRecord);
+            if (userCouponRecordMapper.insertSelective(userCouponRecord) <= 0){
+                CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
+            }
         }
         return ServiceResultEnum.SUCCESS.getResult();
     }
@@ -139,6 +141,7 @@ public class MallUserServiceImpl implements MallUserService {
     }
 
     @Override
+    @Transactional
     public Boolean updateUserPassword(Long loginUserId, String originalPassword, String newPassword) {
         MallUser user = mallUserMapper.selectByPrimaryKey(loginUserId);
         if (user == null){
@@ -148,8 +151,13 @@ public class MallUserServiceImpl implements MallUserService {
         String newPasswordMD5 = MD5Util.MD5Encode(newPassword, Constants.UTF_ENCODING);
         if (originalPasswordMD5.equals(user.getPasswordMd5())){
             user.setPasswordMd5(newPasswordMD5);
-            return mallUserMapper.updateByPrimaryKeySelective(user) > 0
-                    && logout(loginUserId);
+            if (mallUserMapper.updateByPrimaryKeySelective(user) <= 0){
+                CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
+            }
+            if (!logout(loginUserId)){
+                CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
+            }
+            return true;
         }
         return false;
     }
