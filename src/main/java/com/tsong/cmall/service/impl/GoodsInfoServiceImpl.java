@@ -13,6 +13,7 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
  * @Author Tsong
  * @Date 2023/3/23 23:20
  */
+@Service
 public class GoodsInfoServiceImpl implements GoodsInfoService {
     @Autowired
     private GoodsInfoMapper goodsInfoMapper;
