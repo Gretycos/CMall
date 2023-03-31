@@ -197,7 +197,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String saveOrder(MallUserVO user, Long couponUserId, UserAddress address, List<ShoppingCartItemVO> myShoppingCartItems) {
+    public String saveOrder(MallUser user, Long couponUserId, UserAddress address, List<ShoppingCartItemVO> myShoppingCartItems) {
         // 购物车项目id表
         List<Long> itemIdList = myShoppingCartItems.stream()
                 .map(ShoppingCartItemVO::getCartItemId).collect(Collectors.toList());
@@ -243,18 +243,19 @@ public class OrderServiceImpl implements OrderService {
         }
         // 生成订单号
         String orderNo = NumberUtil.genOrderNo();
-        int priceTotal = 0;
         // 保存订单
         Order order = Order.builder()
                 .orderNo(orderNo)
                 .userId(user.getUserId())
                 .build();
         // 总价
+        int priceTotal = 0;
         for (ShoppingCartItemVO shoppingCartItemVO : myShoppingCartItems) {
             priceTotal += shoppingCartItemVO.getGoodsCount() * shoppingCartItemVO.getSellingPrice();
         }
         // 如果使用了优惠券
         if (couponUserId != null) {
+            // 查找领券记录
             UserCouponRecord userCouponRecord = userCouponRecordMapper.selectByPrimaryKey(couponUserId);
             Coupon coupon = couponMapper.selectByPrimaryKey(userCouponRecord.getCouponId());
             priceTotal -= coupon.getDiscount();

@@ -1,9 +1,9 @@
 package com.tsong.cmall.service;
 
-import com.tsong.cmall.controller.vo.MallUserVO;
 import com.tsong.cmall.controller.vo.OrderDetailVO;
 import com.tsong.cmall.controller.vo.OrderItemVO;
 import com.tsong.cmall.controller.vo.ShoppingCartItemVO;
+import com.tsong.cmall.entity.MallUser;
 import com.tsong.cmall.entity.Order;
 import com.tsong.cmall.entity.UserAddress;
 import com.tsong.cmall.util.PageQueryUtil;
@@ -60,7 +60,7 @@ public interface OrderService {
      * @Return java.lang.String
      */
 
-    String saveOrder(MallUserVO user, Long couponUserId, UserAddress address, List<ShoppingCartItemVO> myShoppingCartItems);
+    String saveOrder(MallUser user, Long couponUserId, UserAddress address, List<ShoppingCartItemVO> myShoppingCartItems);
 
     /**
      * @Description 生成秒杀订单
