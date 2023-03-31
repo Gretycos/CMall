@@ -80,6 +80,8 @@ public enum ServiceResultEnum {
 
     OPERATE_ERROR("操作失败！"),
 
+    REQUEST_FORBIDDEN_ERROR("禁止该操作！"),
+
     NO_PERMISSION_ERROR("无权限！"),
 
     DB_ERROR("database error");
