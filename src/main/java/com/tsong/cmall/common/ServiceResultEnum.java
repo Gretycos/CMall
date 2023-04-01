@@ -46,6 +46,8 @@ public enum ServiceResultEnum {
 
     LOGIN_ERROR("登录失败！"),
 
+    LOGIN_NAME_IS_NOT_PHONE("请输入正确的手机号！"),
+
     NOT_LOGIN_ERROR("未登录！"),
 
     ADMIN_NOT_LOGIN_ERROR("管理员未登录！"),
