@@ -44,7 +44,7 @@ public class OrderAPI {
     private UserAddressService userAddressService;
 
     @PostMapping("/saveOrder")
-    @ApiOperation(value = "生成订单接口", notes = "传参为地址id、待结算的购物项id数组、领券id")
+    @ApiOperation(value = "提交订单接口", notes = "传参为地址id、待结算的购物项id数组、领券id")
     public Result<String> saveOrder(@ApiParam(value = "订单参数") @RequestBody SaveOrderParam saveOrderParam,
                                     @TokenToMallUser MallUser loginMallUser) {
         if (saveOrderParam == null
