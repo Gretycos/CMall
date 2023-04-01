@@ -31,6 +31,8 @@ public class Constants {
     public final static int SELL_STATUS_UP = 0;// 商品上架状态
     public final static int SELL_STATUS_DOWN = 1;// 商品下架状态
 
+    public final static int TOKEN_LENGTH = 32;//token字段长度
+
     /**
      * 字符编码
      */
