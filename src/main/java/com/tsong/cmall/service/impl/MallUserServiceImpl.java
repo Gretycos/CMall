@@ -2,6 +2,8 @@ package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.controller.mall.param.MallUserPasswordParam;
+import com.tsong.cmall.controller.mall.param.MallUserUpdateParam;
 import com.tsong.cmall.controller.mall.param.UserInfoUpdateParam;
 import com.tsong.cmall.dao.CouponMapper;
 import com.tsong.cmall.dao.MallUserMapper;
@@ -130,23 +132,26 @@ public class MallUserServiceImpl implements MallUserService {
     }
 
     @Override
-    public Boolean updateUserInfo(Long userId, String newNickName, String newIntroduceSign) {
+    public Boolean updateUserInfo(MallUserUpdateParam mallUserUpdateParam, Long userId) {
         MallUser user = mallUserMapper.selectByPrimaryKey(userId);
         if (user == null) {
             CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
-        user.setNickName(newNickName);
-        user.setIntroduceSign(newIntroduceSign);
+        user.setNickName(mallUserUpdateParam.getNickName());
+        user.setIntroduceSign(mallUserUpdateParam.getIntroduceSign());
         return mallUserMapper.updateByPrimaryKeySelective(user) > 0;
     }
 
     @Override
     @Transactional
-    public Boolean updateUserPassword(Long loginUserId, String originalPassword, String newPassword) {
+    public Boolean updateUserPassword(MallUserPasswordParam mallUserPasswordParam, Long loginUserId) {
         MallUser user = mallUserMapper.selectByPrimaryKey(loginUserId);
         if (user == null){
             CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
+        String originalPassword = mallUserPasswordParam.getOriginalPassword();
+        String newPassword = mallUserPasswordParam.getNewPassword();
+
         String originalPasswordMD5 = MD5Util.MD5Encode(originalPassword, Constants.UTF_ENCODING);
         String newPasswordMD5 = MD5Util.MD5Encode(newPassword, Constants.UTF_ENCODING);
         if (originalPasswordMD5.equals(user.getPasswordMd5())){

@@ -1,5 +1,7 @@
 package com.tsong.cmall.service;
 
+import com.tsong.cmall.controller.mall.param.MallUserPasswordParam;
+import com.tsong.cmall.controller.mall.param.MallUserUpdateParam;
 import com.tsong.cmall.controller.mall.param.UserInfoUpdateParam;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
@@ -26,14 +28,14 @@ public interface MallUserService {
      * @Param [userId, newNickName, newIntroduceSign]
      * @Return java.lang.Boolean
      */
-    Boolean updateUserInfo(Long userId, String newNickName, String newIntroduceSign);
+    Boolean updateUserInfo(MallUserUpdateParam mallUserUpdateParam, Long userId);
 
     /**
      * @Description 用户修改密码
      * @Param [loginUserId, originalPassword, newPassword]
      * @Return java.lang.Boolean
      */
-    Boolean updateUserPassword(Long loginUserId, String originalPassword, String newPassword);
+    Boolean updateUserPassword(MallUserPasswordParam mallUserPasswordParam, Long loginUserId);
 
     /**
      * @Description 登出接口
