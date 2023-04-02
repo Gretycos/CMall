@@ -10,7 +10,7 @@ import com.tsong.cmall.entity.MallUser;
 import com.tsong.cmall.entity.UserAddress;
 import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.OrderService;
-import com.tsong.cmall.service.ShoppingCartItemService;
+import com.tsong.cmall.service.ShoppingCartService;
 import com.tsong.cmall.service.UserAddressService;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
@@ -37,7 +37,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class OrderAPI {
     @Autowired
-    private ShoppingCartItemService shoppingCartItemService;
+    private ShoppingCartService shoppingCartService;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -58,7 +58,7 @@ public class OrderAPI {
         }
 
         // 结算页的物品列表
-        List<ShoppingCartItemVO> itemsForConfirmPage = shoppingCartItemService.getCartItemsForConfirmPage(
+        List<ShoppingCartItemVO> itemsForConfirmPage = shoppingCartService.getCartItemsForConfirmPage(
                 Arrays.asList(saveOrderParam.getCartItemIds()), loginMallUser.getUserId());
         if (CollectionUtils.isEmpty(itemsForConfirmPage)) {
             //无数据
