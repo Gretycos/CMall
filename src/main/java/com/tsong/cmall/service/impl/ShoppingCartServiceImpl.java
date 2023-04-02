@@ -10,7 +10,7 @@ import com.tsong.cmall.dao.ShoppingCartItemMapper;
 import com.tsong.cmall.entity.GoodsInfo;
 import com.tsong.cmall.entity.ShoppingCartItem;
 import com.tsong.cmall.exception.CMallException;
-import com.tsong.cmall.service.ShoppingCartItemService;
+import com.tsong.cmall.service.ShoppingCartService;
 import com.tsong.cmall.util.BeanUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @Date 2023/3/25 17:00
  */
 @Service
-public class ShoppingCartItemServiceImpl implements ShoppingCartItemService {
+public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Autowired
     private ShoppingCartItemMapper shoppingCartItemMapper;
     @Autowired

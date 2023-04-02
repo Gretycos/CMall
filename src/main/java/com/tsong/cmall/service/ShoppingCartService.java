@@ -7,7 +7,7 @@ import com.tsong.cmall.entity.ShoppingCartItem;
 
 import java.util.List;
 
-public interface ShoppingCartItemService {
+public interface ShoppingCartService {
     /**
      * @Description 保存商品至购物车中
      * @Param [shoppingCartItem]
