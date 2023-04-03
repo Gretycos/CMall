@@ -23,7 +23,7 @@ public interface GoodsCategoryService {
 
     GoodsCategory getGoodsCategoryById(Long id);
 
-    Boolean deleteBatch(Integer[] ids);
+    Boolean deleteBatch(Long[] ids);
 
     /**
      * @Description 首页分类数据

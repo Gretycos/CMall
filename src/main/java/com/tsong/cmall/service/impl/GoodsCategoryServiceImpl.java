@@ -80,7 +80,7 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     }
 
     @Override
-    public Boolean deleteBatch(Integer[] ids) {
+    public Boolean deleteBatch(Long[] ids) {
         if (ids.length < 1) {
             return false;
         }

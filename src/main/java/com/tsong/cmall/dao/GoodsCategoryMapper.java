@@ -29,7 +29,7 @@ public interface GoodsCategoryMapper {
 
     int getTotalGoodsCategories(PageQueryUtil pageUtil);
 
-    int deleteBatch(Integer[] ids);
+    int deleteBatch(Long[] ids);
 
     List<GoodsCategory> selectByLevelAndParentIdsAndNumber(List<Long> parentIds, int categoryLevel, int number);
 }
