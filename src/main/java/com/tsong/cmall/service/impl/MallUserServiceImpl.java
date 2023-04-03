@@ -4,7 +4,6 @@ import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
 import com.tsong.cmall.controller.mall.param.MallUserPasswordParam;
 import com.tsong.cmall.controller.mall.param.MallUserUpdateParam;
-import com.tsong.cmall.controller.mall.param.UserInfoUpdateParam;
 import com.tsong.cmall.dao.CouponMapper;
 import com.tsong.cmall.dao.MallUserMapper;
 import com.tsong.cmall.dao.UserCouponRecordMapper;
@@ -83,7 +82,7 @@ public class MallUserServiceImpl implements MallUserService {
         MallUser user = mallUserMapper.selectByLoginNameAndPasswd(loginName, passwordMD5);
         if (user != null) {
             if (user.getLockedFlag() == 1) {
-                return ServiceResultEnum.LOGIN_USER_LOCKED.getResult();
+                return ServiceResultEnum.LOGIN_USER_LOCKED_ERROR.getResult();
             }
             // 新token
             String token = getNewToken(System.currentTimeMillis() + "", user.getUserId());
