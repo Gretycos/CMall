@@ -1,6 +1,7 @@
 package com.tsong.cmall.controller.mall;
 
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.TokenToMallUser;
 import com.tsong.cmall.controller.mall.param.SaveCartItemParam;
 import com.tsong.cmall.controller.mall.param.UpdateCartItemParam;
 import com.tsong.cmall.controller.vo.MyCouponVO;

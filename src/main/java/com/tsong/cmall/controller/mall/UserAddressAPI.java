@@ -1,6 +1,7 @@
 package com.tsong.cmall.controller.mall;
 
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.TokenToMallUser;
 import com.tsong.cmall.controller.mall.param.SaveUserAddressParam;
 import com.tsong.cmall.controller.mall.param.UpdateUserAddressParam;
 import com.tsong.cmall.controller.vo.UserAddressVO;
