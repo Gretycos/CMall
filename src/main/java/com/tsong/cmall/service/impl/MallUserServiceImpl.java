@@ -173,7 +173,7 @@ public class MallUserServiceImpl implements MallUserService {
     }
 
     @Override
-    public Boolean lockUsers(Integer[] ids, int lockStatus) {
+    public Boolean lockUsers(Long[] ids, int lockStatus) {
         if (ids.length < 1) {
             return false;
         }

@@ -49,5 +49,5 @@ public interface MallUserService {
      * @Param [ids, lockStatus]
      * @Return java.lang.Boolean
      */
-    Boolean lockUsers(Integer[] ids, int lockStatus);
+    Boolean lockUsers(Long[] ids, int lockStatus);
 }
