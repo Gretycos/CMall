@@ -58,7 +58,7 @@ public enum ServiceResultEnum {
 
     USER_NULL_ERROR("无效用户！请重新登录！"),
 
-    LOGIN_USER_LOCKED("用户已被禁止登录！"),
+    LOGIN_USER_LOCKED_ERROR("用户已被禁止登录！"),
 
     ORDER_NOT_EXIST_ERROR("订单不存在！"),
 
