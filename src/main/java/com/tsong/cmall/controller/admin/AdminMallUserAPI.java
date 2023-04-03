@@ -1,5 +1,6 @@
 package com.tsong.cmall.controller.admin;
 
+import com.tsong.cmall.config.annotation.TokenToAdminUser;
 import com.tsong.cmall.controller.admin.param.BatchIdParam;
 import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.service.MallUserService;

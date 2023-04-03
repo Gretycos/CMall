@@ -1,6 +1,7 @@
 package com.tsong.cmall.controller.admin;
 
 import com.tsong.cmall.common.Constants;
+import com.tsong.cmall.config.annotation.TokenToAdminUser;
 import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.util.MallUtils;
 import com.tsong.cmall.util.Result;
