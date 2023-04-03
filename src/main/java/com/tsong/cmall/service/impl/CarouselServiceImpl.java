@@ -62,7 +62,7 @@ public class CarouselServiceImpl implements CarouselService {
     }
 
     @Override
-    public Boolean deleteBatch(Integer[] ids) {
+    public Boolean deleteBatch(Long[] ids) {
         if (ids.length < 1) {
             return false;
         }

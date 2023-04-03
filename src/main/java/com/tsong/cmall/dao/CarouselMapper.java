@@ -28,5 +28,5 @@ public interface CarouselMapper {
 
     List<Carousel> findCarouselsByNum(int number);
 
-    int deleteBatch(Integer[] ids);
+    int deleteBatch(Long[] ids);
 }
