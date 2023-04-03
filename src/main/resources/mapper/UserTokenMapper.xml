@@ -10,6 +10,14 @@
   <sql id="Base_Column_List">
     user_id, token, update_time, expire_time
   </sql>
+
+  <select id="selectByToken" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_user_token
+    where token = #{token,jdbcType=VARCHAR}
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

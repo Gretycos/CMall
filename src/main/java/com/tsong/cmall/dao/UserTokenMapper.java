@@ -18,4 +18,6 @@ public interface UserTokenMapper {
     int updateByPrimaryKeySelective(UserToken row);
 
     int updateByPrimaryKey(UserToken row);
+
+    UserToken selectByToken(String token);
 }
