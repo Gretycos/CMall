@@ -2,11 +2,23 @@ package com.tsong.cmall.util;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.net.URI;
+
 /**
  * @Author Tsong
  * @Date 2023/3/24 15:41
  */
 public class MallUtils {
+    public static URI getHost(URI uri) {
+        URI effectiveURI = null;
+        try {
+            effectiveURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), null, null, null);
+        } catch (Throwable var4) {
+            effectiveURI = null;
+        }
+        return effectiveURI;
+    }
+
     public static String cleanString(String value) {
         if (StringUtils.isEmpty(value)) {
             return "";
