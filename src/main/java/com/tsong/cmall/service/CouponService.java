@@ -21,7 +21,7 @@ public interface CouponService {
     boolean deleteCouponById(Long id);
 
     /**
-     * @Description 用户可用优惠券
+     * @Description 用户可领优惠券
      * @Param [userId]
      * @Return java.util.List<com.tsong.cmall.controller.vo.CouponVO>
      */

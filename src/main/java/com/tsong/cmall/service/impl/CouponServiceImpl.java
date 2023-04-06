@@ -73,8 +73,10 @@ public class CouponServiceImpl implements CouponService {
         List<CouponVO> couponVOList = BeanUtil.copyList(coupons, CouponVO.class);
         for (CouponVO couponVO : couponVOList) {
             if (userId != null) {
+                // 查找领券记录
                 int num = userCouponRecordMapper.getUserCouponCount(userId, couponVO.getCouponId());
                 if (num > 0) {
+                    // 领过券了
                     couponVO.setHasReceived(true);
                 }
             }
