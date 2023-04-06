@@ -23,7 +23,7 @@ import java.util.List;
  * @Date 2023/4/2 23:38
  */
 @RestController
-@Api(value = "User Address", tags = "6.商城个人地址相关接口")
+@Api(value = "User Address", tags = "1-6.商城个人地址相关接口")
 @RequestMapping("/api")
 public class UserAddressAPI {
     @Autowired

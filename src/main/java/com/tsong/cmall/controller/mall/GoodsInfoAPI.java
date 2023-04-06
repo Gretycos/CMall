@@ -28,7 +28,7 @@ import java.util.Map;
  * @Date 2023/3/31 12:23
  */
 @RestController
-@Api(value = "goods", tags = "4.CMall商品相关接口")
+@Api(value = "goods", tags = "1-4.CMall商品相关接口")
 @RequestMapping("/api")
 public class GoodsInfoAPI {
     private static final Logger logger = LoggerFactory.getLogger(GoodsInfoAPI.class);

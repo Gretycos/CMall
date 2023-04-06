@@ -4,6 +4,7 @@ import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
 import com.tsong.cmall.config.annotation.TokenToMallUser;
 import com.tsong.cmall.controller.mall.param.SaveOrderParam;
+import com.tsong.cmall.controller.mall.param.SaveSeckillOrderParam;
 import com.tsong.cmall.controller.vo.OrderDetailVO;
 import com.tsong.cmall.controller.vo.OrderVO;
 import com.tsong.cmall.controller.vo.ShoppingCartItemVO;
@@ -13,10 +14,7 @@ import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.OrderService;
 import com.tsong.cmall.service.ShoppingCartService;
 import com.tsong.cmall.service.UserAddressService;
-import com.tsong.cmall.util.PageQueryUtil;
-import com.tsong.cmall.util.PageResult;
-import com.tsong.cmall.util.Result;
-import com.tsong.cmall.util.ResultGenerator;
+import com.tsong.cmall.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,7 +32,7 @@ import java.util.Map;
  * @Date 2023/3/31 23:40
  */
 @RestController
-@Api(value = "order", tags = "7.订单操作相关接口")
+@Api(value = "order", tags = "1-7.订单操作相关接口")
 @RequestMapping("/api")
 public class OrderAPI {
     @Autowired
@@ -44,7 +42,8 @@ public class OrderAPI {
     @Autowired
     private UserAddressService userAddressService;
 
-    @PostMapping("/saveOrder")
+    @RepeatSubmit
+    @PostMapping("/order/save")
     @ApiOperation(value = "提交订单接口", notes = "传参为地址id、待结算的购物项id数组、领券id")
     public Result<String> saveOrder(@ApiParam(value = "订单参数") @RequestBody SaveOrderParam saveOrderParam,
                                     @TokenToMallUser MallUser loginMallUser) {
@@ -79,6 +78,29 @@ public class OrderAPI {
         return ResultGenerator.genFailResult("生成订单失败");
     }
 
+    @RepeatSubmit
+    @PostMapping("/order/seckill/save")
+    @ApiOperation(value = "提交订单接口", notes = "传参为地址id、待结算的购物项id数组、领券id")
+    public Result<String> saveOrder(@ApiParam(value = "订单参数") @RequestBody SaveSeckillOrderParam saveSeckillOrderParam,
+                                    @TokenToMallUser MallUser loginMallUser) {
+        if (saveSeckillOrderParam == null
+                || saveSeckillOrderParam.getSeckillSuccessId() == null
+                || saveSeckillOrderParam.getAddressId() == null
+                || saveSeckillOrderParam.getSeckillSecretKey() == null) {
+            CMallException.fail(ServiceResultEnum.PARAM_ERROR.getResult());
+        }
+        Long seckillSuccessId = saveSeckillOrderParam.getSeckillSuccessId();
+        String seckillSecretKey = saveSeckillOrderParam.getSeckillSecretKey();
+        if (!seckillSecretKey.equals(MD5Util.MD5Encode(seckillSuccessId + Constants.SECKILL_ORDER_SALT, Constants.UTF_ENCODING))) {
+            CMallException.fail("秒杀订单不合法");
+        }
+        UserAddress address = userAddressService.getUserAddressById(saveSeckillOrderParam.getAddressId());
+        String saveOrderResult = orderService.seckillSaveOrder(seckillSuccessId, loginMallUser.getUserId(),address);
+        Result result = ResultGenerator.genSuccessResult();
+        result.setData(saveOrderResult);
+        return result;
+    }
+
     @GetMapping("/order/{orderNo}")
     @ApiOperation(value = "订单详情接口", notes = "传参为订单号")
     public Result<OrderDetailVO> orderDetailPage(@ApiParam(value = "订单号") @PathVariable("orderNo") String orderNo,
@@ -88,7 +110,7 @@ public class OrderAPI {
 
     @GetMapping("/order")
     @ApiOperation(value = "订单列表接口", notes = "传参为页码")
-    public Result<PageResult<List<OrderVO>>> orderList(@ApiParam(value = "页码") @RequestParam(required = false) Integer pageNumber,
+    public Result<PageResult<OrderVO>> orderList(@ApiParam(value = "页码") @RequestParam(required = false) Integer pageNumber,
                                                        @ApiParam(value = "订单状态:0.待支付 1.待确认 2.待发货 3:已发货 4.交易成功") @RequestParam(required = false) Integer status,
                                                        @TokenToMallUser MallUser loginMallUser) {
         Map<String, Object> params = new HashMap<>(8);

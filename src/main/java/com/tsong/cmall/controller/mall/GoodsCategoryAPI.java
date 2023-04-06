@@ -21,7 +21,7 @@ import java.util.List;
  * @Date 2023/3/31 22:52
  */
 @RestController
-@Api(value = "goods category", tags = "3.分类页面接口")
+@Api(value = "goods category", tags = "1-3.分类页面接口")
 @RequestMapping("/api")
 public class GoodsCategoryAPI {
     @Autowired

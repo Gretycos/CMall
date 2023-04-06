@@ -23,7 +23,7 @@ import java.util.List;
  * @Date 2023/3/31 22:55
  */
 @RestController
-@Api(value = "homepage", tags = "1.商城首页接口")
+@Api(value = "homepage", tags = "1-1.商城首页接口")
 @RequestMapping("/api")
 public class HomePageAPI {
 

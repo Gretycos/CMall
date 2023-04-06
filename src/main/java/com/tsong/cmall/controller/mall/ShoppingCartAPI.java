@@ -28,7 +28,7 @@ import java.util.List;
  * @Date 2023/4/2 21:49
  */
 @RestController
-@Api(value = "Shopping Cart", tags = "5.商城购物车相关接口")
+@Api(value = "Shopping Cart", tags = "1-5.商城购物车相关接口")
 @RequestMapping("/api")
 public class ShoppingCartAPI {
     @Autowired

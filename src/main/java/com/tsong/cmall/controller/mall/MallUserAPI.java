@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
  * @Date 2023/4/1 17:08
  */
 @RestController
-@Api(value = "Mall User", tags = "2.商城用户操作相关接口")
+@Api(value = "Mall User", tags = "1-2.商城用户操作相关接口")
 @RequestMapping("/api")
 public class MallUserAPI {
     @Autowired
