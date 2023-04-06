@@ -10,11 +10,13 @@ import com.tsong.cmall.controller.vo.UrlExposerVO;
 import com.tsong.cmall.dao.GoodsInfoMapper;
 import com.tsong.cmall.dao.SeckillMapper;
 import com.tsong.cmall.dao.SeckillSuccessMapper;
+import com.tsong.cmall.entity.GoodsInfo;
 import com.tsong.cmall.entity.Seckill;
 import com.tsong.cmall.entity.SeckillSuccess;
 import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.redis.RedisCache;
 import com.tsong.cmall.service.SeckillService;
+import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.MD5Util;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
@@ -22,11 +24,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @Author Tsong
@@ -184,5 +185,48 @@ public class SeckillServiceImpl implements SeckillService {
                 MD5Util.MD5Encode(
                         seckillSuccessId + Constants.SECKILL_ORDER_SALT, Constants.UTF_ENCODING));
         return seckillSuccessVO;
+    }
+
+    @Override
+    public SeckillGoodsVO getSeckillGoodsDetail(Seckill seckill) {
+        SeckillGoodsVO seckillGoodsVO = new SeckillGoodsVO();
+        BeanUtil.copyProperties(seckill, seckillGoodsVO);
+
+        // 秒杀的商品
+        GoodsInfo goodsInfo = goodsInfoMapper.selectByPrimaryKey(seckill.getGoodsId());
+        seckillGoodsVO.setGoodsName(goodsInfo.getGoodsName());
+        seckillGoodsVO.setGoodsIntro(goodsInfo.getGoodsIntro());
+        seckillGoodsVO.setGoodsDetailContent(goodsInfo.getGoodsDetailContent());
+        seckillGoodsVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
+        seckillGoodsVO.setSellingPrice(goodsInfo.getSellingPrice());
+        Date seckillBegin = seckillGoodsVO.getSeckillBegin();
+        Date seckillEnd = seckillGoodsVO.getSeckillEnd();
+        seckillGoodsVO.setStartDate(seckillBegin.getTime());
+        seckillGoodsVO.setEndDate(seckillEnd.getTime());
+        return seckillGoodsVO;
+    }
+
+    @Override
+    public List<SeckillGoodsVO> getSeckillGoodsList() {
+        List<Seckill> seckillList = seckillMapper.findHomePageSeckillList();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
+        return seckillList.stream().map(seckill -> {
+            SeckillGoodsVO seckillGoodsVO = new SeckillGoodsVO();
+            BeanUtil.copyProperties(seckill, seckillGoodsVO);
+            GoodsInfo goodsInfo = goodsInfoMapper.selectByPrimaryKey(seckill.getGoodsId());
+            if (goodsInfo == null) {
+                return null;
+            }
+            seckillGoodsVO.setGoodsName(goodsInfo.getGoodsName());
+            seckillGoodsVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
+            seckillGoodsVO.setSellingPrice(goodsInfo.getSellingPrice());
+            Date seckillBegin = seckillGoodsVO.getSeckillBegin();
+            Date seckillEnd = seckillGoodsVO.getSeckillEnd();
+            String formatBegin = sdf.format(seckillBegin);
+            String formatEnd = sdf.format(seckillEnd);
+            seckillGoodsVO.setSeckillBeginTime(formatBegin);
+            seckillGoodsVO.setSeckillEndTime(formatEnd);
+            return seckillGoodsVO;
+        }).filter(Objects::nonNull).toList();
     }
 }

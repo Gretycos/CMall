@@ -1,5 +1,6 @@
 package com.tsong.cmall.service;
 
+import com.tsong.cmall.controller.vo.SeckillGoodsVO;
 import com.tsong.cmall.controller.vo.SeckillSuccessVO;
 import com.tsong.cmall.controller.vo.UrlExposerVO;
 import com.tsong.cmall.entity.Seckill;
@@ -24,4 +25,8 @@ public interface SeckillService {
     UrlExposerVO exposeUrl(Long seckillId);
 
     SeckillSuccessVO executeSeckill(Long seckillId, Long userId);
+
+    SeckillGoodsVO getSeckillGoodsDetail(Seckill seckill);
+
+    List<SeckillGoodsVO> getSeckillGoodsList();
 }
