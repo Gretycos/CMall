@@ -23,7 +23,7 @@ import java.util.Map;
  * @Date 2023/4/3 17:48
  */
 @RestController
-@Api(value = "Admin Mall User", tags = "8-6.后台管理系统注册用户模块接口")
+@Api(value = "Admin Mall User", tags = "2-6.后台管理系统注册用户模块接口")
 @RequestMapping("/admin")
 public class AdminMallUserAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminMallUserAPI.class);

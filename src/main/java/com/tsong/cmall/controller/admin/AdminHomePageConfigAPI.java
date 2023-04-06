@@ -30,7 +30,7 @@ import java.util.Map;
  * @Date 2023/4/3 16:49
  */
 @RestController
-@Api(value = "Admin HomePage Config", tags = "8-4.后台管理系统首页配置模块接口")
+@Api(value = "Admin HomePage Config", tags = "2-4.后台管理系统首页配置模块接口")
 @RequestMapping("/admin")
 public class AdminHomePageConfigAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminHomePageConfigAPI.class);

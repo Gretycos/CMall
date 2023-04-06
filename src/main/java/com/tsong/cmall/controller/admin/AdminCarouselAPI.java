@@ -29,7 +29,7 @@ import java.util.Map;
  * @Date 2023/4/3 13:41
  */
 @RestController
-@Api(value = "Admin Carousel", tags = "8-1.后台管理系统轮播图模块接口")
+@Api(value = "Admin Carousel", tags = "2-1.后台管理系统轮播图模块接口")
 @RequestMapping("/admin")
 public class AdminCarouselAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminCarouselAPI.class);

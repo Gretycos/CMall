@@ -26,7 +26,7 @@ import java.util.Map;
  * @Date 2023/4/3 17:45
  */
 @RestController
-@Api(value = "Admin Order", tags = "8-5.后台管理系统订单模块接口")
+@Api(value = "Admin Order", tags = "2-5.后台管理系统订单模块接口")
 @RequestMapping("/admin")
 public class AdminOrderAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminOrderAPI.class);

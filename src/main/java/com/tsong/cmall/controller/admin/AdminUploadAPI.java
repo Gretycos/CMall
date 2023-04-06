@@ -33,7 +33,7 @@ import java.util.*;
  * @Date 2023/4/3 17:51
  */
 @RestController
-@Api(value = "Admin Upload", tags = "8-7.后台管理系统文件上传接口")
+@Api(value = "Admin Upload", tags = "2-7.后台管理系统文件上传接口")
 @RequestMapping("/admin")
 public class AdminUploadAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminUploadAPI.class);

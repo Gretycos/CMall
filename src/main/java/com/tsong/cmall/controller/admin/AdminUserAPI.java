@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Date 2023/4/3 17:30
  */
 @RestController
-@Api(value = "Admin User", tags = "8-0.后台管理系统管理员模块接口")
+@Api(value = "Admin User", tags = "2-0.后台管理系统管理员模块接口")
 @RequestMapping("/admin")
 public class AdminUserAPI {
     @Autowired

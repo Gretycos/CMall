@@ -34,7 +34,7 @@ import java.util.Map;
  * @Date 2023/4/3 14:15
  */
 @RestController
-@Api(value = "Admin Goods Category", tags = "8-2.后台管理系统分类模块接口")
+@Api(value = "Admin Goods Category", tags = "2-2.后台管理系统分类模块接口")
 @RequestMapping("/admin")
 public class AdminGoodsCategoryAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminGoodsCategoryAPI.class);
