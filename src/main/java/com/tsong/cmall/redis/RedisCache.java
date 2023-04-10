@@ -92,6 +92,10 @@ public class RedisCache {
         redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
+    public <T> void setCacheObject(final String key, final T value, final Long timeout, final TimeUnit timeUnit) {
+        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
+    }
+
     /**
      * 设置过期时间
      *
@@ -172,6 +176,18 @@ public class RedisCache {
      */
     public <T> long setCacheSet(final String key, final Object value) {
         Long count = redisTemplate.opsForSet().add(key, value);
+        return count == null ? 0 : count;
+    }
+
+    /**
+     * 缓存Set
+     *
+     * @param key   缓存键值
+     * @param value 缓存的数据
+     * @return 缓存数据的对象
+     */
+    public <T> long setCacheSet(final String key, final Object value, final long timeout, final TimeUnit unit) {
+        Long count = redisTemplate.opsForSet().add(key, value, timeout, unit);
         return count == null ? 0 : count;
     }
 
