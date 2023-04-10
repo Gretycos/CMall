@@ -2,6 +2,7 @@ package com.tsong.cmall.controller.mall;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.NoRepeatSubmit;
 import com.tsong.cmall.config.annotation.TokenToMallUser;
 import com.tsong.cmall.controller.mall.param.SaveOrderParam;
 import com.tsong.cmall.controller.mall.param.SaveSeckillOrderParam;
@@ -42,7 +43,7 @@ public class OrderAPI {
     @Autowired
     private UserAddressService userAddressService;
 
-    @RepeatSubmit
+    @NoRepeatSubmit
     @PostMapping("/order/save")
     @ApiOperation(value = "提交订单接口", notes = "传参为地址id、待结算的购物项id数组、领券id")
     public Result<String> saveOrder(@ApiParam(value = "订单参数") @RequestBody SaveOrderParam saveOrderParam,
@@ -78,7 +79,7 @@ public class OrderAPI {
         return ResultGenerator.genFailResult("生成订单失败");
     }
 
-    @RepeatSubmit
+    @NoRepeatSubmit
     @PostMapping("/order/seckill/save")
     @ApiOperation(value = "提交订单接口", notes = "传参为地址id、待结算的购物项id数组、领券id")
     public Result<String> saveOrder(@ApiParam(value = "订单参数") @RequestBody SaveSeckillOrderParam saveSeckillOrderParam,
@@ -126,7 +127,7 @@ public class OrderAPI {
         return ResultGenerator.genSuccessResult(orderService.getMyOrders(pageUtil));
     }
 
-    @PutMapping("/order/{orderNo}/cancel")
+    @PutMapping("/order/cancel/{orderNo}")
     @ApiOperation(value = "订单取消接口", notes = "传参为订单号")
     public Result cancelOrder(@ApiParam(value = "订单号") @PathVariable("orderNo") String orderNo,
                               @TokenToMallUser MallUser loginMallUser) {
@@ -138,7 +139,7 @@ public class OrderAPI {
         }
     }
 
-    @PutMapping("/order/{orderNo}/finish")
+    @PutMapping("/order/finish/{orderNo}")
     @ApiOperation(value = "确认收货接口", notes = "传参为订单号")
     public Result finishOrder(@ApiParam(value = "订单号") @PathVariable("orderNo") String orderNo,
                               @TokenToMallUser MallUser loginMallUser) {
@@ -150,6 +151,7 @@ public class OrderAPI {
         }
     }
 
+    @NoRepeatSubmit
     @GetMapping("/paySuccess")
     @ApiOperation(value = "模拟支付成功回调的接口", notes = "传参为订单号和支付方式")
     public Result paySuccess(@ApiParam(value = "订单号") @RequestParam("orderNo") String orderNo,
