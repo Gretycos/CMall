@@ -36,13 +36,13 @@ public class ShoppingCartAPI {
     @Autowired
     private CouponService couponService;
 
-    @GetMapping("/shop-cart")
+    @GetMapping("/shopping-cart")
     @ApiOperation(value = "购物车列表(网页移动端不分页)", notes = "")
     public Result<List<ShoppingCartItemVO>> cartItemList(@TokenToMallUser MallUser loginMallUser) {
         return ResultGenerator.genSuccessResult(shoppingCartService.getMyShoppingCartItems(loginMallUser.getUserId()));
     }
 
-    @PostMapping("/shop-cart")
+    @PostMapping("/shopping-cart")
     @ApiOperation(value = "添加商品到购物车接口", notes = "传参为商品id、数量")
     public Result saveShoppingCartItem(@RequestBody SaveCartItemParam saveCartItemParam,
                                                  @TokenToMallUser MallUser loginMallUser) {
@@ -55,7 +55,7 @@ public class ShoppingCartAPI {
         return ResultGenerator.genFailResult(saveResult);
     }
 
-    @PutMapping("/shop-cart")
+    @PutMapping("/shopping-cart")
     @ApiOperation(value = "修改购物项数据", notes = "传参为购物项id、数量")
     public Result updateShoppingCartItem(@RequestBody UpdateCartItemParam updateCartItemParam,
                                                    @TokenToMallUser MallUser loginMallUser) {
@@ -68,9 +68,9 @@ public class ShoppingCartAPI {
         return ResultGenerator.genFailResult(updateResult);
     }
 
-    @DeleteMapping("/shop-cart/{newBeeMallShoppingCartItemId}")
+    @DeleteMapping("/shopping-cart/{ShoppingCartItemId}")
     @ApiOperation(value = "删除购物项", notes = "传参为购物项id")
-    public Result updateShoppingCartItem(@PathVariable("newBeeMallShoppingCartItemId") Long shoppingCartItemId,
+    public Result updateShoppingCartItem(@PathVariable("ShoppingCartItemId") Long shoppingCartItemId,
                                                    @TokenToMallUser MallUser loginMallUser) {
         ShoppingCartItem shoppingCartItem = shoppingCartService.getShoppingCartItemById(shoppingCartItemId);
         if (!loginMallUser.getUserId().equals(shoppingCartItem.getUserId())) {
@@ -85,7 +85,7 @@ public class ShoppingCartAPI {
         return ResultGenerator.genFailResult(ServiceResultEnum.OPERATE_ERROR.getResult());
     }
 
-    @GetMapping("/shop-cart/confirm")
+    @GetMapping("/shopping-cart/confirm")
     @ApiOperation(value = "根据购物项id数组查询购物项明细和可用优惠券", notes = "确认订单页面使用")
     public Result<ShoppingCartConfirmVO> confirmCartItem(Long[] cartItemIds, @TokenToMallUser MallUser loginMallUser) {
         if (cartItemIds.length < 1) {
