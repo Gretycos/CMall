@@ -20,6 +20,8 @@ public class Constants {
 
     public final static int SHOPPING_CART_ITEM_LIMIT_NUMBER = 10;// 购物车中单个商品的最大购买数量(可根据自身需求修改)
 
+    public final static int REPEAT_INTERVAL_TIME = 10; // 重复提交的间隔时间
+
     public final static String MALL_VERIFY_CODE_KEY = "mallVerifyCode";// 验证码key
 
     public final static String MALL_USER_SESSION_KEY = "cMallUser";// session中user的key
@@ -46,6 +48,16 @@ public class Constants {
     public static final String SECKILL_ORDER_SALT = "asd";
 
     public static final String REDIS_KEY_PREFIX = "c-mall:";
+
+    /**
+     * 用户token缓存
+     */
+    public static final String MALL_USER_TOKEN_KEY = REDIS_KEY_PREFIX + "mall_user_token:";
+
+    /**
+     * 用户请求token缓存
+     */
+    public static final String REQUEST_KEY = REDIS_KEY_PREFIX + "request:";
 
     /**
      * 秒杀商品库存缓存
