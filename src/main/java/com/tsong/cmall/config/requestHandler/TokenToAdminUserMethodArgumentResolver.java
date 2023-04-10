@@ -8,6 +8,7 @@ import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.exception.CMallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -17,6 +18,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * @Author Tsong
  * @Date 2023/4/3 18:15
  */
+@Component
 public class TokenToAdminUserMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
     private AdminUserTokenMapper adminUserTokenMapper;
