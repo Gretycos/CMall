@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @Author Tsong
  * @Date 2023/4/3 14:55
  */
+@Data
 public class GoodsCategoryAddParam implements Serializable {
     @ApiModelProperty("分类层级")
     @NotNull(message = "categoryLevel不能为空")

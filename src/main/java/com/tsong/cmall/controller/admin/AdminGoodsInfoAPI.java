@@ -51,11 +51,14 @@ public class AdminGoodsInfoAPI {
     public Result list(@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
                        @RequestParam(required = false) @ApiParam(value = "每页条数") Integer pageSize,
                        @RequestParam(required = false) @ApiParam(value = "商品名称") String goodsName,
-                       @RequestParam(required = false) @ApiParam(value = "上架状态 0-上架 1-下架") Integer goodsSellStatus,
+                       @RequestParam(required = false) @ApiParam(value = "上架状态 0-上架 1-下架") Integer goodsSaleStatus,
                        @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
-        if (pageNumber == null || pageNumber < 1 || pageSize == null || pageSize < 10) {
-            return ResultGenerator.genFailResult("分页参数异常！");
+        if (pageNumber == null || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        if (pageSize == null || pageSize < 10 || pageSize > 100){
+            pageSize = 10;
         }
         Map<String, Object> params = new HashMap<>(8);
         params.put("page", pageNumber);
@@ -63,8 +66,8 @@ public class AdminGoodsInfoAPI {
         if (StringUtils.hasText(goodsName)) {
             params.put("goodsName", goodsName);
         }
-        if (goodsSellStatus != null) {
-            params.put("goodsSellStatus", goodsSellStatus);
+        if (goodsSaleStatus != null) {
+            params.put("goodsSaleStatus", goodsSaleStatus);
         }
         PageQueryUtil pageUtil = new PageQueryUtil(params);
         return ResultGenerator.genSuccessResult(goodsInfoService.getGoodsInfoPage(pageUtil));
@@ -139,9 +142,11 @@ public class AdminGoodsInfoAPI {
     /**
      * 批量修改销售状态
      */
-    @RequestMapping(value = "/goods/status/{saleStatus}", method = RequestMethod.PUT)
+    @PutMapping(value = "/goods/status/{saleStatus}")
     @ApiOperation(value = "批量修改销售状态", notes = "批量修改销售状态")
-    public Result delete(@RequestBody BatchIdParam batchIdParam, @PathVariable("saleStatus") int saleStatus, @TokenToAdminUser AdminUserToken adminUser) {
+    public Result editSaleStatus(@RequestBody BatchIdParam batchIdParam,
+                                 @PathVariable("saleStatus") int saleStatus,
+                                 @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (batchIdParam == null || batchIdParam.getIds().length < 1) {
             return ResultGenerator.genFailResult("参数异常！");

@@ -32,7 +32,7 @@ public interface CouponService {
      * @Param [couponId, userId]
      * @Return boolean
      */
-    boolean saveCouponUser(Long couponId, Long userId);
+    boolean saveCouponUser(Long couponId, Long userId, String couponCode);
 
     /**
      * @Description 查询领到的优惠券

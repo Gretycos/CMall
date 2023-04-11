@@ -94,7 +94,7 @@ public class MallUserAPI {
 
     @PutMapping("/user/info")
     @ApiOperation(value = "修改用户信息", notes = "")
-    public Result updateInfo(@RequestBody @ApiParam("用户信息") MallUserUpdateParam mallUserUpdateParam, @TokenToMallUser MallUser loginMallUser) {
+    public Result updateInfo(@RequestBody @ApiParam("用户信息") @Valid MallUserUpdateParam mallUserUpdateParam, @TokenToMallUser MallUser loginMallUser) {
         Boolean flag = userService.updateUserInfo(mallUserUpdateParam, loginMallUser.getUserId());
         if (flag) {
             //返回成功
@@ -107,7 +107,7 @@ public class MallUserAPI {
 
     @PutMapping("/user/password")
     @ApiOperation(value = "修改用户密码", notes = "")
-    public Result updatePassword(@RequestBody @ApiParam("用户密码") MallUserPasswordParam mallUserPasswordParam, @TokenToMallUser MallUser loginMallUser) {
+    public Result updatePassword(@RequestBody @ApiParam("用户密码") @Valid MallUserPasswordParam mallUserPasswordParam, @TokenToMallUser MallUser loginMallUser) {
         Boolean flag = userService.updateUserPassword(mallUserPasswordParam, loginMallUser.getUserId());
         if (flag) {
             //返回成功

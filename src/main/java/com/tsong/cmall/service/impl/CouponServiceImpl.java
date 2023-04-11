@@ -1,5 +1,6 @@
 package com.tsong.cmall.service.impl;
 
+import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.controller.vo.CouponVO;
 import com.tsong.cmall.controller.vo.MyCouponVO;
 import com.tsong.cmall.controller.vo.ShoppingCartItemVO;
@@ -12,6 +13,7 @@ import com.tsong.cmall.entity.UserCouponRecord;
 import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.CouponService;
 import com.tsong.cmall.util.BeanUtil;
+import com.tsong.cmall.util.MD5Util;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,14 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public boolean saveCoupon(Coupon coupon) {
+        if(coupon.getCouponType() == 2){
+            String code = MD5Util.MD5Encode(Constants.COUPON_CODE + System.currentTimeMillis(), Constants.UTF_ENCODING)
+                    .substring(8, 24);
+            coupon.setCouponCode(code);
+        }
+        if (coupon.getCouponEndTime().getTime() < coupon.getCouponStartTime().getTime()){
+            CMallException.fail("开始时间小于结束时间");
+        }
         return couponMapper.insertSelective(coupon) > 0;
     }
 
@@ -97,8 +107,16 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     @Transactional
-    public boolean saveCouponUser(Long couponId, Long userId) {
+    public boolean saveCouponUser(Long couponId, Long userId, String couponCode) {
         Coupon coupon = couponMapper.selectByPrimaryKey(couponId);
+        if (coupon.getCouponType() == 2){
+            if (couponCode == null){
+                throw new CMallException("优惠券码为空！");
+            }
+            if (!couponCode.equals(coupon.getCouponCode())){
+                throw new CMallException("优惠券码不正确！");
+            }
+        }
         if (coupon.getCouponLimit() != 0) { // 0 是该用户可以不限次数领该券
             // 查询该用户获得该券的数量
             int num = userCouponRecordMapper.getUserCouponCount(userId, couponId);

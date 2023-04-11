@@ -56,10 +56,11 @@ public class CouponAPI {
     }
 
     @PostMapping("/saveCoupon")
-    @ApiOperation(value = "领券", notes = "传参为地址id、待结算的购物项id数组、领券id")
+    @ApiOperation(value = "领券", notes = "传参为优惠券id，优惠券兑换码（可选）")
     public Result<String> saveCoupon(@ApiParam(value = "优惠券id") @RequestParam Long couponId,
+                                     @ApiParam(value = "优惠券兑换码") @RequestParam(required = false) String couponCode,
                                     @TokenToMallUser MallUser loginMallUser) {
-        boolean saveResult = couponService.saveCouponUser(couponId, loginMallUser.getUserId());
+        boolean saveResult = couponService.saveCouponUser(couponId, loginMallUser.getUserId(), couponCode);
         if (saveResult){
             return ResultGenerator.genSuccessResult();
         }

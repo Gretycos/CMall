@@ -112,8 +112,8 @@ public class OrderAPI {
     @GetMapping("/order")
     @ApiOperation(value = "订单列表接口", notes = "传参为页码")
     public Result<PageResult<OrderVO>> orderList(@ApiParam(value = "页码") @RequestParam(required = false) Integer pageNumber,
-                                                       @ApiParam(value = "订单状态:0.待支付 1.待确认 2.待发货 3:已发货 4.交易成功") @RequestParam(required = false) Integer status,
-                                                       @TokenToMallUser MallUser loginMallUser) {
+                                                 @ApiParam(value = "订单状态:0.待支付 1.待确认 2.待发货 3:已发货 4.交易成功") @RequestParam(required = false) Integer status,
+                                                 @TokenToMallUser MallUser loginMallUser) {
         Map<String, Object> params = new HashMap<>(8);
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1;
