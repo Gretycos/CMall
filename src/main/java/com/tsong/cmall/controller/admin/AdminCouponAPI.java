@@ -86,7 +86,6 @@ public class AdminCouponAPI {
         return ResultGenerator.genSuccessResult();
     }
 
-
     @GetMapping("/coupon/{id}")
     @ApiOperation(value = "优惠券详情", notes = "")
     public Result couponInfo(@ApiParam(value = "优惠券id") @PathVariable("id") Long id,
@@ -98,9 +97,9 @@ public class AdminCouponAPI {
 
     @DeleteMapping("/coupon/{id}")
     @ApiOperation(value = "删除优惠券", notes = "")
-    public Result couponDelete(@ApiParam(value = "优惠券id") @PathVariable Long id,
+    public Result deleteCoupon(@ApiParam(value = "优惠券id") @PathVariable Long id,
                          @TokenToAdminUser AdminUserToken adminUser) {
-        logger.info("couponDelete, adminUser:{}", adminUser.toString());
+        logger.info("deleteCoupon, adminUser:{}", adminUser.toString());
         boolean result = couponService.deleteCouponById(id);
         if (!result){
             return ResultGenerator.genFailResult("删除优惠券失败");

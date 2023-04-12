@@ -37,6 +37,8 @@ public class Constants {
 
     public final static int TOKEN_LENGTH = 32;//token字段长度
 
+    public final static long TOKEN_EXPIRED_TIME = 2 * 24 * 3600 * 1000; // 48小时过期
+
     /**
      * 字符编码
      */

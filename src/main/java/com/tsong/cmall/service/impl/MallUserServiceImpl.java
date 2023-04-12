@@ -13,6 +13,7 @@ import com.tsong.cmall.entity.MallUser;
 import com.tsong.cmall.entity.UserCouponRecord;
 import com.tsong.cmall.entity.UserToken;
 import com.tsong.cmall.exception.CMallException;
+import com.tsong.cmall.redis.RedisCache;
 import com.tsong.cmall.service.MallUserService;
 import com.tsong.cmall.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author Tsong
@@ -38,6 +40,9 @@ public class MallUserServiceImpl implements MallUserService {
     private CouponMapper couponMapper;
     @Autowired
     private UserCouponRecordMapper userCouponRecordMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     @Override
     public PageResult getMallUsersPage(PageQueryUtil pageUtil) {
@@ -89,7 +94,7 @@ public class MallUserServiceImpl implements MallUserService {
             // 当前时间
             Date now = new Date();
             // 过期时间
-            Date expireTime = new Date(now.getTime() + 2 * 24 * 3600 * 1000); // 过期时间 48 小时
+            Date expireTime = new Date(now.getTime() + Constants.TOKEN_EXPIRED_TIME); // 过期时间 48 小时
 
             UserToken userToken = userTokenMapper.selectByPrimaryKey(user.getUserId());
             if (userToken == null) {
@@ -102,14 +107,21 @@ public class MallUserServiceImpl implements MallUserService {
                         .build();
                 //新增一条token数据
                 if (userTokenMapper.insertSelective(userToken) > 0) {
+                    redisCache.setCacheObject(Constants.MALL_USER_TOKEN_KEY + token, user,
+                            Constants.TOKEN_EXPIRED_TIME, TimeUnit.MILLISECONDS);
                     //新增成功后返回
                     return token;
                 }
             } else {
+                // 单点登录
+                // 删除
+                redisCache.deleteObject(Constants.MALL_USER_TOKEN_KEY + userToken.getToken());
                 // 用户登录过，修改token
                 userToken.setToken(token);
                 userToken.setUpdateTime(now);
                 userToken.setExpireTime(expireTime);
+                redisCache.setCacheObject(Constants.MALL_USER_TOKEN_KEY + token, user,
+                        Constants.TOKEN_EXPIRED_TIME, TimeUnit.MILLISECONDS);
                 //更新
                 if (userTokenMapper.updateByPrimaryKeySelective(userToken) > 0) {
                     //修改成功后返回
@@ -168,6 +180,8 @@ public class MallUserServiceImpl implements MallUserService {
 
     @Override
     public Boolean logout(Long userId) {
+        String token = userTokenMapper.selectByPrimaryKey(userId).getToken();
+        redisCache.deleteObject(Constants.MALL_USER_TOKEN_KEY + token);
         return userTokenMapper.deleteByPrimaryKey(userId) > 0;
     }
 
