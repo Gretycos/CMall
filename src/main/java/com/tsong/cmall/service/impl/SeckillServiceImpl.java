@@ -209,7 +209,6 @@ public class SeckillServiceImpl implements SeckillService {
     @Override
     public List<SeckillGoodsVO> getSeckillGoodsList() {
         List<Seckill> seckillList = seckillMapper.findHomePageSeckillList();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
         return seckillList.stream().map(seckill -> {
             SeckillGoodsVO seckillGoodsVO = new SeckillGoodsVO();
             BeanUtil.copyProperties(seckill, seckillGoodsVO);
@@ -220,12 +219,8 @@ public class SeckillServiceImpl implements SeckillService {
             seckillGoodsVO.setGoodsName(goodsInfo.getGoodsName());
             seckillGoodsVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
             seckillGoodsVO.setSellingPrice(goodsInfo.getSellingPrice());
-            Date seckillBegin = seckillGoodsVO.getSeckillBegin();
-            Date seckillEnd = seckillGoodsVO.getSeckillEnd();
-            String formatBegin = sdf.format(seckillBegin);
-            String formatEnd = sdf.format(seckillEnd);
-            seckillGoodsVO.setSeckillBeginTime(formatBegin);
-            seckillGoodsVO.setSeckillEndTime(formatEnd);
+            seckillGoodsVO.setSeckillBegin(seckillGoodsVO.getSeckillBegin());
+            seckillGoodsVO.setSeckillEnd(seckillGoodsVO.getSeckillEnd());
             return seckillGoodsVO;
         }).filter(Objects::nonNull).toList();
     }

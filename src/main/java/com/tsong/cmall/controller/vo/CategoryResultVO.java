@@ -1,7 +1,7 @@
 package com.tsong.cmall.controller.vo;
 
 import com.tsong.cmall.entity.GoodsCategory;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,8 +13,8 @@ import java.util.List;
  */
 @Data
 public class CategoryResultVO implements Serializable {
-    @ApiModelProperty("二级分类列表")
+    @Schema(title = "二级分类列表")
     private List<GoodsCategory> secondLevelCategories;
-    @ApiModelProperty("三级分类列表")
+    @Schema(title = "三级分类列表")
     private List<GoodsCategory> thirdLevelCategories;
 }

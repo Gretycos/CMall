@@ -14,9 +14,9 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ import java.util.Map;
  * @Date 2023/4/3 14:15
  */
 @RestController
-@Api(value = "Admin Goods Category", tags = "2-2.后台管理系统分类模块接口")
+@Tag(name = "Admin Goods Category", description = "2-2.后台管理系统分类模块接口")
 @RequestMapping("/admin")
 public class AdminGoodsCategoryAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminGoodsCategoryAPI.class);
@@ -45,11 +45,11 @@ public class AdminGoodsCategoryAPI {
      * 列表
      */
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
-    @ApiOperation(value = "商品分类列表", notes = "根据级别和上级分类id查询")
-    public Result list(@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
-                       @RequestParam(required = false) @ApiParam(value = "每页条数") Integer pageSize,
-                       @RequestParam(required = false) @ApiParam(value = "分类级别") Integer categoryLevel,
-                       @RequestParam(required = false) @ApiParam(value = "上级分类的id") Long parentId,
+    @Operation(summary = "商品分类列表", description = "根据级别和上级分类id查询")
+    public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
+                       @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
+                       @RequestParam(required = false) @Parameter(name = "分类级别") Integer categoryLevel,
+                       @RequestParam(required = false) @Parameter(name = "上级分类的id") Long parentId,
                        @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (pageNumber == null || pageNumber < 1
@@ -71,7 +71,7 @@ public class AdminGoodsCategoryAPI {
      * 列表
      */
     @RequestMapping(value = "/categories4Select", method = RequestMethod.GET)
-    @ApiOperation(value = "商品分类列表", notes = "用于三级分类联动效果制作")
+    @Operation(summary = "商品分类列表", description = "用于三级分类联动效果制作")
     public Result listForSelect(@RequestParam("categoryId") Long categoryId, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (categoryId == null || categoryId < 1) {
@@ -109,7 +109,7 @@ public class AdminGoodsCategoryAPI {
      * 添加
      */
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
-    @ApiOperation(value = "新增分类", notes = "新增分类")
+    @Operation(summary = "新增分类", description = "新增分类")
     public Result save(@RequestBody @Valid GoodsCategoryAddParam goodsCategoryAddParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsCategory goodsCategory = new GoodsCategory();
@@ -127,7 +127,7 @@ public class AdminGoodsCategoryAPI {
      * 修改
      */
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改分类信息", notes = "修改分类信息")
+    @Operation(summary = "修改分类信息", description = "修改分类信息")
     public Result update(@RequestBody @Valid GoodsCategoryEditParam goodsCategoryEditParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsCategory goodsCategory = new GoodsCategory();
@@ -144,7 +144,7 @@ public class AdminGoodsCategoryAPI {
      * 详情
      */
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "获取单条分类信息", notes = "根据id查询")
+    @Operation(summary = "获取单条分类信息", description = "根据id查询")
     public Result info(@PathVariable("id") Long id, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsCategory goodsCategory = goodsCategoryService.getGoodsCategoryById(id);
@@ -158,7 +158,7 @@ public class AdminGoodsCategoryAPI {
      * 分类删除
      */
     @RequestMapping(value = "/categories", method = RequestMethod.DELETE)
-    @ApiOperation(value = "批量删除分类信息", notes = "批量删除分类信息")
+    @Operation(summary = "批量删除分类信息", description = "批量删除分类信息")
     public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (batchIdParam == null || batchIdParam.getIds().length < 1) {

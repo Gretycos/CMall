@@ -1,6 +1,6 @@
 package com.tsong.cmall.controller.mall.param;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,30 +11,30 @@ import java.io.Serializable;
  */
 @Data
 public class UpdateUserAddressParam implements Serializable {
-    @ApiModelProperty("地址id")
+    @Schema(title = "地址id")
     private Long addressId;
 
-    @ApiModelProperty("用户id")
+    @Schema(title = "用户id")
     private Long userId;
 
-    @ApiModelProperty("收件人名称")
+    @Schema(title = "收件人名称")
     private String userName;
 
-    @ApiModelProperty("收件人联系方式")
+    @Schema(title = "收件人联系方式")
     private String userPhone;
 
-    @ApiModelProperty("是否默认地址 0-不是 1-是")
+    @Schema(title = "是否默认地址 0-不是 1-是")
     private Byte defaultFlag;
 
-    @ApiModelProperty("省")
+    @Schema(title = "省")
     private String provinceName;
 
-    @ApiModelProperty("市")
+    @Schema(title = "市")
     private String cityName;
 
-    @ApiModelProperty("区/县")
+    @Schema(title = "区/县")
     private String regionName;
 
-    @ApiModelProperty("详细地址")
+    @Schema(title = "详细地址")
     private String detailAddress;
 }

@@ -12,9 +12,9 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @Date 2023/4/3 13:41
  */
 @RestController
-@Api(value = "Admin Carousel", tags = "2-1.后台管理系统轮播图模块接口")
+@Tag(name = "Admin Carousel", description = "2-1.后台管理系统轮播图模块接口")
 @RequestMapping("/admin")
 public class AdminCarouselAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminCarouselAPI.class);
@@ -40,9 +40,9 @@ public class AdminCarouselAPI {
      * 列表
      */
     @RequestMapping(value = "/carousels", method = RequestMethod.GET)
-    @ApiOperation(value = "轮播图列表", notes = "轮播图列表")
-    public Result list(@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
-                       @RequestParam(required = false) @ApiParam(value = "每页条数") Integer pageSize,
+    @Operation(summary = "轮播图列表", description = "轮播图列表")
+    public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
+                       @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
                        @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (pageNumber == null || pageNumber < 1 || pageSize == null || pageSize < 10) {
@@ -59,7 +59,7 @@ public class AdminCarouselAPI {
      * 添加
      */
     @RequestMapping(value = "/carousels", method = RequestMethod.POST)
-    @ApiOperation(value = "新增轮播图", notes = "新增轮播图")
+    @Operation(summary = "新增轮播图", description = "新增轮播图")
     public Result save(@RequestBody @Valid CarouselAddParam carouselAddParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         Carousel carousel = new Carousel();
@@ -77,7 +77,7 @@ public class AdminCarouselAPI {
      * 修改
      */
     @RequestMapping(value = "/carousels", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改轮播图信息", notes = "修改轮播图信息")
+    @Operation(summary = "修改轮播图信息", description = "修改轮播图信息")
     public Result update(@RequestBody CarouselEditParam carouselEditParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         Carousel carousel = new Carousel();
@@ -94,7 +94,7 @@ public class AdminCarouselAPI {
      * 详情
      */
     @RequestMapping(value = "/carousels/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "获取单条轮播图信息", notes = "根据id查询")
+    @Operation(summary = "获取单条轮播图信息", description = "根据id查询")
     public Result info(@PathVariable("id") Integer id, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         Carousel carousel = carouselService.getCarouselById(id);
@@ -108,7 +108,7 @@ public class AdminCarouselAPI {
      * 删除
      */
     @RequestMapping(value = "/carousels", method = RequestMethod.DELETE)
-    @ApiOperation(value = "批量删除轮播图信息", notes = "批量删除轮播图信息")
+    @Operation(summary = "批量删除轮播图信息", description = "批量删除轮播图信息")
     public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (batchIdParam == null || batchIdParam.getIds().length < 1) {

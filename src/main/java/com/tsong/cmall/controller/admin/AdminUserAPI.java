@@ -11,7 +11,7 @@ import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.service.AdminUserService;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Date 2023/4/3 17:30
  */
 @RestController
-@Api(value = "Admin User", tags = "2-0.后台管理系统管理员模块接口")
+@Tag(name = "Admin User", description = "2-0.后台管理系统管理员模块接口")
 @RequestMapping("/admin")
 public class AdminUserAPI {
     @Autowired

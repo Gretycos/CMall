@@ -6,8 +6,8 @@ import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.GoodsCategoryService;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +21,14 @@ import java.util.List;
  * @Date 2023/3/31 22:52
  */
 @RestController
-@Api(value = "goods category", tags = "1-3.分类页面接口")
+@Tag(name = "goods category", description = "1-3.分类页面接口")
 @RequestMapping("/api")
 public class GoodsCategoryAPI {
     @Autowired
     private GoodsCategoryService goodsCategoryService;
 
     @GetMapping("/categories")
-    @ApiOperation(value = "获取分类数据", notes = "分类页面使用")
+    @Operation(summary = "获取分类数据", description = "分类页面使用")
     public Result<List<HomePageCategoryVO>> getCategories() {
         List<HomePageCategoryVO> categories = goodsCategoryService.getCategoriesForHomePage();
         if (CollectionUtils.isEmpty(categories)) {

@@ -70,6 +70,8 @@ public enum ServiceResultEnum {
 
     ORDER_ITEM_NULL_ERROR("订单项异常！"),
 
+    ORDER_ADDRESS_NULL_ERROR("订单地址异常！"),
+
     ORDER_GENERATE_ERROR("生成订单异常！"),
 
     SHOPPING_ITEM_ERROR("购物车数据异常！"),

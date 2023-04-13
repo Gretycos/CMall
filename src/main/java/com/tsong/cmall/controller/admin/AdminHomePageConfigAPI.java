@@ -13,9 +13,9 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ import java.util.Map;
  * @Date 2023/4/3 16:49
  */
 @RestController
-@Api(value = "Admin HomePage Config", tags = "2-4.后台管理系统首页配置模块接口")
+@Tag(name = "Admin HomePage Config", description = "2-4.后台管理系统首页配置模块接口")
 @RequestMapping("/admin")
 public class AdminHomePageConfigAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminHomePageConfigAPI.class);
@@ -42,10 +42,10 @@ public class AdminHomePageConfigAPI {
      * 列表
      */
     @RequestMapping(value = "/homepageConfigs", method = RequestMethod.GET)
-    @ApiOperation(value = "首页配置列表", notes = "首页配置列表")
-    public Result list(@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
-                       @RequestParam(required = false) @ApiParam(value = "每页条数") Integer pageSize,
-                       @RequestParam(required = false) @ApiParam(value = "1-搜索框热搜 2-搜索下拉框热搜 3-(首页)热销商品 4-(首页)新品上线 5-(首页)为你推荐")
+    @Operation(summary = "首页配置列表", description = "首页配置列表")
+    public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
+                       @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
+                       @RequestParam(required = false) @Parameter(name = "1-搜索框热搜 2-搜索下拉框热搜 3-(首页)热销商品 4-(首页)新品上线 5-(首页)为你推荐")
                            Integer configType, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (pageNumber == null || pageNumber < 1 || pageSize == null || pageSize < 10) {
@@ -67,7 +67,7 @@ public class AdminHomePageConfigAPI {
      * 添加
      */
     @RequestMapping(value = "/homepageConfigs", method = RequestMethod.POST)
-    @ApiOperation(value = "新增首页配置项", notes = "新增首页配置项")
+    @Operation(summary = "新增首页配置项", description = "新增首页配置项")
     public Result save(@RequestBody @Valid HomePageConfigAddParam homePageConfigAddParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         HomePageConfig homePageConfig = new HomePageConfig();
@@ -85,7 +85,7 @@ public class AdminHomePageConfigAPI {
      * 修改
      */
     @RequestMapping(value = "/homepageConfigs", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改首页配置项", notes = "修改首页配置项")
+    @Operation(summary = "修改首页配置项", description = "修改首页配置项")
     public Result update(@RequestBody @Valid HomePageConfigEditParam homePageConfigEditParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         HomePageConfig homePageConfig = new HomePageConfig();
@@ -102,7 +102,7 @@ public class AdminHomePageConfigAPI {
      * 详情
      */
     @RequestMapping(value = "/homepageConfigs/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "获取单条首页配置项信息", notes = "根据id查询")
+    @Operation(summary = "获取单条首页配置项信息", description = "根据id查询")
     public Result info(@PathVariable("id") Long id, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         HomePageConfig config = homePageConfigService.getHomePageConfigById(id);
@@ -116,7 +116,7 @@ public class AdminHomePageConfigAPI {
      * 删除
      */
     @RequestMapping(value = "/homepageConfigs", method = RequestMethod.DELETE)
-    @ApiOperation(value = "批量删除首页配置项信息", notes = "批量删除首页配置项信息")
+    @Operation(summary = "批量删除首页配置项信息", description = "批量删除首页配置项信息")
     public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (batchIdParam == null || batchIdParam.getIds().length < 1) {

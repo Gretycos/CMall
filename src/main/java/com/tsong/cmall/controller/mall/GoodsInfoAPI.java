@@ -10,9 +10,9 @@ import com.tsong.cmall.entity.MallUser;
 import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.GoodsInfoService;
 import com.tsong.cmall.util.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import java.util.Map;
  * @Date 2023/3/31 12:23
  */
 @RestController
-@Api(value = "goods", tags = "1-4.CMall商品相关接口")
+@Tag(name = "goods", description = "1-4.CMall商品相关接口")
 @RequestMapping("/api")
 public class GoodsInfoAPI {
     private static final Logger logger = LoggerFactory.getLogger(GoodsInfoAPI.class);
@@ -37,11 +37,11 @@ public class GoodsInfoAPI {
     private GoodsInfoService goodsInfoService;
 
     @GetMapping("/search")
-    @ApiOperation(value = "商品搜索接口", notes = "根据关键字和分类id进行搜索")
-    public Result<PageResult<List<SearchPageGoodsVO>>> search(@RequestParam(required = false) @ApiParam(value = "搜索关键字") String keyword,
-                                                              @RequestParam(required = false) @ApiParam(value = "分类id") Long goodsCategoryId,
-                                                              @RequestParam(required = false) @ApiParam(value = "orderBy") String orderBy,
-                                                              @RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
+    @Operation(summary = "商品搜索接口", description = "根据关键字和分类id进行搜索")
+    public Result<PageResult<List<SearchPageGoodsVO>>> search(@RequestParam(required = false) @Parameter(name = "搜索关键字") String keyword,
+                                                              @RequestParam(required = false) @Parameter(name = "分类id") Long goodsCategoryId,
+                                                              @RequestParam(required = false) @Parameter(name = "orderBy") String orderBy,
+                                                              @RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
                                                               @TokenToMallUser MallUser loginMallUser) {
 
         logger.info("goods search api,keyword={},goodsCategoryId={},orderBy={},pageNumber={},userId={}",
@@ -73,8 +73,8 @@ public class GoodsInfoAPI {
     }
 
     @GetMapping("/goods/detail/{goodsId}")
-    @ApiOperation(value = "商品详情接口", notes = "传参为商品id")
-    public Result<GoodsDetailVO> goodsDetail(@ApiParam(value = "商品id") @PathVariable("goodsId") Long goodsId,
+    @Operation(summary = "商品详情接口", description = "传参为商品id")
+    public Result<GoodsDetailVO> goodsDetail(@Parameter(name = "商品id") @PathVariable("goodsId") Long goodsId,
                                              @TokenToMallUser MallUser loginMallUser) {
         logger.info("goods detail api,goodsId={},userId={}", goodsId, loginMallUser.getUserId());
         if (goodsId < 1) {

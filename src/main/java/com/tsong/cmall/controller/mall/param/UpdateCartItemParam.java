@@ -1,6 +1,6 @@
 package com.tsong.cmall.controller.mall.param;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,9 +12,9 @@ import java.io.Serializable;
 @Data
 public class UpdateCartItemParam implements Serializable {
 
-    @ApiModelProperty("购物项id")
+    @Schema(title = "购物项id")
     private Long cartItemId;
 
-    @ApiModelProperty("商品数量")
+    @Schema(title = "商品数量")
     private Integer goodsCount;
 }

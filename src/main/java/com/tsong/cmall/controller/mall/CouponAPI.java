@@ -9,9 +9,9 @@ import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,22 +24,22 @@ import java.util.Map;
  * @Date 2023/4/6 15:58
  */
 @RestController
-@Api(value = "coupon", tags = "1-8.优惠券页面接口")
+@Tag(name = "coupon", description = "1-8.优惠券页面接口")
 @RequestMapping("/api")
 public class CouponAPI {
     @Autowired
     private CouponService couponService;
 
     @GetMapping("/couponList")
-    @ApiOperation(value = "可领优惠券列表", notes = "")
+    @Operation(summary = "可领优惠券列表", description = "")
     public Result<List<CouponVO>> availableCouponList(@TokenToMallUser MallUser loginMallUser){
         List<CouponVO> couponVOList = couponService.selectAvailableCoupon(loginMallUser.getUserId());
         return ResultGenerator.genSuccessResult(couponVOList);
     }
 
     @GetMapping("/myCoupons")
-    @ApiOperation(value = "我的优惠券列表", notes = "")
-    public Result<PageResult<CouponVO>> myCouponList(@ApiParam(value = "页码") @RequestParam(required = false) Integer pageNumber,
+    @Operation(summary = "我的优惠券列表", description = "")
+    public Result<PageResult<CouponVO>> myCouponList(@Parameter(name = "页码") @RequestParam(required = false) Integer pageNumber,
                                @TokenToMallUser MallUser loginMallUser){
         Map<String, Object> params = new HashMap<>(8);
         if (pageNumber == null || pageNumber < 1) {
@@ -56,9 +56,9 @@ public class CouponAPI {
     }
 
     @PostMapping("/saveCoupon")
-    @ApiOperation(value = "领券", notes = "传参为优惠券id，优惠券兑换码（可选）")
-    public Result<String> saveCoupon(@ApiParam(value = "优惠券id") @RequestParam Long couponId,
-                                     @ApiParam(value = "优惠券兑换码") @RequestParam(required = false) String couponCode,
+    @Operation(summary = "领券", description = "传参为优惠券id，优惠券兑换码（可选）")
+    public Result<String> saveCoupon(@Parameter(name = "优惠券id") @RequestParam Long couponId,
+                                     @Parameter(name = "优惠券兑换码") @RequestParam(required = false) String couponCode,
                                     @TokenToMallUser MallUser loginMallUser) {
         boolean saveResult = couponService.saveCouponUser(couponId, loginMallUser.getUserId(), couponCode);
         if (saveResult){

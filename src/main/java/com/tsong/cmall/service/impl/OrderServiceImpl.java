@@ -376,23 +376,9 @@ public class OrderServiceImpl implements OrderService {
     public OrderDetailVO getOrderDetailByOrderId(Long orderId) {
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order == null) {
-            CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+            CMallException.fail(ServiceResultEnum.ORDER_NOT_EXIST_ERROR.getResult());
         }
-        List<OrderItem> orderItemList = orderItemMapper.selectByOrderId(order.getOrderId());
-        //获取订单项数据
-        if (!CollectionUtils.isEmpty(orderItemList)) {
-            List<OrderItemVO> orderItemVOList = BeanUtil.copyList(orderItemList, OrderItemVO.class);
-            OrderDetailVO orderDetailVO = new OrderDetailVO();
-            BeanUtil.copyProperties(order, orderDetailVO);
-            orderDetailVO.setOrderStatusString(OrderStatusEnum.getOrderStatusEnumByStatus(
-                    orderDetailVO.getOrderStatus()).getName());
-            orderDetailVO.setPayTypeString(PayTypeEnum.getPayTypeEnumByType(orderDetailVO.getPayType()).getName());
-            orderDetailVO.setOrderItemVOList(orderItemVOList);
-            return orderDetailVO;
-        } else {
-            CMallException.fail(ServiceResultEnum.ORDER_ITEM_NULL_ERROR.getResult());
-            return null;
-        }
+        return genOrderDetailVO(order);
     }
 
     @Override
@@ -405,6 +391,12 @@ public class OrderServiceImpl implements OrderService {
         if (!userId.equals(order.getUserId())) {
             CMallException.fail(ServiceResultEnum.NO_PERMISSION_ERROR.getResult());
         }
+        return genOrderDetailVO(order);
+    }
+
+    /**
+     * 生成订单细节VO*/
+    private OrderDetailVO genOrderDetailVO(Order order){
         // 获取订单项数据
         List<OrderItem> orderItems = orderItemMapper.selectByOrderId(order.getOrderId());
         if (CollectionUtils.isEmpty(orderItems)) {
@@ -412,11 +404,16 @@ public class OrderServiceImpl implements OrderService {
         }
         // 拷贝到订单项VOList
         List<OrderItemVO> orderItemVOList = BeanUtil.copyList(orderItems, OrderItemVO.class);
+        OrderAddress orderAddress = orderAddressMapper.selectByPrimaryKey(order.getOrderId());
+        if (orderAddress == null){
+            CMallException.fail(ServiceResultEnum.ORDER_ADDRESS_NULL_ERROR.getResult());
+        }
         // 订单VO
         OrderDetailVO orderDetailVO = new OrderDetailVO();
         BeanUtil.copyProperties(order, orderDetailVO);
         orderDetailVO.setOrderStatusString(OrderStatusEnum.getOrderStatusEnumByStatus(orderDetailVO.getOrderStatus()).getName());
         orderDetailVO.setPayTypeString(PayTypeEnum.getPayTypeEnumByType(orderDetailVO.getPayType()).getName());
+        orderDetailVO.setUserAddress(orderAddress.toString());
         orderDetailVO.setOrderItemVOList(orderItemVOList);
         return orderDetailVO;
     }

@@ -16,9 +16,9 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ import java.util.Map;
  * @Date 2023/4/3 16:08
  */
 @RestController
-@Api(value = "Goods Info", tags = "2-3.后台管理系统商品模块接口")
+@Tag(name = "Goods Info", description = "2-3.后台管理系统商品模块接口")
 @RequestMapping("/admin")
 public class AdminGoodsInfoAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminGoodsInfoAPI.class);
@@ -47,11 +47,11 @@ public class AdminGoodsInfoAPI {
      * 列表
      */
     @RequestMapping(value = "/goods/list", method = RequestMethod.GET)
-    @ApiOperation(value = "商品列表", notes = "可根据名称和上架状态筛选")
-    public Result list(@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
-                       @RequestParam(required = false) @ApiParam(value = "每页条数") Integer pageSize,
-                       @RequestParam(required = false) @ApiParam(value = "商品名称") String goodsName,
-                       @RequestParam(required = false) @ApiParam(value = "上架状态 0-上架 1-下架") Integer goodsSaleStatus,
+    @Operation(summary = "商品列表", description = "可根据名称和上架状态筛选")
+    public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
+                       @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
+                       @RequestParam(required = false) @Parameter(name = "商品名称") String goodsName,
+                       @RequestParam(required = false) @Parameter(name = "上架状态 0-上架 1-下架") Integer goodsSaleStatus,
                        @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (pageNumber == null || pageNumber < 1) {
@@ -77,7 +77,7 @@ public class AdminGoodsInfoAPI {
      * 添加
      */
     @RequestMapping(value = "/goods", method = RequestMethod.POST)
-    @ApiOperation(value = "新增商品信息", notes = "新增商品信息")
+    @Operation(summary = "新增商品信息", description = "新增商品信息")
     public Result save(@RequestBody @Valid GoodsAddParam goodsAddParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsInfo goodsInfo = new GoodsInfo();
@@ -95,7 +95,7 @@ public class AdminGoodsInfoAPI {
      * 修改
      */
     @RequestMapping(value = "/goods", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改商品信息", notes = "修改商品信息")
+    @Operation(summary = "修改商品信息", description = "修改商品信息")
     public Result update(@RequestBody @Valid GoodsEditParam goodsEditParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsInfo goodsInfo = new GoodsInfo();
@@ -112,7 +112,7 @@ public class AdminGoodsInfoAPI {
      * 详情
      */
     @GetMapping("/goods/{id}")
-    @ApiOperation(value = "获取单条商品信息", notes = "根据id查询")
+    @Operation(summary = "获取单条商品信息", description = "根据id查询")
     public Result info(@PathVariable("id") Long id, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsAndCategoryVO goodsAndCategoryVO = new GoodsAndCategoryVO();
@@ -143,7 +143,7 @@ public class AdminGoodsInfoAPI {
      * 批量修改销售状态
      */
     @PutMapping(value = "/goods/status/{saleStatus}")
-    @ApiOperation(value = "批量修改销售状态", notes = "批量修改销售状态")
+    @Operation(summary = "批量修改销售状态", description = "批量修改销售状态")
     public Result editSaleStatus(@RequestBody BatchIdParam batchIdParam,
                                  @PathVariable("saleStatus") int saleStatus,
                                  @TokenToAdminUser AdminUserToken adminUser) {

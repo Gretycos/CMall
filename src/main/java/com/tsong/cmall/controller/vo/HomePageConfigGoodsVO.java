@@ -1,27 +1,27 @@
 package com.tsong.cmall.controller.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
 public class HomePageConfigGoodsVO implements Serializable {
-    @ApiModelProperty("商品id")
+    @Schema(title = "商品id")
     private Long goodsId;
 
-    @ApiModelProperty("商品名称")
+    @Schema(title = "商品名称")
     private String goodsName;
 
-    @ApiModelProperty("商品简介")
+    @Schema(title = "商品简介")
     private String goodsIntro;
 
-    @ApiModelProperty("商品图片地址")
+    @Schema(title = "商品图片地址")
     private String goodsCoverImg;
 
-    @ApiModelProperty("商品价格")
+    @Schema(title = "商品价格")
     private Integer sellingPrice;
 
-    @ApiModelProperty("商品标签")
+    @Schema(title = "商品标签")
     private String tag;
 }

@@ -13,9 +13,9 @@ import com.tsong.cmall.service.SeckillService;
 import com.tsong.cmall.util.MD5Util;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * @Date 2023/4/6 21:05
  */
 @RestController
-@Api(value = "seckill", tags = "1-9.秒杀页面接口")
+@Tag(name = "seckill", description = "1-9.秒杀页面接口")
 @RequestMapping("/api")
 public class SeckillAPI {
     private static final Logger logger = LoggerFactory.getLogger(SeckillAPI.class);
@@ -42,14 +42,14 @@ public class SeckillAPI {
     private RedisCache redisCache;
 
     @GetMapping("/seckill/time/now")
-    @ApiOperation(value = "获取服务器时间", notes = "")
+    @Operation(summary = "获取服务器时间", description = "")
     public Result getTimeNow() {
         return ResultGenerator.genSuccessResult(new Date().getTime());
     }
 
     @GetMapping("/seckill/checkStock/{seckillId}")
-    @ApiOperation(value = "判断秒杀商品的虚拟库存是否足够", notes = "")
-    public Result seckillCheckStock(@ApiParam(value = "秒杀事件id") @PathVariable Long seckillId,
+    @Operation(summary = "判断秒杀商品的虚拟库存是否足够", description = "")
+    public Result seckillCheckStock(@Parameter(name = "秒杀事件id") @PathVariable Long seckillId,
                                     @TokenToMallUser MallUser loginMallUser) {
         logger.info("seckill seckillCheckStock api,userId={}", loginMallUser.getUserId());
         Integer stock = redisCache.getCacheObject(Constants.SECKILL_GOODS_STOCK_KEY + seckillId);
@@ -61,8 +61,8 @@ public class SeckillAPI {
     }
 
     @GetMapping("/seckill/exposer/{seckillId}")
-    @ApiOperation(value = "暴露秒杀链接", notes = "")
-    public Result exposeUrl(@ApiParam(value = "秒杀事件id") @PathVariable Long seckillId,
+    @Operation(summary = "暴露秒杀链接", description = "")
+    public Result exposeUrl(@Parameter(name = "秒杀事件id") @PathVariable Long seckillId,
                             @TokenToMallUser MallUser loginMallUser) {
         logger.info("seckill exposeUrl api,userId={}", loginMallUser.getUserId());
         return ResultGenerator.genSuccessResult(seckillService.exposeUrl(seckillId));
@@ -70,8 +70,8 @@ public class SeckillAPI {
 
 
     @PostMapping("/seckill/execute")
-    @ApiOperation(value = "处理秒杀", notes = "")
-    public Result execute(@ApiParam(value = "秒杀事件参数") @RequestBody SeckillExeParam seckillExeParam){
+    @Operation(summary = "处理秒杀", description = "")
+    public Result execute(@Parameter(name = "秒杀事件参数") @RequestBody SeckillExeParam seckillExeParam){
         String md5 = seckillExeParam.getMd5();
         Long seckillId = seckillExeParam.getSeckillId();
         Long mallUserId = seckillExeParam.getMallUserId();
@@ -84,7 +84,7 @@ public class SeckillAPI {
     }
 
     @GetMapping("/seckill/list")
-    @ApiOperation(value = "秒杀商品列表", notes = "")
+    @Operation(summary = "秒杀商品列表", description = "")
     public Result secondKillGoodsList(@TokenToMallUser MallUser loginMallUser) {
         logger.info("seckill secondKillGoodsList api,userId={}", loginMallUser.getUserId());
         // 直接返回配置的秒杀商品列表
@@ -99,8 +99,8 @@ public class SeckillAPI {
     }
 
     @GetMapping("/seckill/{seckillId}")
-    @ApiOperation(value = "秒杀商品信息", notes = "")
-    public Result seckillGoodsDetail(@ApiParam(value = "秒杀事件id") @PathVariable Long seckillId, @TokenToMallUser MallUser loginMallUser){
+    @Operation(summary = "秒杀商品信息", description = "")
+    public Result seckillGoodsDetail(@Parameter(name = "秒杀事件id") @PathVariable Long seckillId, @TokenToMallUser MallUser loginMallUser){
         logger.info("seckill seckillGoodsDetail api,userId={}", loginMallUser.getUserId());
         // 返回秒杀商品详情VO，如果秒杀时间未到，不允许访问详情页，也不允许返回数据，参数为秒杀id
         // 根据返回的数据解析出秒杀的事件id，发起秒杀

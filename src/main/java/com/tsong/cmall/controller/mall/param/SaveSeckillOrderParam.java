@@ -1,6 +1,6 @@
 package com.tsong.cmall.controller.mall.param;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,12 +11,12 @@ import java.io.Serializable;
  */
 @Data
 public class SaveSeckillOrderParam implements Serializable {
-    @ApiModelProperty("秒杀成功id")
+    @Schema(title = "秒杀成功id")
     private Long seckillSuccessId;
 
-    @ApiModelProperty("秒杀密钥")
+    @Schema(title = "秒杀密钥")
     private String seckillSecretKey;
 
-    @ApiModelProperty("地址id")
+    @Schema(title = "地址id")
     private Long addressId;
 }

@@ -7,9 +7,9 @@ import com.tsong.cmall.service.MallUserService;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.Map;
  * @Date 2023/4/3 17:48
  */
 @RestController
-@Api(value = "Admin Mall User", tags = "2-6.后台管理系统注册用户模块接口")
+@Tag(name = "Admin Mall User", description = "2-6.后台管理系统注册用户模块接口")
 @RequestMapping("/admin")
 public class AdminMallUserAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminMallUserAPI.class);
@@ -35,10 +35,10 @@ public class AdminMallUserAPI {
      * 列表
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    @ApiOperation(value = "商城注册用户列表", notes = "商城注册用户列表")
-    public Result list(@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
-                       @RequestParam(required = false) @ApiParam(value = "每页条数") Integer pageSize,
-                       @RequestParam(required = false) @ApiParam(value = "用户状态") Integer lockStatus,
+    @Operation(summary = "商城注册用户列表", description = "商城注册用户列表")
+    public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
+                       @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
+                       @RequestParam(required = false) @Parameter(name = "用户状态") Integer lockStatus,
                        @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (pageNumber == null || pageNumber < 1 || pageSize == null || pageSize < 10) {
@@ -58,7 +58,7 @@ public class AdminMallUserAPI {
      * 用户禁用与解除禁用(0-未锁定 1-已锁定)
      */
     @RequestMapping(value = "/users/{lockStatus}", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改用户状态", notes = "批量修改，用户禁用与解除禁用(0-未锁定 1-已锁定)")
+    @Operation(summary = "修改用户状态", description = "批量修改，用户禁用与解除禁用(0-未锁定 1-已锁定)")
     public Result lockUser(@RequestBody BatchIdParam batchIdParam, @PathVariable int lockStatus, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (batchIdParam==null||batchIdParam.getIds().length < 1) {

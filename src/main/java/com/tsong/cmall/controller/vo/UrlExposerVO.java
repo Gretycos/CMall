@@ -1,6 +1,7 @@
 package com.tsong.cmall.controller.vo;
 
 import com.tsong.cmall.common.SeckillStatusEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,22 +9,22 @@ import java.io.Serializable;
 @Data
 public class UrlExposerVO implements Serializable {
     private static final long serialVersionUID = -7615136662052646516L;
-    // 秒杀状态enum
+    @Schema(title = "秒杀状态enum")
     private SeckillStatusEnum seckillStatusEnum;
 
-    // 一种加密措施
+    @Schema(title = "一种加密措施")
     private String md5;
 
-    // id
+    @Schema(title = "秒杀id")
     private long seckillId;
 
-    // 系统当前时间（毫秒）
+    @Schema(title = "系统当前时间（毫秒）")
     private long now;
 
-    // 开启时间
+    @Schema(title = "开启时间")
     private long start;
 
-    // 结束时间
+    @Schema(title = "结束时间")
     private long end;
 
     public UrlExposerVO(SeckillStatusEnum seckillStatusEnum, String md5, long seckillId) {

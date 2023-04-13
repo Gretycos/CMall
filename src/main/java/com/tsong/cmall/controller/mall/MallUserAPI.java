@@ -14,9 +14,9 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.NumberUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
  * @Date 2023/4/1 17:08
  */
 @RestController
-@Api(value = "Mall User", tags = "1-2.商城用户操作相关接口")
+@Tag(name = "Mall User", description = "1-2.商城用户操作相关接口")
 @RequestMapping("/api")
 public class MallUserAPI {
     @Autowired
@@ -38,7 +38,7 @@ public class MallUserAPI {
     private static final Logger logger = LoggerFactory.getLogger(MallUserAPI.class);
 
     @PostMapping("/user/login")
-    @ApiOperation(value = "登录接口", notes = "返回token")
+    @Operation(summary = "登录接口", description = "返回token")
     public Result<String> login(@RequestBody @Valid MallUserLoginParam mallUserLoginParam) {
         if (!NumberUtil.isPhone(mallUserLoginParam.getLoginName())){
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_NAME_IS_NOT_PHONE.getResult());
@@ -59,7 +59,7 @@ public class MallUserAPI {
 
 
     @PostMapping("/user/logout")
-    @ApiOperation(value = "登出接口", notes = "清除token")
+    @Operation(summary = "登出接口", description = "清除token")
     public Result<String> logout(@TokenToMallUser MallUser loginMallUser) {
         Boolean logoutResult = userService.logout(loginMallUser.getUserId());
         logger.info("logout api,loginMallUser={}", loginMallUser.getUserId());
@@ -74,7 +74,7 @@ public class MallUserAPI {
 
 
     @PostMapping("/user/register")
-    @ApiOperation(value = "用户注册", notes = "")
+    @Operation(summary = "用户注册", description = "")
     public Result register(@RequestBody @Valid MallUserRegisterParam mallUserRegisterParam) {
         if (!NumberUtil.isPhone(mallUserRegisterParam.getLoginName())){
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_NAME_IS_NOT_PHONE.getResult());
@@ -92,8 +92,8 @@ public class MallUserAPI {
     }
 
     @PutMapping("/user/info")
-    @ApiOperation(value = "修改用户信息", notes = "")
-    public Result updateInfo(@RequestBody @ApiParam("用户信息") @Valid MallUserUpdateParam mallUserUpdateParam,
+    @Operation(summary = "修改用户信息", description = "")
+    public Result updateInfo(@RequestBody @Parameter(name = "用户信息") @Valid MallUserUpdateParam mallUserUpdateParam,
                              @TokenToMallUser MallUser loginMallUser) {
         Boolean flag = userService.updateUserInfo(mallUserUpdateParam, loginMallUser.getUserId());
         if (flag) {
@@ -106,8 +106,8 @@ public class MallUserAPI {
     }
 
     @PutMapping("/user/password")
-    @ApiOperation(value = "修改用户密码", notes = "")
-    public Result updatePassword(@RequestBody @ApiParam("用户密码") @Valid MallUserPasswordParam mallUserPasswordParam,
+    @Operation(summary = "修改用户密码", description = "")
+    public Result updatePassword(@RequestBody @Parameter(name = "用户密码") @Valid MallUserPasswordParam mallUserPasswordParam,
                                  @TokenToMallUser MallUser loginMallUser) {
         Boolean flag = userService.updateUserPassword(mallUserPasswordParam, loginMallUser.getUserId());
         if (flag) {
@@ -120,7 +120,7 @@ public class MallUserAPI {
     }
 
     @GetMapping("/user/info")
-    @ApiOperation(value = "获取用户信息", notes = "")
+    @Operation(summary = "获取用户信息", description = "")
     public Result<MallUserVO> getUserDetail(@TokenToMallUser MallUser loginMallUser) {
         //已登录则直接返回
         MallUserVO mallUserVO = new MallUserVO();

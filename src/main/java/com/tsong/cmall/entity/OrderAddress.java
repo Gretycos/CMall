@@ -27,4 +27,14 @@ public class OrderAddress {
     private String regionName;
 
     private String detailAddress;
+
+    @Override
+    public String toString() {
+        return userName + '，'
+                + userPhone + '，'
+                + provinceName + ' '
+                + cityName + ' '
+                + regionName + ' '
+                + detailAddress;
+    }
 }

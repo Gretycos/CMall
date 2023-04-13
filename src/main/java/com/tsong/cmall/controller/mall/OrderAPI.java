@@ -16,9 +16,9 @@ import com.tsong.cmall.service.OrderService;
 import com.tsong.cmall.service.ShoppingCartService;
 import com.tsong.cmall.service.UserAddressService;
 import com.tsong.cmall.util.*;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ import java.util.Map;
  * @Date 2023/3/31 23:40
  */
 @RestController
-@Api(value = "order", tags = "1-7.订单操作相关接口")
+@Tag(name = "order", description = "1-7.订单操作相关接口")
 @RequestMapping("/api")
 public class OrderAPI {
     @Autowired
@@ -45,8 +45,8 @@ public class OrderAPI {
 
     @NoRepeatSubmit
     @PostMapping("/order/save")
-    @ApiOperation(value = "提交订单接口", notes = "传参为地址id、待结算的购物项id数组、领券id")
-    public Result<String> saveOrder(@ApiParam(value = "订单参数") @RequestBody SaveOrderParam saveOrderParam,
+    @Operation(summary = "提交订单接口", description = "传参为地址id、待结算的购物项id数组、领券id")
+    public Result<String> saveOrder(@Parameter(name = "订单参数") @RequestBody SaveOrderParam saveOrderParam,
                                     @TokenToMallUser MallUser loginMallUser) {
         if (saveOrderParam == null
                 || saveOrderParam.getCartItemIds() == null
@@ -81,8 +81,8 @@ public class OrderAPI {
 
     @NoRepeatSubmit
     @PostMapping("/order/seckill/save")
-    @ApiOperation(value = "提交订单接口", notes = "传参为地址id、待结算的购物项id数组、领券id")
-    public Result<String> saveOrder(@ApiParam(value = "订单参数") @RequestBody SaveSeckillOrderParam saveSeckillOrderParam,
+    @Operation(summary = "提交订单接口", description = "传参为地址id、待结算的购物项id数组、领券id")
+    public Result<String> saveOrder(@Parameter(name = "订单参数") @RequestBody SaveSeckillOrderParam saveSeckillOrderParam,
                                     @TokenToMallUser MallUser loginMallUser) {
         if (saveSeckillOrderParam == null
                 || saveSeckillOrderParam.getSeckillSuccessId() == null
@@ -103,16 +103,16 @@ public class OrderAPI {
     }
 
     @GetMapping("/order/{orderNo}")
-    @ApiOperation(value = "订单详情接口", notes = "传参为订单号")
-    public Result<OrderDetailVO> orderDetailPage(@ApiParam(value = "订单号") @PathVariable("orderNo") String orderNo,
+    @Operation(summary = "订单详情接口", description = "传参为订单号")
+    public Result<OrderDetailVO> orderDetailPage(@Parameter(name = "订单号") @PathVariable("orderNo") String orderNo,
                                                  @TokenToMallUser MallUser loginMallUser) {
         return ResultGenerator.genSuccessResult(orderService.getOrderDetailByOrderNo(orderNo, loginMallUser.getUserId()));
     }
 
     @GetMapping("/order")
-    @ApiOperation(value = "订单列表接口", notes = "传参为页码")
-    public Result<PageResult<OrderVO>> orderList(@ApiParam(value = "页码") @RequestParam(required = false) Integer pageNumber,
-                                                 @ApiParam(value = "订单状态:0.待支付 1.待确认 2.待发货 3:已发货 4.交易成功") @RequestParam(required = false) Integer status,
+    @Operation(summary = "订单列表接口", description = "传参为页码")
+    public Result<PageResult<OrderVO>> orderList(@Parameter(name = "页码") @RequestParam(required = false) Integer pageNumber,
+                                                 @Parameter(name = "订单状态:0.待支付 1.待确认 2.待发货 3:已发货 4.交易成功") @RequestParam(required = false) Integer status,
                                                  @TokenToMallUser MallUser loginMallUser) {
         Map<String, Object> params = new HashMap<>(8);
         if (pageNumber == null || pageNumber < 1) {
@@ -128,8 +128,8 @@ public class OrderAPI {
     }
 
     @PutMapping("/order/cancel/{orderNo}")
-    @ApiOperation(value = "订单取消接口", notes = "传参为订单号")
-    public Result cancelOrder(@ApiParam(value = "订单号") @PathVariable("orderNo") String orderNo,
+    @Operation(summary = "订单取消接口", description = "传参为订单号")
+    public Result cancelOrder(@Parameter(name = "订单号") @PathVariable("orderNo") String orderNo,
                               @TokenToMallUser MallUser loginMallUser) {
         String cancelOrderResult = orderService.cancelOrder(orderNo, loginMallUser.getUserId());
         if (ServiceResultEnum.SUCCESS.getResult().equals(cancelOrderResult)) {
@@ -140,8 +140,8 @@ public class OrderAPI {
     }
 
     @PutMapping("/order/finish/{orderNo}")
-    @ApiOperation(value = "确认收货接口", notes = "传参为订单号")
-    public Result finishOrder(@ApiParam(value = "订单号") @PathVariable("orderNo") String orderNo,
+    @Operation(summary = "确认收货接口", description = "传参为订单号")
+    public Result finishOrder(@Parameter(name = "订单号") @PathVariable("orderNo") String orderNo,
                               @TokenToMallUser MallUser loginMallUser) {
         String finishOrderResult = orderService.finishOrder(orderNo, loginMallUser.getUserId());
         if (ServiceResultEnum.SUCCESS.getResult().equals(finishOrderResult)) {
@@ -153,9 +153,9 @@ public class OrderAPI {
 
     @NoRepeatSubmit
     @GetMapping("/paySuccess")
-    @ApiOperation(value = "模拟支付成功回调的接口", notes = "传参为订单号和支付方式")
-    public Result paySuccess(@ApiParam(value = "订单号") @RequestParam("orderNo") String orderNo,
-                             @ApiParam(value = "支付方式") @RequestParam("payType") int payType) {
+    @Operation(summary = "模拟支付成功回调的接口", description = "传参为订单号和支付方式")
+    public Result paySuccess(@Parameter(name = "订单号") @RequestParam("orderNo") String orderNo,
+                             @Parameter(name = "支付方式") @RequestParam("payType") int payType) {
         String payResult = orderService.paySuccess(orderNo, payType);
         if (ServiceResultEnum.SUCCESS.getResult().equals(payResult)) {
             return ResultGenerator.genSuccessResult();

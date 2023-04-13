@@ -1,6 +1,6 @@
 package com.tsong.cmall.controller.mall.param;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -13,12 +13,12 @@ import java.io.Serializable;
  */
 @Data
 public class MallUserUpdateParam implements Serializable {
-    @ApiModelProperty("用户昵称")
+    @Schema(title = "用户昵称")
     @NotEmpty(message = "昵称不能为空")
     @Length(max = 16,message = "昵称过长")
     private String nickName;
 
-    @ApiModelProperty("个性签名")
+    @Schema(title = "个性签名")
     @NotEmpty(message = "个性签名不能为空")
     @Length(max = 140,message = "个性签名过长")
     private String introduceSign;

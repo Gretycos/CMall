@@ -11,8 +11,8 @@ import com.tsong.cmall.service.UserAddressService;
 import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,20 +23,20 @@ import java.util.List;
  * @Date 2023/4/2 23:38
  */
 @RestController
-@Api(value = "User Address", tags = "1-6.商城个人地址相关接口")
+@Tag(name = "User Address", description = "1-6.商城个人地址相关接口")
 @RequestMapping("/api")
 public class UserAddressAPI {
     @Autowired
     private UserAddressService userAddressService;
 
     @GetMapping("/address")
-    @ApiOperation(value = "我的收货地址列表", notes = "")
+    @Operation(summary = "我的收货地址列表", description = "")
     public Result<List<UserAddressVO>> addressList(@TokenToMallUser MallUser loginMallUser) {
         return ResultGenerator.genSuccessResult(userAddressService.getMyAddresses(loginMallUser.getUserId()));
     }
 
     @PostMapping("/address")
-    @ApiOperation(value = "添加地址", notes = "")
+    @Operation(summary = "添加地址", description = "")
     public Result<Boolean> saveUserAddress(@RequestBody SaveUserAddressParam saveUserAddressParam,
                                            @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddress = new UserAddress();
@@ -52,7 +52,7 @@ public class UserAddressAPI {
     }
 
     @PutMapping("/address")
-    @ApiOperation(value = "修改地址", notes = "")
+    @Operation(summary = "修改地址", description = "")
     public Result<Boolean> updateUserAddress(@RequestBody UpdateUserAddressParam updateUserAddressParam,
                                                  @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddressFromDB = userAddressService.getUserAddressById(updateUserAddressParam.getAddressId());
@@ -72,7 +72,7 @@ public class UserAddressAPI {
     }
 
     @GetMapping("/address/{addressId}")
-    @ApiOperation(value = "获取收货地址详情", notes = "传参为地址id")
+    @Operation(summary = "获取收货地址详情", description = "传参为地址id")
     public Result<UserAddressVO> getUserAddress(@PathVariable("addressId") Long addressId,
                                                               @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddress = userAddressService.getUserAddressById(addressId);
@@ -85,14 +85,14 @@ public class UserAddressAPI {
     }
 
     @GetMapping("/address/default")
-    @ApiOperation(value = "获取默认收货地址", notes = "无传参")
+    @Operation(summary = "获取默认收货地址", description = "无传参")
     public Result getDefaultUserAddress(@TokenToMallUser MallUser loginMallUser) {
         UserAddress mallUserAddressById = userAddressService.getMyDefaultAddressByUserId(loginMallUser.getUserId());
         return ResultGenerator.genSuccessResult(mallUserAddressById);
     }
 
     @DeleteMapping("/address/{addressId}")
-    @ApiOperation(value = "删除收货地址", notes = "传参为地址id")
+    @Operation(summary = "删除收货地址", description = "传参为地址id")
     public Result deleteAddress(@PathVariable("addressId") Long addressId,
                                 @TokenToMallUser MallUser loginMallUser) {
         UserAddress mallUserAddressById = userAddressService.getUserAddressById(addressId);

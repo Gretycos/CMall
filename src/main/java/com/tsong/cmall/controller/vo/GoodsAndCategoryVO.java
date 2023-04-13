@@ -2,7 +2,7 @@ package com.tsong.cmall.controller.vo;
 
 import com.tsong.cmall.entity.GoodsCategory;
 import com.tsong.cmall.entity.GoodsInfo;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,15 +14,15 @@ import java.util.List;
  */
 @Data
 public class GoodsAndCategoryVO implements Serializable {
-    @ApiModelProperty("商品")
+    @Schema(title = "商品")
     private GoodsInfo goodsInfo;
 
-    @ApiModelProperty("一级分类")
+    @Schema(title = "一级分类")
     private GoodsCategory firstCategory;
 
-    @ApiModelProperty("二级分类")
+    @Schema(title = "二级分类")
     private GoodsCategory secondCategory;
 
-    @ApiModelProperty("三级分类")
+    @Schema(title = "三级分类")
     private GoodsCategory thirdCategory;
 }

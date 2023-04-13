@@ -9,9 +9,9 @@ import com.tsong.cmall.service.OrderService;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import java.util.Map;
  * @Date 2023/4/3 17:45
  */
 @RestController
-@Api(value = "Admin Order", tags = "2-5.后台管理系统订单模块接口")
+@Tag(name = "Admin Order", description = "2-5.后台管理系统订单模块接口")
 @RequestMapping("/admin")
 public class AdminOrderAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminOrderAPI.class);
@@ -38,11 +38,11 @@ public class AdminOrderAPI {
      * 列表
      */
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
-    @ApiOperation(value = "订单列表", notes = "可根据订单号和订单状态筛选")
-    public Result list(@RequestParam(required = false) @ApiParam(value = "页码") Integer pageNumber,
-                       @RequestParam(required = false) @ApiParam(value = "每页条数") Integer pageSize,
-                       @RequestParam(required = false) @ApiParam(value = "订单号") String orderNo,
-                       @RequestParam(required = false) @ApiParam(value = "订单状态") Integer orderStatus,
+    @Operation(summary = "订单列表", description = "可根据订单号和订单状态筛选")
+    public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
+                       @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
+                       @RequestParam(required = false) @Parameter(name = "订单号") String orderNo,
+                       @RequestParam(required = false) @Parameter(name = "订单状态") Integer orderStatus,
                        @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (pageNumber == null || pageNumber < 1 || pageSize == null || pageSize < 10) {
@@ -62,8 +62,8 @@ public class AdminOrderAPI {
     }
 
     @GetMapping("/orders/{orderId}")
-    @ApiOperation(value = "订单详情接口", notes = "传参为订单号")
-    public Result<OrderDetailVO> orderDetailPage(@ApiParam(value = "订单号") @PathVariable("orderId") Long orderId,
+    @Operation(summary = "订单详情接口", description = "传参为订单号")
+    public Result<OrderDetailVO> orderDetailPage(@Parameter(name = "订单号") @PathVariable("orderId") Long orderId,
                                                  @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         return ResultGenerator.genSuccessResult(orderService.getOrderDetailByOrderId(orderId));
@@ -73,7 +73,7 @@ public class AdminOrderAPI {
      * 配货
      */
     @RequestMapping(value = "/orders/checkDone", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改订单状态为配货成功", notes = "批量修改")
+    @Operation(summary = "修改订单状态为配货成功", description = "批量修改")
     public Result checkDone(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (batchIdParam==null||batchIdParam.getIds().length < 1) {
@@ -91,7 +91,7 @@ public class AdminOrderAPI {
      * 出库
      */
     @RequestMapping(value = "/orders/checkOut", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改订单状态为已出库", notes = "批量修改")
+    @Operation(summary = "修改订单状态为已出库", description = "批量修改")
     public Result checkOut(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (batchIdParam==null||batchIdParam.getIds().length < 1) {
@@ -109,7 +109,7 @@ public class AdminOrderAPI {
      * 关闭订单
      */
     @RequestMapping(value = "/orders/close", method = RequestMethod.PUT)
-    @ApiOperation(value = "修改订单状态为商家关闭", notes = "批量修改")
+    @Operation(summary = "修改订单状态为商家关闭", description = "批量修改")
     public Result closeOrder(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (batchIdParam==null||batchIdParam.getIds().length < 1) {

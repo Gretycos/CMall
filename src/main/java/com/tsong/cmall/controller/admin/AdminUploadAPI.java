@@ -6,8 +6,8 @@ import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.util.MallUtils;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ import java.util.*;
  * @Date 2023/4/3 17:51
  */
 @RestController
-@Api(value = "Admin Upload", tags = "2-7.后台管理系统文件上传接口")
+@Tag(name = "Admin Upload", description = "2-7.后台管理系统文件上传接口")
 @RequestMapping("/admin")
 public class AdminUploadAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminUploadAPI.class);
@@ -45,7 +45,7 @@ public class AdminUploadAPI {
      * 图片上传
      */
     @RequestMapping(value = "/upload/file", method = RequestMethod.POST)
-    @ApiOperation(value = "单图上传", notes = "file Name \"file\"")
+    @Operation(summary = "单图上传", description = "file Name \"file\"")
     public Result upload(HttpServletRequest httpServletRequest,
                          @RequestParam("file") MultipartFile file,
                          @TokenToAdminUser AdminUserToken adminUser) throws URISyntaxException {
@@ -81,7 +81,7 @@ public class AdminUploadAPI {
      * 图片上传
      */
     @RequestMapping(value = "/upload/files", method = RequestMethod.POST)
-    @ApiOperation(value = "多图上传", notes = "图片上传")
+    @Operation(summary = "多图上传", description = "图片上传")
     public Result uploadV2(HttpServletRequest httpServletRequest, @TokenToAdminUser AdminUserToken adminUser) throws URISyntaxException {
         logger.info("adminUser:{}", adminUser.toString());
         List<MultipartFile> multipartFiles = new ArrayList<>(8);

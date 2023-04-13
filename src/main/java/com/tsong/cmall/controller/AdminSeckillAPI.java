@@ -12,9 +12,9 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ import java.util.Map;
  * @Date 2023/4/12 13:44
  */
 @RestController
-@Api(value = "Admin Seckill", tags = "2-9.后台管理秒杀模块接口")
+@Tag(name = "Admin Seckill", description = "2-9.后台管理秒杀模块接口")
 @RequestMapping("/admin")
 public class AdminSeckillAPI {
     private static final Logger logger = LoggerFactory.getLogger(AdminSeckillAPI.class);
@@ -41,9 +41,9 @@ public class AdminSeckillAPI {
     private RedisCache redisCache;
 
     @GetMapping("/seckill/list")
-    @ApiOperation(value = "秒杀商品列表", notes = "")
-    public Result seckillList(@ApiParam(value = "页码") @RequestParam(required = false) Integer pageNumber,
-                             @ApiParam(value = "每页条数") @RequestParam(required = false) Integer pageSize,
+    @Operation(summary = "秒杀商品列表", description = "")
+    public Result seckillList(@Parameter(name = "页码") @RequestParam(required = false) Integer pageNumber,
+                             @Parameter(name = "每页条数") @RequestParam(required = false) Integer pageSize,
                              @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("seckillList, adminUser:{}", adminUser.toString());
         Map<String, Object> params = new HashMap<>(8);
@@ -60,8 +60,8 @@ public class AdminSeckillAPI {
     }
 
     @PostMapping("/seckill/save")
-    @ApiOperation(value = "新增秒杀", notes = "")
-    public Result saveSeckill(@ApiParam(value = "秒杀新增参数") @RequestBody @Valid SeckillAddParam seckillAddParam,
+    @Operation(summary = "新增秒杀", description = "")
+    public Result saveSeckill(@Parameter(name = "秒杀新增参数") @RequestBody @Valid SeckillAddParam seckillAddParam,
                              @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("saveSeckill, adminUser:{}", adminUser.toString());
         Seckill seckill = new Seckill();
@@ -77,8 +77,8 @@ public class AdminSeckillAPI {
     }
 
     @PostMapping("/seckill/update")
-    @ApiOperation(value = "修改秒杀", notes = "")
-    public Result updateSeckill(@ApiParam(value = "优惠券修改参数") @RequestBody @Valid SeckillEditParam seckillEditParam,
+    @Operation(summary = "修改秒杀", description = "")
+    public Result updateSeckill(@Parameter(name = "优惠券修改参数") @RequestBody @Valid SeckillEditParam seckillEditParam,
                                @TokenToAdminUser AdminUserToken adminUser){
         logger.info("updateSeckill, adminUser:{}", adminUser.toString());
         Seckill seckill = new Seckill();
@@ -96,8 +96,8 @@ public class AdminSeckillAPI {
     }
 
     @GetMapping("/seckill/{id}")
-    @ApiOperation(value = "秒杀详情", notes = "")
-    public Result seckillInfo(@ApiParam(value = "秒杀id") @PathVariable("id") Long id,
+    @Operation(summary = "秒杀详情", description = "")
+    public Result seckillInfo(@Parameter(name = "秒杀id") @PathVariable("id") Long id,
                              @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("seckillInfo, adminUser:{}", adminUser.toString());
         Seckill seckill = seckillService.getSeckillById(id);
@@ -105,8 +105,8 @@ public class AdminSeckillAPI {
     }
 
     @DeleteMapping("/seckill/{id}")
-    @ApiOperation(value = "删除秒杀", notes = "")
-    public Result deleteSeckill(@ApiParam(value = "秒杀id") @PathVariable Long id,
+    @Operation(summary = "删除秒杀", description = "")
+    public Result deleteSeckill(@Parameter(name = "秒杀id") @PathVariable Long id,
                          @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("deleteSeckill, adminUser:{}", adminUser.toString());
         boolean result = seckillService.deleteSeckillById(id);

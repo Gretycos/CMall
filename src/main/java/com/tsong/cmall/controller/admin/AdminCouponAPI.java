@@ -10,9 +10,9 @@ import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ import java.util.Map;
  * @Date 2023/4/11 13:28
  */
 @RestController
-@Api(value = "Admin Coupon", tags = "2-8.后台管理优惠券模块接口")
+@Tag(name = "Admin Coupon", description = "2-8.后台管理优惠券模块接口")
 @RequestMapping("/admin")
 public class AdminCouponAPI {
 
@@ -38,9 +38,9 @@ public class AdminCouponAPI {
     private CouponService couponService;
 
     @GetMapping("/coupon/list")
-    @ApiOperation(value = "优惠券列表", notes = "")
-    public Result couponList(@ApiParam(value = "页码") @RequestParam(required = false) Integer pageNumber,
-                             @ApiParam(value = "每页条数") @RequestParam(required = false) Integer pageSize,
+    @Operation(summary = "优惠券列表", description = "")
+    public Result couponList(@Parameter(name = "页码") @RequestParam(required = false) Integer pageNumber,
+                             @Parameter(name = "每页条数") @RequestParam(required = false) Integer pageSize,
                              @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("couponList, adminUser:{}", adminUser.toString());
         Map<String, Object> params = new HashMap<>(8);
@@ -57,8 +57,8 @@ public class AdminCouponAPI {
     }
 
     @PostMapping("/coupon/save")
-    @ApiOperation(value = "新增优惠券", notes = "")
-    public Result saveCoupon(@ApiParam(value = "优惠券新增参数") @RequestBody @Valid CouponAddParam couponAddParam,
+    @Operation(summary = "新增优惠券", description = "")
+    public Result saveCoupon(@Parameter(name = "优惠券新增参数") @RequestBody @Valid CouponAddParam couponAddParam,
                              @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("couponSave, adminUser:{}", adminUser.toString());
         Coupon coupon = new Coupon();
@@ -72,8 +72,8 @@ public class AdminCouponAPI {
     }
 
     @PostMapping("/coupon/update")
-    @ApiOperation(value = "修改优惠券", notes = "")
-    public Result updateCoupon(@ApiParam(value = "优惠券修改参数") @RequestBody @Valid CouponEditParam couponEditParam,
+    @Operation(summary = "修改优惠券", description = "")
+    public Result updateCoupon(@Parameter(name = "优惠券修改参数") @RequestBody @Valid CouponEditParam couponEditParam,
                                @TokenToAdminUser AdminUserToken adminUser){
         logger.info("couponUpdate, adminUser:{}", adminUser.toString());
         Coupon coupon = new Coupon();
@@ -87,8 +87,8 @@ public class AdminCouponAPI {
     }
 
     @GetMapping("/coupon/{id}")
-    @ApiOperation(value = "优惠券详情", notes = "")
-    public Result couponInfo(@ApiParam(value = "优惠券id") @PathVariable("id") Long id,
+    @Operation(summary = "优惠券详情", description = "")
+    public Result couponInfo(@Parameter(name = "优惠券id") @PathVariable("id") Long id,
                        @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("couponInfo, adminUser:{}", adminUser.toString());
         Coupon coupon = couponService.getCouponById(id);
@@ -96,8 +96,8 @@ public class AdminCouponAPI {
     }
 
     @DeleteMapping("/coupon/{id}")
-    @ApiOperation(value = "删除优惠券", notes = "")
-    public Result deleteCoupon(@ApiParam(value = "优惠券id") @PathVariable Long id,
+    @Operation(summary = "删除优惠券", description = "")
+    public Result deleteCoupon(@Parameter(name = "优惠券id") @PathVariable Long id,
                          @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("deleteCoupon, adminUser:{}", adminUser.toString());
         boolean result = couponService.deleteCouponById(id);

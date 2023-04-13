@@ -183,7 +183,7 @@ public class CouponServiceImpl implements CouponService {
             for (MyCouponVO myCouponVO : myCouponVOList) {
                 Coupon coupon = couponMap.get(myCouponVO.getCouponId());
                 if (coupon != null){
-                    myCouponVO.setName(coupon.getCouponName());
+                    myCouponVO.setCouponName(coupon.getCouponName());
                     myCouponVO.setCouponDesc(coupon.getCouponDesc());
                     myCouponVO.setDiscount(coupon.getDiscount());
                     myCouponVO.setMin(coupon.getMin());

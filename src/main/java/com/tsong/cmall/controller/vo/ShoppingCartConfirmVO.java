@@ -1,6 +1,6 @@
 package com.tsong.cmall.controller.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,8 +12,8 @@ import java.util.List;
  */
 @Data
 public class ShoppingCartConfirmVO implements Serializable {
-    @ApiModelProperty("参与结算的商品")
+    @Schema(title = "参与结算的商品")
     List<ShoppingCartItemVO> itemsForConfirmPage;
-    @ApiModelProperty("当前商品可用的优惠券")
+    @Schema(title = "当前商品可用的优惠券")
     List<MyCouponVO> myCouponVOList;
 }

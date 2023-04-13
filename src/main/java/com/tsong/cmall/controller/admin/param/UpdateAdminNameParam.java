@@ -1,5 +1,6 @@
 package com.tsong.cmall.controller.admin.param;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
@@ -12,8 +13,10 @@ import java.io.Serializable;
 @Data
 public class UpdateAdminNameParam implements Serializable {
     @NotEmpty(message = "loginUserName不能为空")
+    @Schema(title = "用户名")
     private String loginUserName;
 
     @NotEmpty(message = "nickName不能为空")
+    @Schema(title = "昵称")
     private String nickName;
 }
