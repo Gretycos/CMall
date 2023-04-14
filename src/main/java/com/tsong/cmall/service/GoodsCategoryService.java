@@ -1,5 +1,6 @@
 package com.tsong.cmall.service;
 
+import com.tsong.cmall.controller.vo.CategoryResultVO;
 import com.tsong.cmall.controller.vo.HomePageCategoryVO;
 import com.tsong.cmall.controller.vo.SearchPageCategoryVO;
 import com.tsong.cmall.entity.GoodsCategory;
@@ -38,14 +39,19 @@ public interface GoodsCategoryService {
      * @Param [categoryId]
      * @Return com.tsong.cmall.controller.vo.SearchPageCategoryVO
      */
-
     SearchPageCategoryVO getCategoriesForSearchPage(Long categoryId);
+
+    /**
+     * @Description 获取选择的分类，用于三级分类联动
+     * @Param [categoryId]
+     * @Return com.tsong.cmall.controller.vo.CategoryResultVO
+     */
+    CategoryResultVO getCategoriesForSelect(Long categoryId);
 
     /**
      * @Description 根据parentId和level获取分类列表
      * @Param [parentIds, categoryLevel]
      * @Return java.util.List<com.tsong.cmall.entity.GoodsCategory>
      */
-
     List<GoodsCategory> selectByLevelAndParentIdsAndNumber(List<Long> parentIds, int categoryLevel);
 }

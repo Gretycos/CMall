@@ -13,6 +13,7 @@ import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +38,7 @@ public class UserAddressAPI {
 
     @PostMapping("/address")
     @Operation(summary = "添加地址", description = "")
-    public Result<Boolean> saveUserAddress(@RequestBody SaveUserAddressParam saveUserAddressParam,
+    public Result<Boolean> saveUserAddress(@RequestBody @Valid SaveUserAddressParam saveUserAddressParam,
                                            @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddress = new UserAddress();
         BeanUtil.copyProperties(saveUserAddressParam, userAddress);
@@ -53,8 +54,8 @@ public class UserAddressAPI {
 
     @PutMapping("/address")
     @Operation(summary = "修改地址", description = "")
-    public Result<Boolean> updateUserAddress(@RequestBody UpdateUserAddressParam updateUserAddressParam,
-                                                 @TokenToMallUser MallUser loginMallUser) {
+    public Result<Boolean> updateUserAddress(@RequestBody @Valid UpdateUserAddressParam updateUserAddressParam,
+                                             @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddressFromDB = userAddressService.getUserAddressById(updateUserAddressParam.getAddressId());
         if (!loginMallUser.getUserId().equals(userAddressFromDB.getUserId())) {
             return ResultGenerator.genFailResult(ServiceResultEnum.REQUEST_FORBIDDEN_ERROR.getResult());
@@ -74,7 +75,7 @@ public class UserAddressAPI {
     @GetMapping("/address/{addressId}")
     @Operation(summary = "获取收货地址详情", description = "传参为地址id")
     public Result<UserAddressVO> getUserAddress(@PathVariable("addressId") Long addressId,
-                                                              @TokenToMallUser MallUser loginMallUser) {
+                                                @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddress = userAddressService.getUserAddressById(addressId);
         UserAddressVO userAddressVO = new UserAddressVO();
         BeanUtil.copyProperties(userAddress, userAddressVO);

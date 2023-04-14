@@ -32,7 +32,7 @@ public class HomePageAPI {
     @Autowired
     private HomePageConfigService homePageConfigService;
 
-    @GetMapping("/index-infos")
+    @GetMapping("/homepage")
     @Operation(summary = "获取首页数据", description = "轮播图、新品、推荐等")
     public Result<HomePageInfoVO> indexInfo() {
         HomePageInfoVO homePageInfoVO = new HomePageInfoVO();

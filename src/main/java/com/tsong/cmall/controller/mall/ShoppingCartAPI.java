@@ -16,6 +16,7 @@ import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +45,8 @@ public class ShoppingCartAPI {
 
     @PostMapping("/shopping-cart")
     @Operation(summary = "添加商品到购物车接口", description = "传参为商品id、数量")
-    public Result saveShoppingCartItem(@RequestBody SaveCartItemParam saveCartItemParam,
-                                                 @TokenToMallUser MallUser loginMallUser) {
+    public Result saveShoppingCartItem(@RequestBody @Valid SaveCartItemParam saveCartItemParam,
+                                       @TokenToMallUser MallUser loginMallUser) {
         String saveResult = shoppingCartService.saveShoppingCartItem(saveCartItemParam, loginMallUser.getUserId());
         //添加成功
         if (ServiceResultEnum.SUCCESS.getResult().equals(saveResult)) {
@@ -57,8 +58,8 @@ public class ShoppingCartAPI {
 
     @PutMapping("/shopping-cart")
     @Operation(summary = "修改购物项数据", description = "传参为购物项id、数量")
-    public Result updateShoppingCartItem(@RequestBody UpdateCartItemParam updateCartItemParam,
-                                                   @TokenToMallUser MallUser loginMallUser) {
+    public Result updateShoppingCartItem(@RequestBody @Valid UpdateCartItemParam updateCartItemParam,
+                                         @TokenToMallUser MallUser loginMallUser) {
         String updateResult = shoppingCartService.updateShoppingCartItem(updateCartItemParam, loginMallUser.getUserId());
         //修改成功
         if (ServiceResultEnum.SUCCESS.getResult().equals(updateResult)) {
@@ -71,7 +72,7 @@ public class ShoppingCartAPI {
     @DeleteMapping("/shopping-cart/{ShoppingCartItemId}")
     @Operation(summary = "删除购物项", description = "传参为购物项id")
     public Result updateShoppingCartItem(@PathVariable("ShoppingCartItemId") Long shoppingCartItemId,
-                                                   @TokenToMallUser MallUser loginMallUser) {
+                                         @TokenToMallUser MallUser loginMallUser) {
         ShoppingCartItem shoppingCartItem = shoppingCartService.getShoppingCartItemById(shoppingCartItemId);
         if (!loginMallUser.getUserId().equals(shoppingCartItem.getUserId())) {
             return ResultGenerator.genFailResult(ServiceResultEnum.REQUEST_FORBIDDEN_ERROR.getResult());
@@ -87,7 +88,8 @@ public class ShoppingCartAPI {
 
     @GetMapping("/shopping-cart/confirm")
     @Operation(summary = "根据购物项id数组查询购物项明细和可用优惠券", description = "确认订单页面使用")
-    public Result<ShoppingCartConfirmVO> confirmCartItem(Long[] cartItemIds, @TokenToMallUser MallUser loginMallUser) {
+    public Result<ShoppingCartConfirmVO> confirmCartItem(@RequestBody Long[] cartItemIds,
+                                                         @TokenToMallUser MallUser loginMallUser) {
         if (cartItemIds.length < 1) {
             CMallException.fail("参数异常");
         }

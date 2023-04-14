@@ -16,6 +16,7 @@ import com.tsong.cmall.util.ResultGenerator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,12 +72,12 @@ public class SeckillAPI {
 
     @PostMapping("/seckill/execute")
     @Operation(summary = "处理秒杀", description = "")
-    public Result execute(@Parameter(name = "秒杀事件参数") @RequestBody SeckillExeParam seckillExeParam){
+    public Result execute(@Parameter(name = "秒杀事件参数") @RequestBody @Valid SeckillExeParam seckillExeParam){
         String md5 = seckillExeParam.getMd5();
         Long seckillId = seckillExeParam.getSeckillId();
         Long mallUserId = seckillExeParam.getMallUserId();
         // 判断md5信息是否合法
-        if (md5 == null || !md5.equals(MD5Util.MD5Encode(seckillId.toString(), Constants.UTF_ENCODING))) {
+        if (!md5.equals(MD5Util.MD5Encode(seckillId.toString(), Constants.UTF_ENCODING))) {
             throw new CMallException("秒杀商品不存在");
         }
         SeckillSuccessVO seckillSuccessVO = seckillService.executeSeckill(seckillId, mallUserId);

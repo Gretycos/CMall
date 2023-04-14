@@ -39,7 +39,7 @@ public class AdminCarouselAPI {
     /**
      * 列表
      */
-    @RequestMapping(value = "/carousels", method = RequestMethod.GET)
+    @GetMapping(value = "/carousels")
     @Operation(summary = "轮播图列表", description = "轮播图列表")
     public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
                        @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
@@ -58,7 +58,7 @@ public class AdminCarouselAPI {
     /**
      * 添加
      */
-    @RequestMapping(value = "/carousels", method = RequestMethod.POST)
+    @PostMapping(value = "/carousels/save")
     @Operation(summary = "新增轮播图", description = "新增轮播图")
     public Result save(@RequestBody @Valid CarouselAddParam carouselAddParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -76,9 +76,9 @@ public class AdminCarouselAPI {
     /**
      * 修改
      */
-    @RequestMapping(value = "/carousels", method = RequestMethod.PUT)
+    @PutMapping(value = "/carousels/update")
     @Operation(summary = "修改轮播图信息", description = "修改轮播图信息")
-    public Result update(@RequestBody CarouselEditParam carouselEditParam, @TokenToAdminUser AdminUserToken adminUser) {
+    public Result update(@RequestBody @Valid CarouselEditParam carouselEditParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         Carousel carousel = new Carousel();
         BeanUtil.copyProperties(carouselEditParam, carousel);
@@ -93,7 +93,7 @@ public class AdminCarouselAPI {
     /**
      * 详情
      */
-    @RequestMapping(value = "/carousels/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/carousels/{id}")
     @Operation(summary = "获取单条轮播图信息", description = "根据id查询")
     public Result info(@PathVariable("id") Integer id, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -107,7 +107,7 @@ public class AdminCarouselAPI {
     /**
      * 删除
      */
-    @RequestMapping(value = "/carousels", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/carousels/delete")
     @Operation(summary = "批量删除轮播图信息", description = "批量删除轮播图信息")
     public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());

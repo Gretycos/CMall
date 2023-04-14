@@ -17,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author Tsong
@@ -35,7 +32,7 @@ public class AdminUserAPI {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminUserAPI.class);
 
-    @RequestMapping(value = "/adminUser/login", method = RequestMethod.POST)
+    @PostMapping(value = "/adminUser/login")
     public Result<String> login(@RequestBody @Valid AdminLoginParam adminLoginParam) {
         String loginResult = adminUserService.login(adminLoginParam.getUserName(), adminLoginParam.getPasswordMd5());
         logger.info("manage login api,adminName={},loginResult={}", adminLoginParam.getUserName(), loginResult);
@@ -50,7 +47,7 @@ public class AdminUserAPI {
         return ResultGenerator.genFailResult(loginResult);
     }
 
-    @RequestMapping(value = "/adminUser/profile", method = RequestMethod.GET)
+    @GetMapping(value = "/adminUser/profile")
     public Result profile(@TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         AdminUser adminUserFromDB = adminUserService.getUserDetailById(adminUser.getAdminUserId());
@@ -63,7 +60,7 @@ public class AdminUserAPI {
         return ResultGenerator.genFailResult(ServiceResultEnum.DATA_NOT_EXIST.getResult());
     }
 
-    @RequestMapping(value = "/adminUser/password", method = RequestMethod.PUT)
+    @PutMapping(value = "/adminUser/password")
     public Result passwordUpdate(@RequestBody @Valid UpdateAdminPasswordParam adminPasswordParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (adminUserService.updatePassword(adminUser.getAdminUserId(), adminPasswordParam.getOriginalPassword(), adminPasswordParam.getNewPassword())) {
@@ -73,7 +70,7 @@ public class AdminUserAPI {
         }
     }
 
-    @RequestMapping(value = "/adminUser/name", method = RequestMethod.PUT)
+    @PutMapping(value = "/adminUser/name")
     public Result nameUpdate(@RequestBody @Valid UpdateAdminNameParam adminNameParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (adminUserService.updateName(adminUser.getAdminUserId(), adminNameParam.getLoginUserName(), adminNameParam.getNickName())) {
@@ -83,7 +80,7 @@ public class AdminUserAPI {
         }
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/logout")
     public Result logout(@TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         adminUserService.logout(adminUser.getAdminUserId());

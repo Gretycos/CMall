@@ -1,6 +1,7 @@
 package com.tsong.cmall.controller.admin.param;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,5 +13,6 @@ import java.io.Serializable;
 @Data
 public class BatchIdParam implements Serializable {
     @Schema(title = "id数组")
+    @NotNull(message = "id数组不能为空")
     Long[] ids;
 }

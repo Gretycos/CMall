@@ -9,6 +9,7 @@ import com.tsong.cmall.controller.admin.param.GoodsCategoryEditParam;
 import com.tsong.cmall.controller.vo.CategoryResultVO;
 import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.entity.GoodsCategory;
+import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.GoodsCategoryService;
 import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
@@ -77,32 +78,7 @@ public class AdminGoodsCategoryAPI {
         if (categoryId == null || categoryId < 1) {
             return ResultGenerator.genFailResult("缺少参数！");
         }
-        GoodsCategory category = goodsCategoryService.getGoodsCategoryById(categoryId);
-        //既不是一级分类也不是二级分类则为不返回数据
-        if (category == null || category.getCategoryLevel() == CategoryLevelEnum.LEVEL_THREE.getLevel()) {
-            return ResultGenerator.genFailResult("参数异常！");
-        }
-        CategoryResultVO categoryResultVO = new CategoryResultVO();
-        if (category.getCategoryLevel() == CategoryLevelEnum.LEVEL_ONE.getLevel()) {
-            //如果是一级分类则返回当前一级分类下的所有二级分类，以及二级分类列表中第一条数据下的所有三级分类列表
-            //查询一级分类列表中第一个实体的所有二级分类
-            List<GoodsCategory> secondLevelCategories = goodsCategoryService.selectByLevelAndParentIdsAndNumber(
-                    Collections.singletonList(categoryId), CategoryLevelEnum.LEVEL_TWO.getLevel());
-            if (!CollectionUtils.isEmpty(secondLevelCategories)) {
-                //查询二级分类列表中第一个实体的所有三级分类
-                List<GoodsCategory> thirdLevelCategories = goodsCategoryService.selectByLevelAndParentIdsAndNumber(
-                        Collections.singletonList(secondLevelCategories.get(0).getCategoryId()), CategoryLevelEnum.LEVEL_THREE.getLevel());
-                categoryResultVO.setSecondLevelCategories(secondLevelCategories);
-                categoryResultVO.setThirdLevelCategories(thirdLevelCategories);
-            }
-        }
-        if (category.getCategoryLevel() == CategoryLevelEnum.LEVEL_TWO.getLevel()) {
-            //如果是二级分类则返回当前分类下的所有三级分类列表
-            List<GoodsCategory> thirdLevelCategories = goodsCategoryService.selectByLevelAndParentIdsAndNumber(
-                    Collections.singletonList(categoryId), CategoryLevelEnum.LEVEL_THREE.getLevel());
-            categoryResultVO.setThirdLevelCategories(thirdLevelCategories);
-        }
-        return ResultGenerator.genSuccessResult(categoryResultVO);
+        return ResultGenerator.genSuccessResult(goodsCategoryService.getCategoriesForSelect(categoryId));
     }
 
     /**
@@ -159,10 +135,10 @@ public class AdminGoodsCategoryAPI {
      */
     @RequestMapping(value = "/categories", method = RequestMethod.DELETE)
     @Operation(summary = "批量删除分类信息", description = "批量删除分类信息")
-    public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
+    public Result delete(@RequestBody @Valid BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
-        if (batchIdParam == null || batchIdParam.getIds().length < 1) {
-            return ResultGenerator.genFailResult("参数异常！");
+        if (batchIdParam.getIds().length < 1) {
+            CMallException.fail(ServiceResultEnum.PARAM_ERROR.getResult());
         }
         if (goodsCategoryService.deleteBatch(batchIdParam.getIds())) {
             return ResultGenerator.genSuccessResult();

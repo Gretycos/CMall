@@ -19,6 +19,7 @@ import com.tsong.cmall.util.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -46,14 +47,8 @@ public class OrderAPI {
     @NoRepeatSubmit
     @PostMapping("/order/save")
     @Operation(summary = "提交订单接口", description = "传参为地址id、待结算的购物项id数组、领券id")
-    public Result<String> saveOrder(@Parameter(name = "订单参数") @RequestBody SaveOrderParam saveOrderParam,
+    public Result<String> saveOrder(@Parameter(name = "订单参数") @RequestBody @Valid SaveOrderParam saveOrderParam,
                                     @TokenToMallUser MallUser loginMallUser) {
-        if (saveOrderParam == null
-                || saveOrderParam.getCartItemIds() == null
-                || saveOrderParam.getAddressId() == null
-                || saveOrderParam.getCouponUserId() == null) {
-            CMallException.fail(ServiceResultEnum.PARAM_ERROR.getResult());
-        }
         if (saveOrderParam.getCartItemIds().length < 1) {
             CMallException.fail(ServiceResultEnum.PARAM_ERROR.getResult());
         }
@@ -81,15 +76,9 @@ public class OrderAPI {
 
     @NoRepeatSubmit
     @PostMapping("/order/seckill/save")
-    @Operation(summary = "提交订单接口", description = "传参为地址id、待结算的购物项id数组、领券id")
-    public Result<String> saveOrder(@Parameter(name = "订单参数") @RequestBody SaveSeckillOrderParam saveSeckillOrderParam,
+    @Operation(summary = "提交秒杀订单接口", description = "传参为地址id、待结算的购物项id数组、领券id")
+    public Result<String> saveSeckillOrder(@Parameter(name = "订单参数") @RequestBody @Valid SaveSeckillOrderParam saveSeckillOrderParam,
                                     @TokenToMallUser MallUser loginMallUser) {
-        if (saveSeckillOrderParam == null
-                || saveSeckillOrderParam.getSeckillSuccessId() == null
-                || saveSeckillOrderParam.getAddressId() == null
-                || saveSeckillOrderParam.getSeckillSecretKey() == null) {
-            CMallException.fail(ServiceResultEnum.PARAM_ERROR.getResult());
-        }
         Long seckillSuccessId = saveSeckillOrderParam.getSeckillSuccessId();
         String seckillSecretKey = saveSeckillOrderParam.getSeckillSecretKey();
         if (!seckillSecretKey.equals(MD5Util.MD5Encode(seckillSuccessId + Constants.SECKILL_ORDER_SALT, Constants.UTF_ENCODING))) {

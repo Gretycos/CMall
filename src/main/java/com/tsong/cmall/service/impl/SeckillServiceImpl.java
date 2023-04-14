@@ -119,16 +119,16 @@ public class SeckillServiceImpl implements SeckillService {
     public SeckillSuccessVO executeSeckill(Long seckillId, Long userId) {
         // 判断能否在500毫秒内得到令牌，如果不能则立即返回false，不会阻塞程序
         if (!rateLimiter.tryAcquire(500, TimeUnit.MILLISECONDS)) {
-            throw new CMallException("秒杀失败");
+            CMallException.fail("秒杀失败");
         }
         // 判断用户是否购买过秒杀商品
         if (redisCache.containsCacheSet(Constants.SECKILL_SUCCESS_USER_ID + seckillId, userId)) {
-            throw new CMallException("您已经购买过秒杀商品，请勿重复购买");
+            CMallException.fail("您已经购买过秒杀商品，请勿重复购买");
         }
         // 更新秒杀商品虚拟库存
         Long stock = redisCache.luaDecrement(Constants.SECKILL_GOODS_STOCK_KEY + seckillId);
         if (stock < 0) {
-            throw new CMallException("秒杀商品已售空");
+            CMallException.fail("秒杀商品已售空");
         }
         // 从redis中获得秒杀
         Seckill seckill = redisCache.getCacheObject(Constants.SECKILL_KEY + seckillId);
@@ -143,9 +143,9 @@ public class SeckillServiceImpl implements SeckillService {
         Date now = new Date();
         long nowTime = now.getTime();
         if (nowTime < beginTime) {
-            throw new CMallException("秒杀未开启");
+            CMallException.fail("秒杀未开启");
         } else if (nowTime > endTime) {
-            throw new CMallException("秒杀已结束");
+            CMallException.fail("秒杀已结束");
         }
 
         Map<String, Object> map = new HashMap<>(8);
@@ -163,16 +163,14 @@ public class SeckillServiceImpl implements SeckillService {
         // map.get("result");
         int result = MapUtils.getInteger(map, "result", -2);
         if (result != 1) {
-            throw new CMallException("很遗憾！未抢购到秒杀商品");
+            CMallException.fail("很遗憾！未抢购到秒杀商品");
         }
         // result == 1 说明秒杀成功，并且秒杀成功表插入了一条该用户秒杀成功的数据
 
         // 在redis中记录该用户完成了该秒杀
         redisCache.setCacheSet(Constants.SECKILL_SUCCESS_USER_ID + seckillId, userId);
-        long endExpireTime = endTime / 1000;
-        long nowExpireTime = nowTime / 1000;
         redisCache.expire(Constants.SECKILL_SUCCESS_USER_ID + seckillId,
-                endExpireTime - nowExpireTime, TimeUnit.SECONDS);
+                endTime - nowTime, TimeUnit.MILLISECONDS);
 
         // 获得该用户的秒杀成功
         SeckillSuccess seckillSuccess = seckillSuccessMapper.getSeckillSuccessByUserIdAndSeckillId(
@@ -199,10 +197,8 @@ public class SeckillServiceImpl implements SeckillService {
         seckillGoodsVO.setGoodsDetailContent(goodsInfo.getGoodsDetailContent());
         seckillGoodsVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
         seckillGoodsVO.setSellingPrice(goodsInfo.getSellingPrice());
-        Date seckillBegin = seckillGoodsVO.getSeckillBegin();
-        Date seckillEnd = seckillGoodsVO.getSeckillEnd();
-        seckillGoodsVO.setStartDate(seckillBegin.getTime());
-        seckillGoodsVO.setEndDate(seckillEnd.getTime());
+        seckillGoodsVO.setSeckillBegin(seckillGoodsVO.getSeckillBegin());
+        seckillGoodsVO.setSeckillEnd(seckillGoodsVO.getSeckillEnd());
         return seckillGoodsVO;
     }
 

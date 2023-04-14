@@ -38,13 +38,13 @@ public class GoodsInfoAPI {
 
     @GetMapping("/search")
     @Operation(summary = "商品搜索接口", description = "根据关键字和分类id进行搜索")
-    public Result<PageResult<List<SearchPageGoodsVO>>> search(@RequestParam(required = false) @Parameter(name = "搜索关键字") String keyword,
+    public Result<PageResult<List<SearchPageGoodsVO>>> goodsSearch(@RequestParam(required = false) @Parameter(name = "搜索关键字") String keyword,
                                                               @RequestParam(required = false) @Parameter(name = "分类id") Long goodsCategoryId,
                                                               @RequestParam(required = false) @Parameter(name = "orderBy") String orderBy,
                                                               @RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
                                                               @TokenToMallUser MallUser loginMallUser) {
 
-        logger.info("goods search api,keyword={},goodsCategoryId={},orderBy={},pageNumber={},userId={}",
+        logger.info("goodsSearch, keyword={},goodsCategoryId={},orderBy={},pageNumber={},userId={}",
                 keyword, goodsCategoryId, orderBy, pageNumber, loginMallUser.getUserId());
 
         Map<String, Object> params = new HashMap<>(8);
@@ -76,7 +76,7 @@ public class GoodsInfoAPI {
     @Operation(summary = "商品详情接口", description = "传参为商品id")
     public Result<GoodsDetailVO> goodsDetail(@Parameter(name = "商品id") @PathVariable("goodsId") Long goodsId,
                                              @TokenToMallUser MallUser loginMallUser) {
-        logger.info("goods detail api,goodsId={},userId={}", goodsId, loginMallUser.getUserId());
+        logger.info("goodsDetail, goodsId={},userId={}", goodsId, loginMallUser.getUserId());
         if (goodsId < 1) {
             return ResultGenerator.genFailResult("参数异常");
         }

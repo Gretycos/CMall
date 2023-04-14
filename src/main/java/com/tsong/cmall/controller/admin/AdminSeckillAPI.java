@@ -1,4 +1,4 @@
-package com.tsong.cmall.controller;
+package com.tsong.cmall.controller.admin;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.config.annotation.TokenToAdminUser;

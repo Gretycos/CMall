@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
@@ -44,7 +41,7 @@ public class AdminUploadAPI {
     /**
      * 图片上传
      */
-    @RequestMapping(value = "/upload/file", method = RequestMethod.POST)
+    @PostMapping(value = "/upload/file")
     @Operation(summary = "单图上传", description = "file Name \"file\"")
     public Result upload(HttpServletRequest httpServletRequest,
                          @RequestParam("file") MultipartFile file,
@@ -80,7 +77,7 @@ public class AdminUploadAPI {
     /**
      * 图片上传
      */
-    @RequestMapping(value = "/upload/files", method = RequestMethod.POST)
+    @PostMapping(value = "/upload/files")
     @Operation(summary = "多图上传", description = "图片上传")
     public Result uploadV2(HttpServletRequest httpServletRequest, @TokenToAdminUser AdminUserToken adminUser) throws URISyntaxException {
         logger.info("adminUser:{}", adminUser.toString());

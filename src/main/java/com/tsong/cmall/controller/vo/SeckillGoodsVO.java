@@ -43,10 +43,4 @@ public class SeckillGoodsVO implements Serializable {
 
     @Schema(title = "秒杀结束")
     private Date seckillEnd;
-
-    @Schema(title = "秒杀开始时间戳")
-    private Long startDate;
-
-    @Schema(title = "秒杀结束时间戳")
-    private Long endDate;
 }

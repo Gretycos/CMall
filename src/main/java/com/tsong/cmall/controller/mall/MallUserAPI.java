@@ -45,7 +45,7 @@ public class MallUserAPI {
         }
         String loginResult = userService.login(mallUserLoginParam.getLoginName(), mallUserLoginParam.getPasswordMd5());
 
-        logger.info("login api,loginName={},loginResult={}", mallUserLoginParam.getLoginName(), loginResult);
+        logger.info("login, loginName={},loginResult={}", mallUserLoginParam.getLoginName(), loginResult);
 
         //登录成功
         if (StringUtils.hasText(loginResult) && loginResult.length() == Constants.TOKEN_LENGTH) {
@@ -62,7 +62,7 @@ public class MallUserAPI {
     @Operation(summary = "登出接口", description = "清除token")
     public Result<String> logout(@TokenToMallUser MallUser loginMallUser) {
         Boolean logoutResult = userService.logout(loginMallUser.getUserId());
-        logger.info("logout api,loginMallUser={}", loginMallUser.getUserId());
+        logger.info("logout, loginMallUser={}", loginMallUser.getUserId());
 
         //登出成功
         if (logoutResult) {
@@ -75,13 +75,13 @@ public class MallUserAPI {
 
     @PostMapping("/user/register")
     @Operation(summary = "用户注册", description = "")
-    public Result register(@RequestBody @Valid MallUserRegisterParam mallUserRegisterParam) {
+    public Result mallUserRegister(@RequestBody @Valid MallUserRegisterParam mallUserRegisterParam) {
         if (!NumberUtil.isPhone(mallUserRegisterParam.getLoginName())){
             return ResultGenerator.genFailResult(ServiceResultEnum.LOGIN_NAME_IS_NOT_PHONE.getResult());
         }
         String registerResult = userService.register(mallUserRegisterParam.getLoginName(), mallUserRegisterParam.getPassword());
 
-        logger.info("register api,loginName={},loginResult={}", mallUserRegisterParam.getLoginName(), registerResult);
+        logger.info("mallUserRegister, loginName={},loginResult={}", mallUserRegisterParam.getLoginName(), registerResult);
 
         //注册成功
         if (ServiceResultEnum.SUCCESS.getResult().equals(registerResult)) {

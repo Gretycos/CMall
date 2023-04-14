@@ -3,16 +3,15 @@ package com.tsong.cmall.service.impl;
 import com.tsong.cmall.common.CategoryLevelEnum;
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
-import com.tsong.cmall.controller.vo.HomePageCategoryVO;
-import com.tsong.cmall.controller.vo.SecondLevelCategoryVO;
-import com.tsong.cmall.controller.vo.ThirdLevelCategoryVO;
-import com.tsong.cmall.controller.vo.SearchPageCategoryVO;
+import com.tsong.cmall.controller.vo.*;
 import com.tsong.cmall.dao.GoodsCategoryMapper;
 import com.tsong.cmall.entity.GoodsCategory;
+import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.GoodsCategoryService;
 import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
+import com.tsong.cmall.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -169,6 +168,36 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
             }
         }
         return null;
+    }
+
+    @Override
+    public CategoryResultVO getCategoriesForSelect(Long categoryId) {
+        GoodsCategory category = goodsCategoryMapper.selectByPrimaryKey(categoryId);
+        //既不是一级分类也不是二级分类则为不返回数据
+        if (category == null || category.getCategoryLevel() == CategoryLevelEnum.LEVEL_THREE.getLevel()) {
+            CMallException.fail("参数异常！");
+        }
+        CategoryResultVO categoryResultVO = new CategoryResultVO();
+        if (category.getCategoryLevel() == CategoryLevelEnum.LEVEL_ONE.getLevel()) {
+            //如果是一级分类则返回当前一级分类下的所有二级分类，以及二级分类列表中第一条数据下的所有三级分类列表
+            //查询一级分类列表中第一个实体的所有二级分类
+            List<GoodsCategory> secondLevelCategories = this.selectByLevelAndParentIdsAndNumber(
+                    Collections.singletonList(categoryId), CategoryLevelEnum.LEVEL_TWO.getLevel());
+            if (!CollectionUtils.isEmpty(secondLevelCategories)) {
+                //查询二级分类列表中第一个实体的所有三级分类
+                List<GoodsCategory> thirdLevelCategories = this.selectByLevelAndParentIdsAndNumber(
+                        Collections.singletonList(secondLevelCategories.get(0).getCategoryId()), CategoryLevelEnum.LEVEL_THREE.getLevel());
+                categoryResultVO.setSecondLevelCategories(secondLevelCategories);
+                categoryResultVO.setThirdLevelCategories(thirdLevelCategories);
+            }
+        }
+        if (category.getCategoryLevel() == CategoryLevelEnum.LEVEL_TWO.getLevel()) {
+            //如果是二级分类则返回当前分类下的所有三级分类列表
+            List<GoodsCategory> thirdLevelCategories = this.selectByLevelAndParentIdsAndNumber(
+                    Collections.singletonList(categoryId), CategoryLevelEnum.LEVEL_THREE.getLevel());
+            categoryResultVO.setThirdLevelCategories(thirdLevelCategories);
+        }
+        return categoryResultVO;
     }
 
     @Override
