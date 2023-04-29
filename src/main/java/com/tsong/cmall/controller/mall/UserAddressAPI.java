@@ -11,6 +11,7 @@ import com.tsong.cmall.service.UserAddressService;
 import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.Result;
 import com.tsong.cmall.util.ResultGenerator;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -38,7 +39,7 @@ public class UserAddressAPI {
 
     @PostMapping("/address")
     @Operation(summary = "添加地址", description = "")
-    public Result<Boolean> saveUserAddress(@RequestBody @Valid SaveUserAddressParam saveUserAddressParam,
+    public Result<Boolean> saveUserAddress(@Parameter(name = "新增地址参数")@RequestBody @Valid SaveUserAddressParam saveUserAddressParam,
                                            @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddress = new UserAddress();
         BeanUtil.copyProperties(saveUserAddressParam, userAddress);
@@ -54,7 +55,7 @@ public class UserAddressAPI {
 
     @PutMapping("/address")
     @Operation(summary = "修改地址", description = "")
-    public Result<Boolean> updateUserAddress(@RequestBody @Valid UpdateUserAddressParam updateUserAddressParam,
+    public Result<Boolean> updateUserAddress(@Parameter(name = "修改地址参数")@RequestBody @Valid UpdateUserAddressParam updateUserAddressParam,
                                              @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddressFromDB = userAddressService.getUserAddressById(updateUserAddressParam.getAddressId());
         if (!loginMallUser.getUserId().equals(userAddressFromDB.getUserId())) {
@@ -74,7 +75,7 @@ public class UserAddressAPI {
 
     @GetMapping("/address/{addressId}")
     @Operation(summary = "获取收货地址详情", description = "传参为地址id")
-    public Result<UserAddressVO> getUserAddress(@PathVariable("addressId") Long addressId,
+    public Result<UserAddressVO> getUserAddress(@Parameter(name = "地址id")@PathVariable("addressId") Long addressId,
                                                 @TokenToMallUser MallUser loginMallUser) {
         UserAddress userAddress = userAddressService.getUserAddressById(addressId);
         UserAddressVO userAddressVO = new UserAddressVO();
@@ -94,7 +95,7 @@ public class UserAddressAPI {
 
     @DeleteMapping("/address/{addressId}")
     @Operation(summary = "删除收货地址", description = "传参为地址id")
-    public Result deleteAddress(@PathVariable("addressId") Long addressId,
+    public Result deleteAddress(@Parameter(name = "地址id") @PathVariable("addressId") Long addressId,
                                 @TokenToMallUser MallUser loginMallUser) {
         UserAddress mallUserAddressById = userAddressService.getUserAddressById(addressId);
         if (!loginMallUser.getUserId().equals(mallUserAddressById.getUserId())) {

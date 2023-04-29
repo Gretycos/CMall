@@ -30,14 +30,14 @@ public class CouponAPI {
     @Autowired
     private CouponService couponService;
 
-    @GetMapping("/couponList")
+    @GetMapping("/coupon")
     @Operation(summary = "可领优惠券列表", description = "")
     public Result<List<CouponVO>> availableCouponList(@TokenToMallUser MallUser loginMallUser){
         List<CouponVO> couponVOList = couponService.selectAvailableCoupon(loginMallUser.getUserId());
         return ResultGenerator.genSuccessResult(couponVOList);
     }
 
-    @GetMapping("/myCoupons")
+    @GetMapping("/coupon/my")
     @Operation(summary = "我的优惠券列表", description = "")
     public Result<PageResult<CouponVO>> myCouponList(@Parameter(name = "页码") @RequestParam(required = false) Integer pageNumber,
                                @TokenToMallUser MallUser loginMallUser){
@@ -55,7 +55,7 @@ public class CouponAPI {
         return ResultGenerator.genSuccessResult(couponService.selectMyCoupons(pageUtil));
     }
 
-    @PostMapping("/saveCoupon")
+    @PostMapping("/coupon/save")
     @Operation(summary = "领券", description = "传参为优惠券id，优惠券兑换码（可选）")
     public Result<String> saveCoupon(@Parameter(name = "优惠券id") @RequestParam Long couponId,
                                      @Parameter(name = "优惠券兑换码") @RequestParam(required = false) String couponCode,

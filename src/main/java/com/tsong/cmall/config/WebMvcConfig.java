@@ -38,7 +38,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
         registry.
                 addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/4.18.2/")
                 .resourceChain(false);
     }
 
