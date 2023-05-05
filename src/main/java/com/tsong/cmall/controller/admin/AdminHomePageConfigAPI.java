@@ -41,7 +41,7 @@ public class AdminHomePageConfigAPI {
     /**
      * 列表
      */
-    @RequestMapping(value = "/homepageConfigs", method = RequestMethod.GET)
+    @GetMapping(value = "/homepage")
     @Operation(summary = "首页配置列表", description = "首页配置列表")
     public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
                        @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
@@ -66,7 +66,7 @@ public class AdminHomePageConfigAPI {
     /**
      * 添加
      */
-    @RequestMapping(value = "/homepageConfigs", method = RequestMethod.POST)
+    @PostMapping(value = "/homepage")
     @Operation(summary = "新增首页配置项", description = "新增首页配置项")
     public Result save(@RequestBody @Valid HomePageConfigAddParam homePageConfigAddParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -84,7 +84,7 @@ public class AdminHomePageConfigAPI {
     /**
      * 修改
      */
-    @RequestMapping(value = "/homepageConfigs", method = RequestMethod.PUT)
+    @PutMapping(value = "/homepage")
     @Operation(summary = "修改首页配置项", description = "修改首页配置项")
     public Result update(@RequestBody @Valid HomePageConfigEditParam homePageConfigEditParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -101,7 +101,7 @@ public class AdminHomePageConfigAPI {
     /**
      * 详情
      */
-    @RequestMapping(value = "/homepageConfigs/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/homepage/{id}")
     @Operation(summary = "获取单条首页配置项信息", description = "根据id查询")
     public Result info(@PathVariable("id") Long id, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -115,7 +115,7 @@ public class AdminHomePageConfigAPI {
     /**
      * 删除
      */
-    @RequestMapping(value = "/homepageConfigs", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/homepage")
     @Operation(summary = "批量删除首页配置项信息", description = "批量删除首页配置项信息")
     public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());

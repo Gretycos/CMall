@@ -80,7 +80,7 @@ public class AdminUserAPI {
         }
     }
 
-    @DeleteMapping(value = "/logout")
+    @DeleteMapping(value = "/adminUser/logout")
     public Result logout(@TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         adminUserService.logout(adminUser.getAdminUserId());

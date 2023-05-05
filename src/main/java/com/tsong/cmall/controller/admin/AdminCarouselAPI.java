@@ -58,7 +58,7 @@ public class AdminCarouselAPI {
     /**
      * 添加
      */
-    @PostMapping(value = "/carousels/save")
+    @PostMapping(value = "/carousels")
     @Operation(summary = "新增轮播图", description = "新增轮播图")
     public Result save(@RequestBody @Valid CarouselAddParam carouselAddParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -76,7 +76,7 @@ public class AdminCarouselAPI {
     /**
      * 修改
      */
-    @PutMapping(value = "/carousels/update")
+    @PutMapping(value = "/carousels")
     @Operation(summary = "修改轮播图信息", description = "修改轮播图信息")
     public Result update(@RequestBody @Valid CarouselEditParam carouselEditParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -107,7 +107,7 @@ public class AdminCarouselAPI {
     /**
      * 删除
      */
-    @DeleteMapping(value = "/carousels/delete")
+    @DeleteMapping(value = "/carousels")
     @Operation(summary = "批量删除轮播图信息", description = "批量删除轮播图信息")
     public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());

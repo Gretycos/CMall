@@ -34,7 +34,7 @@ public class AdminMallUserAPI {
     /**
      * 列表
      */
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    @GetMapping(value = "/users")
     @Operation(summary = "商城注册用户列表", description = "商城注册用户列表")
     public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
                        @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
@@ -57,7 +57,7 @@ public class AdminMallUserAPI {
     /**
      * 用户禁用与解除禁用(0-未锁定 1-已锁定)
      */
-    @RequestMapping(value = "/users/{lockStatus}", method = RequestMethod.PUT)
+    @PutMapping(value = "/users/{lockStatus}")
     @Operation(summary = "修改用户状态", description = "批量修改，用户禁用与解除禁用(0-未锁定 1-已锁定)")
     public Result lockUser(@RequestBody BatchIdParam batchIdParam, @PathVariable int lockStatus, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());

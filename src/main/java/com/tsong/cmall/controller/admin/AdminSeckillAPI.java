@@ -40,7 +40,7 @@ public class AdminSeckillAPI {
     @Autowired
     private RedisCache redisCache;
 
-    @GetMapping("/seckill/list")
+    @GetMapping("/seckill")
     @Operation(summary = "秒杀商品列表", description = "")
     public Result seckillList(@Parameter(name = "页码") @RequestParam(required = false) Integer pageNumber,
                              @Parameter(name = "每页条数") @RequestParam(required = false) Integer pageSize,
@@ -59,7 +59,7 @@ public class AdminSeckillAPI {
         return ResultGenerator.genSuccessResult(seckillService.getSeckillPage(pageUtil));
     }
 
-    @PostMapping("/seckill/save")
+    @PostMapping("/seckill")
     @Operation(summary = "新增秒杀", description = "")
     public Result saveSeckill(@Parameter(name = "秒杀新增参数") @RequestBody @Valid SeckillAddParam seckillAddParam,
                              @TokenToAdminUser AdminUserToken adminUser) {
@@ -76,7 +76,7 @@ public class AdminSeckillAPI {
         return ResultGenerator.genSuccessResult();
     }
 
-    @PostMapping("/seckill/update")
+    @PutMapping("/seckill")
     @Operation(summary = "修改秒杀", description = "")
     public Result updateSeckill(@Parameter(name = "优惠券修改参数") @RequestBody @Valid SeckillEditParam seckillEditParam,
                                @TokenToAdminUser AdminUserToken adminUser){

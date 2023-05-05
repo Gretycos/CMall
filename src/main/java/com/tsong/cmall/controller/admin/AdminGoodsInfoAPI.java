@@ -46,7 +46,7 @@ public class AdminGoodsInfoAPI {
     /**
      * 列表
      */
-    @RequestMapping(value = "/goods/list", method = RequestMethod.GET)
+    @GetMapping(value = "/goods")
     @Operation(summary = "商品列表", description = "可根据名称和上架状态筛选")
     public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
                        @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
@@ -76,7 +76,7 @@ public class AdminGoodsInfoAPI {
     /**
      * 添加
      */
-    @RequestMapping(value = "/goods", method = RequestMethod.POST)
+    @PostMapping(value = "/goods")
     @Operation(summary = "新增商品信息", description = "新增商品信息")
     public Result save(@RequestBody @Valid GoodsAddParam goodsAddParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -94,7 +94,7 @@ public class AdminGoodsInfoAPI {
     /**
      * 修改
      */
-    @RequestMapping(value = "/goods", method = RequestMethod.PUT)
+    @PutMapping(value = "/goods")
     @Operation(summary = "修改商品信息", description = "修改商品信息")
     public Result update(@RequestBody @Valid GoodsEditParam goodsEditParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());

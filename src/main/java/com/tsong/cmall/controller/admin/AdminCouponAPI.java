@@ -37,7 +37,7 @@ public class AdminCouponAPI {
     @Autowired
     private CouponService couponService;
 
-    @GetMapping("/coupon/list")
+    @GetMapping("/coupon")
     @Operation(summary = "优惠券列表", description = "")
     public Result couponList(@Parameter(name = "页码") @RequestParam(required = false) Integer pageNumber,
                              @Parameter(name = "每页条数") @RequestParam(required = false) Integer pageSize,
@@ -56,7 +56,7 @@ public class AdminCouponAPI {
         return ResultGenerator.genSuccessResult(couponService.getCouponPage(pageUtil));
     }
 
-    @PostMapping("/coupon/save")
+    @PostMapping("/coupon")
     @Operation(summary = "新增优惠券", description = "")
     public Result saveCoupon(@Parameter(name = "优惠券新增参数") @RequestBody @Valid CouponAddParam couponAddParam,
                              @TokenToAdminUser AdminUserToken adminUser) {
@@ -71,7 +71,7 @@ public class AdminCouponAPI {
         return ResultGenerator.genSuccessResult();
     }
 
-    @PostMapping("/coupon/update")
+    @PutMapping("/coupon")
     @Operation(summary = "修改优惠券", description = "")
     public Result updateCoupon(@Parameter(name = "优惠券修改参数") @RequestBody @Valid CouponEditParam couponEditParam,
                                @TokenToAdminUser AdminUserToken adminUser){

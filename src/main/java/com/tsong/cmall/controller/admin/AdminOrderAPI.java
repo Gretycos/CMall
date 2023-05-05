@@ -37,7 +37,7 @@ public class AdminOrderAPI {
     /**
      * 列表
      */
-    @RequestMapping(value = "/orders", method = RequestMethod.GET)
+    @GetMapping(value = "/orders")
     @Operation(summary = "订单列表", description = "可根据订单号和订单状态筛选")
     public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
                        @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
@@ -62,8 +62,8 @@ public class AdminOrderAPI {
     }
 
     @GetMapping("/orders/{orderId}")
-    @Operation(summary = "订单详情接口", description = "传参为订单号")
-    public Result<OrderDetailVO> orderDetailPage(@Parameter(name = "订单号") @PathVariable("orderId") Long orderId,
+    @Operation(summary = "订单详情接口", description = "传参为订单id")
+    public Result<OrderDetailVO> orderDetailPage(@Parameter(name = "订单id") @PathVariable("orderId") Long orderId,
                                                  @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         return ResultGenerator.genSuccessResult(orderService.getOrderDetailByOrderId(orderId));
@@ -72,7 +72,7 @@ public class AdminOrderAPI {
     /**
      * 配货
      */
-    @RequestMapping(value = "/orders/checkDone", method = RequestMethod.PUT)
+    @PutMapping(value = "/orders/checkDone")
     @Operation(summary = "修改订单状态为配货成功", description = "批量修改")
     public Result checkDone(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -90,7 +90,7 @@ public class AdminOrderAPI {
     /**
      * 出库
      */
-    @RequestMapping(value = "/orders/checkOut", method = RequestMethod.PUT)
+    @PutMapping(value = "/orders/checkOut")
     @Operation(summary = "修改订单状态为已出库", description = "批量修改")
     public Result checkOut(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
@@ -108,7 +108,7 @@ public class AdminOrderAPI {
     /**
      * 关闭订单
      */
-    @RequestMapping(value = "/orders/close", method = RequestMethod.PUT)
+    @PutMapping(value = "/orders/close")
     @Operation(summary = "修改订单状态为商家关闭", description = "批量修改")
     public Result closeOrder(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
