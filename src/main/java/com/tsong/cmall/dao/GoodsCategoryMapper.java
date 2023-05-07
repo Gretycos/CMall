@@ -23,7 +23,7 @@ public interface GoodsCategoryMapper {
 
     int updateByPrimaryKey(GoodsCategory row);
 
-    GoodsCategory selectByLevelAndName(@Param("categoryLevel") Byte categoryLevel, @Param("categoryName") String categoryName);
+    GoodsCategory selectByLevelAndName(Byte categoryLevel, String categoryName);
 
     List<GoodsCategory> findGoodsCategoryList(PageQueryUtil pageUtil);
 

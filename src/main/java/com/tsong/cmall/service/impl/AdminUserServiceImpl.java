@@ -81,20 +81,18 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional
     public Boolean updatePassword(Long loginUserId, String originalPassword, String newPassword) {
         AdminUser adminUser = adminUserMapper.selectByPrimaryKey(loginUserId);
+        // 当前用户非空才可以进行更改
         if (adminUser == null){
             CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
-        // 当前用户非空才可以进行更改
-        String originalPasswordMD5 = MD5Util.MD5Encode(originalPassword, Constants.UTF_ENCODING);
-        String newPasswordMD5 = MD5Util.MD5Encode(newPassword, Constants.UTF_ENCODING);
         // 比较原密码是否正确
-        if (originalPasswordMD5.equals(adminUser.getLoginPassword())) {
+        if (originalPassword.equals(adminUser.getLoginPassword())) {
             // 设置新密码并修改
-            adminUser.setLoginPassword(newPasswordMD5);
-            // 修改成功则清空token并返回true
+            adminUser.setLoginPassword(newPassword);
             if (adminUserMapper.updateByPrimaryKeySelective(adminUser) <= 0){
                 CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
             }
+            // 修改成功则清空token
             if (!logout(loginUserId)){
                 CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
             }

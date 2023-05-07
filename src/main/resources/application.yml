@@ -21,7 +21,7 @@ project:
   # 订单未支付超期时间，单位秒
   orderUnpaidOverTime: 300
   # 服务器地址
-  serverUrl: http://localhost:8080
+  serverUrl: http://127.0.0.1:8080
 
 
 # 防止XSS攻击

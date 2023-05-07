@@ -17,6 +17,71 @@
     category_id, category_level, parent_id, category_name, category_rank, is_deleted, 
     create_time, create_user, update_time, update_user
   </sql>
+
+  <select id="findGoodsCategoryList" parameterType="Map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_goods_category
+    <where>
+      <if test="categoryLevel!=null and categoryLevel!=''">
+        and category_level = #{categoryLevel}
+      </if>
+      <if test="parentId!=null and parentId!=''">
+        and parent_id = #{parentId}
+      </if>
+      and is_deleted = 0
+    </where>
+    order by category_rank desc
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="selectByLevelAndName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_goods_category
+    where category_name = #{categoryName,jdbcType=VARCHAR} and category_level = #{categoryLevel,jdbcType=TINYINT}
+    and is_deleted = 0 limit 1
+  </select>
+
+  <select id="getTotalGoodsCategories" parameterType="Map" resultType="int">
+    select count(*) from tb_goods_category
+    <where>
+      <if test="categoryLevel!=null and categoryLevel!=''">
+        and category_level = #{categoryLevel}
+      </if>
+      <if test="parentId!=null and parentId!=''">
+        and parent_id = #{parentId}
+      </if>
+      and is_deleted = 0
+    </where>
+  </select>
+
+  <select id="selectByLevelAndParentIdsAndNumber" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_goods_category
+    where parent_id in
+    <foreach item="parentId" collection="parentIds" open="(" separator="," close=")">
+      #{parentId,jdbcType=BIGINT}
+    </foreach>
+    and category_level = #{categoryLevel,jdbcType=TINYINT}
+    and is_deleted = 0
+    order by category_rank desc
+    <if test="number>0">
+      limit #{number}
+    </if>
+  </select>
+
+  <update id="deleteBatch">
+    update tb_goods_category
+    set is_deleted=1 where category_id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

@@ -13,10 +13,10 @@ import java.io.Serializable;
 @Data
 public class UpdateAdminPasswordParam implements Serializable {
     @NotEmpty(message = "originalPassword不能为空")
-    @Schema(title = "初始密码")
+    @Schema(title = "初始密码，md5加密")
     private String originalPassword;
 
     @NotEmpty(message = "newPassword不能为空")
-    @Schema(title = "新密码")
+    @Schema(title = "新密码，md5加密")
     private String newPassword;
 }
