@@ -88,7 +88,10 @@ public enum ServiceResultEnum {
 
     NO_PERMISSION_ERROR("无权限！"),
 
-    DB_ERROR("database error");
+    DB_ERROR("database error"),
+
+    PASSWORD_INCORRECT("密码错误！");
+
     private String result;
     ServiceResultEnum(String result) {
         this.result = result;

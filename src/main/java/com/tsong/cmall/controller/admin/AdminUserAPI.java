@@ -66,7 +66,7 @@ public class AdminUserAPI {
         if (adminUserService.updatePassword(adminUser.getAdminUserId(), adminPasswordParam.getOriginalPassword(), adminPasswordParam.getNewPassword())) {
             return ResultGenerator.genSuccessResult();
         } else {
-            return ResultGenerator.genFailResult(ServiceResultEnum.DB_ERROR.getResult());
+            return ResultGenerator.genFailResult(ServiceResultEnum.PASSWORD_INCORRECT.getResult());
         }
     }
 

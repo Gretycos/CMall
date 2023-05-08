@@ -25,6 +25,9 @@ spring:
       connect-timeout: 5000ms
       timeout: 5000ms
       client-type: lettuce
+  servlet:
+    multipart:
+      max-file-size: 2MB
 
 springdoc:
   api-docs:
