@@ -144,14 +144,14 @@ public class AdminGoodsInfoAPI {
      */
     @PutMapping(value = "/goods/status/{saleStatus}")
     @Operation(summary = "批量修改销售状态", description = "批量修改销售状态")
-    public Result editSaleStatus(@RequestBody BatchIdParam batchIdParam,
+    public Result editSaleStatus(@RequestBody @Valid BatchIdParam batchIdParam,
                                  @PathVariable("saleStatus") int saleStatus,
                                  @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
-        if (batchIdParam == null || batchIdParam.getIds().length < 1) {
+        if (batchIdParam.getIds().length < 1) {
             return ResultGenerator.genFailResult("参数异常！");
         }
-        if (saleStatus != Constants.SELL_STATUS_UP && saleStatus != Constants.SELL_STATUS_DOWN) {
+        if (saleStatus != Constants.SALE_STATUS_UP && saleStatus != Constants.SALE_STATUS_DOWN) {
             return ResultGenerator.genFailResult("状态异常！");
         }
         if (goodsInfoService.batchUpdateSaleStatus(batchIdParam.getIds(), saleStatus)) {

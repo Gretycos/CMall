@@ -66,7 +66,7 @@ public class GoodsInfoAPI {
             params.put("orderBy", orderBy);
         }
         //搜索上架状态下的商品
-        params.put("goodsSellStatus", Constants.SELL_STATUS_UP);
+        params.put("goodsSellStatus", Constants.SALE_STATUS_UP);
         //封装商品数据
         PageQueryUtil pageUtil = new PageQueryUtil(params);
         return ResultGenerator.genSuccessResult(goodsInfoService.searchGoodsInfo(pageUtil));
@@ -81,7 +81,7 @@ public class GoodsInfoAPI {
             return ResultGenerator.genFailResult("参数异常");
         }
         GoodsInfo goods = goodsInfoService.getGoodsInfoById(goodsId);
-        if (Constants.SELL_STATUS_UP != goods.getGoodsSaleStatus()) {
+        if (Constants.SALE_STATUS_UP != goods.getGoodsSaleStatus()) {
             CMallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
         }
         GoodsDetailVO goodsDetailVO = new GoodsDetailVO();

@@ -32,8 +32,8 @@ public class Constants {
 
     public final static String COUPON_CODE = "couponCode:";// 优惠卷加密前缀
 
-    public final static int SELL_STATUS_UP = 0;// 商品上架状态
-    public final static int SELL_STATUS_DOWN = 1;// 商品下架状态
+    public final static int SALE_STATUS_UP = 1;// 商品上架状态
+    public final static int SALE_STATUS_DOWN = 0;// 商品下架状态
 
     public final static int TOKEN_LENGTH = 32;//token字段长度
 

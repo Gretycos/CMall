@@ -4,6 +4,7 @@ import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.config.annotation.TokenToAdminUser;
 import com.tsong.cmall.controller.admin.param.SeckillAddParam;
 import com.tsong.cmall.controller.admin.param.SeckillEditParam;
+import com.tsong.cmall.controller.vo.SeckillVO;
 import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.entity.Seckill;
 import com.tsong.cmall.redis.RedisCache;
@@ -78,7 +79,7 @@ public class AdminSeckillAPI {
 
     @PutMapping("/seckill")
     @Operation(summary = "修改秒杀", description = "")
-    public Result updateSeckill(@Parameter(name = "优惠券修改参数") @RequestBody @Valid SeckillEditParam seckillEditParam,
+    public Result updateSeckill(@Parameter(name = "秒杀修改参数") @RequestBody @Valid SeckillEditParam seckillEditParam,
                                @TokenToAdminUser AdminUserToken adminUser){
         logger.info("updateSeckill, adminUser:{}", adminUser.toString());
         Seckill seckill = new Seckill();
@@ -100,8 +101,8 @@ public class AdminSeckillAPI {
     public Result seckillInfo(@Parameter(name = "秒杀id") @PathVariable("id") Long id,
                              @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("seckillInfo, adminUser:{}", adminUser.toString());
-        Seckill seckill = seckillService.getSeckillById(id);
-        return ResultGenerator.genSuccessResult(seckill);
+        SeckillVO seckillVO = seckillService.getSeckillVOById(id);
+        return ResultGenerator.genSuccessResult(seckillVO);
     }
 
     @DeleteMapping("/seckill/{id}")

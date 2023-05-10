@@ -6,6 +6,7 @@ import com.tsong.cmall.common.SeckillStatusEnum;
 import com.tsong.cmall.common.ServiceResultEnum;
 import com.tsong.cmall.controller.vo.SeckillGoodsVO;
 import com.tsong.cmall.controller.vo.SeckillSuccessVO;
+import com.tsong.cmall.controller.vo.SeckillVO;
 import com.tsong.cmall.controller.vo.UrlExposerVO;
 import com.tsong.cmall.dao.GoodsInfoMapper;
 import com.tsong.cmall.dao.SeckillMapper;
@@ -23,10 +24,12 @@ import com.tsong.cmall.util.PageResult;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -53,9 +56,43 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Override
     public PageResult getSeckillPage(PageQueryUtil pageUtil) {
-        List<Seckill> carousels = seckillMapper.findSeckillList(pageUtil);
+        List<Seckill> seckillList = seckillMapper.findSeckillList(pageUtil);
         int total = seckillMapper.getTotalSeckills(pageUtil);
-        return new PageResult(carousels, total, pageUtil.getLimit(), pageUtil.getPage());
+        // 映射商品id列表
+        List<Long> goodsIdList = seckillList.stream().map(Seckill::getGoodsId).toList();
+        // 查询商品列表
+        List<GoodsInfo> goodsInfoList = goodsInfoMapper.selectByPrimaryKeys(goodsIdList);
+        // 映射成map {goodsId: GoodsInfo}
+        Map<Long, GoodsInfo> goodsInfoMap = goodsInfoList.stream().collect(
+                Collectors.toMap(GoodsInfo::getGoodsId, Function.identity(), (e1, e2) -> e1));
+        // 返回结果
+        List<SeckillVO> seckillVOList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(seckillList)){
+            seckillVOList = BeanUtil.copyList(seckillList, SeckillVO.class);
+            for (SeckillVO seckillVO : seckillVOList) {
+                GoodsInfo goodsInfo = goodsInfoMap.get(seckillVO.getGoodsId());
+                if (goodsInfo == null){
+                    CMallException.fail(ServiceResultEnum.GOODS_NOT_EXIST.getResult());
+                }
+                seckillVO.setGoodsName(goodsInfo.getGoodsName());
+                seckillVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
+            }
+        }
+        return new PageResult(seckillVOList, total, pageUtil.getLimit(), pageUtil.getPage());
+    }
+
+    @Override
+    public SeckillVO getSeckillVOById(Long id) {
+        Seckill seckill = getSeckillById(id);
+        SeckillVO seckillVO = new SeckillVO();
+        BeanUtil.copyProperties(seckill, seckillVO);
+        GoodsInfo goodsInfo = goodsInfoMapper.selectByPrimaryKey(seckill.getGoodsId());
+        if (goodsInfo == null){
+            CMallException.fail(ServiceResultEnum.GOODS_NOT_EXIST.getResult());
+        }
+        seckillVO.setGoodsName(goodsInfo.getGoodsName());
+        seckillVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
+        return seckillVO;
     }
 
     @Override

@@ -208,7 +208,7 @@ public class OrderServiceImpl implements OrderService {
         List<GoodsInfo> goodsInfoList = goodsInfoMapper.selectByPrimaryKeys(goodsIds);
         // 检查是否包含已下架商品
         List<GoodsInfo> goodsListNotSelling = goodsInfoList.stream()
-                .filter(goodsTemp -> goodsTemp.getGoodsSaleStatus() != Constants.SELL_STATUS_UP)
+                .filter(goodsTemp -> goodsTemp.getGoodsSaleStatus() != Constants.SALE_STATUS_UP)
                 .collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(goodsListNotSelling)) {
             // goodsListNotSelling 对象非空则表示有下架商品
