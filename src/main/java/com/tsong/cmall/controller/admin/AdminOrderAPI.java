@@ -12,6 +12,7 @@ import com.tsong.cmall.util.ResultGenerator;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,9 +111,9 @@ public class AdminOrderAPI {
      */
     @PutMapping(value = "/orders/close")
     @Operation(summary = "修改订单状态为商家关闭", description = "批量修改")
-    public Result closeOrder(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
+    public Result closeOrder(@RequestBody @Valid BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
-        if (batchIdParam==null||batchIdParam.getIds().length < 1) {
+        if (batchIdParam.getIds().length < 1) {
             return ResultGenerator.genFailResult("参数异常！");
         }
         String result = orderService.closeOrder(batchIdParam.getIds());

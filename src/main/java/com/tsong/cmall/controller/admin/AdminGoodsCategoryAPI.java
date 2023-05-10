@@ -133,7 +133,7 @@ public class AdminGoodsCategoryAPI {
     /**
      * 分类删除
      */
-    @DeleteMapping(value = "/categories")
+    @PostMapping(value = "/categories/delete")
     @Operation(summary = "批量删除分类信息", description = "批量删除分类信息")
     public Result delete(@RequestBody @Valid BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());

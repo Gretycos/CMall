@@ -115,11 +115,11 @@ public class AdminHomePageConfigAPI {
     /**
      * 删除
      */
-    @DeleteMapping(value = "/homepage")
+    @PostMapping(value = "/homepage/delete")
     @Operation(summary = "批量删除首页配置项信息", description = "批量删除首页配置项信息")
-    public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
+    public Result delete(@RequestBody @Valid BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
-        if (batchIdParam == null || batchIdParam.getIds().length < 1) {
+        if (batchIdParam.getIds().length < 1) {
             return ResultGenerator.genFailResult("参数异常！");
         }
         if (homePageConfigService.deleteBatch(batchIdParam.getIds())) {

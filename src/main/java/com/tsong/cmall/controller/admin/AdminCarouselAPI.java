@@ -107,7 +107,7 @@ public class AdminCarouselAPI {
     /**
      * 删除
      */
-    @DeleteMapping(value = "/carousels")
+    @PostMapping(value = "/carousels/delete")
     @Operation(summary = "批量删除轮播图信息", description = "批量删除轮播图信息")
     public Result delete(@RequestBody BatchIdParam batchIdParam, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
