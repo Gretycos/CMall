@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
@@ -94,7 +96,7 @@ public class ShoppingCartAPI {
         if (cartItemIds.length < 1) {
             CMallException.fail("参数异常");
         }
-        int priceTotal = 0;
+        BigDecimal priceTotal = new BigDecimal(0);
         List<ShoppingCartItemVO> itemsForConfirmPage = shoppingCartService.getCartItemsForConfirmPage(Arrays.asList(cartItemIds), loginMallUser.getUserId());
         if (CollectionUtils.isEmpty(itemsForConfirmPage)) {
             //无数据则抛出异常
@@ -102,9 +104,11 @@ public class ShoppingCartAPI {
         } else {
             //总价
             for (ShoppingCartItemVO shoppingCartItemVO : itemsForConfirmPage) {
-                priceTotal += shoppingCartItemVO.getGoodsCount() * shoppingCartItemVO.getSellingPrice();
+                priceTotal = priceTotal
+                        .add(shoppingCartItemVO.getSellingPrice().multiply(new BigDecimal(shoppingCartItemVO.getGoodsCount()))
+                        .setScale(2, RoundingMode.HALF_UP));
             }
-            if (priceTotal < 1) {
+            if (priceTotal.compareTo(new BigDecimal(1)) < 0) {
                 CMallException.fail("价格异常");
             }
         }

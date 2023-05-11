@@ -8,7 +8,7 @@
     <result column="goods_id" jdbcType="BIGINT" property="goodsId" />
     <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
     <result column="goods_cover_img" jdbcType="VARCHAR" property="goodsCoverImg" />
-    <result column="selling_price" jdbcType="INTEGER" property="sellingPrice" />
+    <result column="selling_price" jdbcType="DECIMAL" property="sellingPrice" />
     <result column="goods_count" jdbcType="INTEGER" property="goodsCount" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
@@ -43,7 +43,7 @@
       (#{orderItem.orderId,jdbcType=BIGINT},
       #{orderItem.goodsId,jdbcType=BIGINT},#{orderItem.seckillId,jdbcType=BIGINT},
       #{orderItem.goodsName,jdbcType=VARCHAR}, #{orderItem.goodsCoverImg,jdbcType=VARCHAR},
-      #{orderItem.sellingPrice,jdbcType=INTEGER},
+      #{orderItem.sellingPrice,jdbcType=DECIMAL},
       #{orderItem.goodsCount,jdbcType=INTEGER})
     </foreach>
   </insert>
@@ -65,7 +65,7 @@
       )
     values (#{orderItemId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{seckillId,jdbcType=BIGINT}, 
       #{goodsId,jdbcType=BIGINT}, #{goodsName,jdbcType=VARCHAR}, #{goodsCoverImg,jdbcType=VARCHAR}, 
-      #{sellingPrice,jdbcType=INTEGER}, #{goodsCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      #{sellingPrice,jdbcType=DECIMAL}, #{goodsCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.tsong.cmall.entity.OrderItem">
@@ -148,7 +148,7 @@
         goods_cover_img = #{goodsCoverImg,jdbcType=VARCHAR},
       </if>
       <if test="sellingPrice != null">
-        selling_price = #{sellingPrice,jdbcType=INTEGER},
+        selling_price = #{sellingPrice,jdbcType=DECIMAL},
       </if>
       <if test="goodsCount != null">
         goods_count = #{goodsCount,jdbcType=INTEGER},
@@ -166,7 +166,7 @@
       goods_id = #{goodsId,jdbcType=BIGINT},
       goods_name = #{goodsName,jdbcType=VARCHAR},
       goods_cover_img = #{goodsCoverImg,jdbcType=VARCHAR},
-      selling_price = #{sellingPrice,jdbcType=INTEGER},
+      selling_price = #{sellingPrice,jdbcType=DECIMAL},
       goods_count = #{goodsCount,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where order_item_id = #{orderItemId,jdbcType=BIGINT}

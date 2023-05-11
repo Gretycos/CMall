@@ -1,5 +1,6 @@
 package com.tsong.cmall.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class Seckill {
 
     private Long goodsId;
 
-    private Integer seckillPrice;
+    private BigDecimal seckillPrice;
 
     private Integer seckillNum;
 

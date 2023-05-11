@@ -1,9 +1,11 @@
 package com.tsong.cmall.controller.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -33,14 +35,16 @@ public class SeckillGoodsVO implements Serializable {
     private String goodsCoverImg;
 
     @Schema(title = "商品售价")
-    private Integer sellingPrice;
+    private BigDecimal sellingPrice;
 
     @Schema(title = "商品秒杀价")
-    private Integer seckillPrice;
+    private BigDecimal seckillPrice;
 
     @Schema(title = "秒杀开始")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date seckillBegin;
 
     @Schema(title = "秒杀结束")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date seckillEnd;
 }

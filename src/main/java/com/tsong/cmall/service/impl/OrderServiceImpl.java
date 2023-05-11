@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -249,18 +251,20 @@ public class OrderServiceImpl implements OrderService {
                 .userId(user.getUserId())
                 .build();
         // 总价
-        int priceTotal = 0;
+        BigDecimal priceTotal = new BigDecimal(0);
         for (ShoppingCartItemVO shoppingCartItemVO : myShoppingCartItems) {
-            priceTotal += shoppingCartItemVO.getGoodsCount() * shoppingCartItemVO.getSellingPrice();
+            priceTotal = priceTotal
+                    .add(shoppingCartItemVO.getSellingPrice().multiply(new BigDecimal(shoppingCartItemVO.getGoodsCount())))
+                    .setScale(2, RoundingMode.HALF_UP) ;
         }
         // 如果使用了优惠券
         if (couponUserId != null) {
             // 查找领券记录
             UserCouponRecord userCouponRecord = userCouponRecordMapper.selectByPrimaryKey(couponUserId);
             Coupon coupon = couponMapper.selectByPrimaryKey(userCouponRecord.getCouponId());
-            priceTotal -= coupon.getDiscount();
+            priceTotal = priceTotal.subtract(new BigDecimal(coupon.getDiscount()));
         }
-        if (priceTotal < 1) {
+        if (priceTotal.compareTo(new BigDecimal(1)) < 0) {
             CMallException.fail(ServiceResultEnum.ORDER_PRICE_ERROR.getResult());
         }
         order.setTotalPrice(priceTotal);

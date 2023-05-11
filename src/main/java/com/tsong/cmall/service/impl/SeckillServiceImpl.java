@@ -58,16 +58,17 @@ public class SeckillServiceImpl implements SeckillService {
     public PageResult getSeckillPage(PageQueryUtil pageUtil) {
         List<Seckill> seckillList = seckillMapper.findSeckillList(pageUtil);
         int total = seckillMapper.getTotalSeckills(pageUtil);
-        // 映射商品id列表
-        List<Long> goodsIdList = seckillList.stream().map(Seckill::getGoodsId).toList();
-        // 查询商品列表
-        List<GoodsInfo> goodsInfoList = goodsInfoMapper.selectByPrimaryKeys(goodsIdList);
-        // 映射成map {goodsId: GoodsInfo}
-        Map<Long, GoodsInfo> goodsInfoMap = goodsInfoList.stream().collect(
-                Collectors.toMap(GoodsInfo::getGoodsId, Function.identity(), (e1, e2) -> e1));
         // 返回结果
         List<SeckillVO> seckillVOList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(seckillList)){
+            // 映射商品id列表
+            List<Long> goodsIdList = seckillList.stream().map(Seckill::getGoodsId).toList();
+            // 查询商品列表
+            List<GoodsInfo> goodsInfoList = goodsInfoMapper.selectByPrimaryKeys(goodsIdList);
+            // 映射成map {goodsId: GoodsInfo}
+            Map<Long, GoodsInfo> goodsInfoMap = goodsInfoList.stream().collect(
+                    Collectors.toMap(GoodsInfo::getGoodsId, Function.identity(), (e1, e2) -> e1));
+
             seckillVOList = BeanUtil.copyList(seckillList, SeckillVO.class);
             for (SeckillVO seckillVO : seckillVOList) {
                 GoodsInfo goodsInfo = goodsInfoMap.get(seckillVO.getGoodsId());
@@ -105,9 +106,6 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Override
     public boolean updateSeckill(Seckill seckill) {
-        if (goodsInfoMapper.selectByPrimaryKey(seckill.getGoodsId()) == null) {
-            CMallException.fail(ServiceResultEnum.GOODS_NOT_EXIST.getResult());
-        }
         Seckill temp = seckillMapper.selectByPrimaryKey(seckill.getSeckillId());
         if (temp == null) {
             CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());

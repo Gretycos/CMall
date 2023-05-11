@@ -7,6 +7,7 @@ import com.tsong.cmall.entity.Coupon;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface CouponService {
@@ -46,7 +47,7 @@ public interface CouponService {
      * @Param [myShoppingCartItems, priceTotal, userId]
      * @Return java.util.List<com.tsong.cmall.controller.vo.CouponVO>
      */
-    List<MyCouponVO> selectCouponsForOrder(List<ShoppingCartItemVO> myShoppingCartItems, int priceTotal, Long userId);
+    List<MyCouponVO> selectCouponsForOrder(List<ShoppingCartItemVO> myShoppingCartItems, BigDecimal priceTotal, Long userId);
 
     /**
      * @Description 删除优惠券

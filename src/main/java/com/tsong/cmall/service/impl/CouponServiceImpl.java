@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -170,7 +171,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public List<MyCouponVO> selectCouponsForOrder(List<ShoppingCartItemVO> myShoppingCartItems, int priceTotal, Long userId) {
+    public List<MyCouponVO> selectCouponsForOrder(List<ShoppingCartItemVO> myShoppingCartItems, BigDecimal priceTotal, Long userId) {
         List<UserCouponRecord> userCouponRecordList = userCouponRecordMapper.selectMyAvailableCoupons(userId);
         List<MyCouponVO> myCouponVOList = BeanUtil.copyList(userCouponRecordList, MyCouponVO.class);
         List<Long> couponIds = userCouponRecordList.stream().map(UserCouponRecord::getCouponId).toList();
@@ -210,7 +211,7 @@ public class CouponServiceImpl implements CouponService {
             }
             // 判断使用条件
             boolean isValid = false;
-            if (item.getMin() <= priceTotal) {
+            if (priceTotal.compareTo(new BigDecimal(item.getMin())) >= 0) {
                 if (item.getGoodsType() == 0){ // 全场通用
                     isValid = true;
                 } else {

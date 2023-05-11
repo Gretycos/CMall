@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class ShoppingCartItemVO implements Serializable {
@@ -23,5 +24,5 @@ public class ShoppingCartItemVO implements Serializable {
     private String goodsCoverImg;
 
     @Schema(title = "商品价格")
-    private Integer sellingPrice;
+    private BigDecimal sellingPrice;
 }

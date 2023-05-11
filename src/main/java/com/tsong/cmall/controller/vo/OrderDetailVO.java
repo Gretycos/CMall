@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class OrderDetailVO implements Serializable {
     private String orderNo;
 
     @Schema(title = "订单价格")
-    private Integer totalPrice;
+    private BigDecimal totalPrice;
 
     @Schema(title = "订单支付状态码")
     private Byte payStatus;

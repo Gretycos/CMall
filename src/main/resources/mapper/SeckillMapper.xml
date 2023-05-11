@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.tsong.cmall.entity.Seckill">
     <id column="seckill_id" jdbcType="BIGINT" property="seckillId" />
     <result column="goods_id" jdbcType="BIGINT" property="goodsId" />
-    <result column="seckill_price" jdbcType="INTEGER" property="seckillPrice" />
+    <result column="seckill_price" jdbcType="DECIMAL" property="seckillPrice" />
     <result column="seckill_num" jdbcType="INTEGER" property="seckillNum" />
     <result column="seckill_status" jdbcType="BIT" property="seckillStatus" />
     <result column="seckill_begin" jdbcType="TIMESTAMP" property="seckillBegin" />
@@ -96,21 +96,22 @@
     from tb_seckill
     where seckill_id = #{seckillId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from tb_seckill
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update tb_seckill
+    set is_deleted = 1
     where seckill_id = #{seckillId,jdbcType=BIGINT}
-  </delete>
+  </update>
   <insert id="insert" parameterType="com.tsong.cmall.entity.Seckill">
     insert into tb_seckill (seckill_id, goods_id, seckill_price, 
       seckill_num, seckill_status, seckill_begin, 
       seckill_end, seckill_rank, create_time, 
       update_time, is_deleted)
-    values (#{seckillId,jdbcType=BIGINT}, #{goodsId,jdbcType=BIGINT}, #{seckillPrice,jdbcType=INTEGER}, 
+    values (#{seckillId,jdbcType=BIGINT}, #{goodsId,jdbcType=BIGINT}, #{seckillPrice,jdbcType=DECIMAL},
       #{seckillNum,jdbcType=INTEGER}, #{seckillStatus,jdbcType=BIT}, #{seckillBegin,jdbcType=TIMESTAMP}, 
       #{seckillEnd,jdbcType=TIMESTAMP}, #{seckillRank,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="com.tsong.cmall.entity.Seckill">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="seckillId" parameterType="com.tsong.cmall.entity.Seckill">
     insert into tb_seckill
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="seckillId != null">
@@ -155,7 +156,7 @@
         #{goodsId,jdbcType=BIGINT},
       </if>
       <if test="seckillPrice != null">
-        #{seckillPrice,jdbcType=INTEGER},
+        #{seckillPrice,jdbcType=DECIMAL},
       </if>
       <if test="seckillNum != null">
         #{seckillNum,jdbcType=INTEGER},
@@ -190,7 +191,7 @@
         goods_id = #{goodsId,jdbcType=BIGINT},
       </if>
       <if test="seckillPrice != null">
-        seckill_price = #{seckillPrice,jdbcType=INTEGER},
+        seckill_price = #{seckillPrice,jdbcType=DECIMAL},
       </if>
       <if test="seckillNum != null">
         seckill_num = #{seckillNum,jdbcType=INTEGER},
@@ -222,7 +223,7 @@
   <update id="updateByPrimaryKey" parameterType="com.tsong.cmall.entity.Seckill">
     update tb_seckill
     set goods_id = #{goodsId,jdbcType=BIGINT},
-      seckill_price = #{seckillPrice,jdbcType=INTEGER},
+      seckill_price = #{seckillPrice,jdbcType=DECIMAL},
       seckill_num = #{seckillNum,jdbcType=INTEGER},
       seckill_status = #{seckillStatus,jdbcType=BIT},
       seckill_begin = #{seckillBegin,jdbcType=TIMESTAMP},

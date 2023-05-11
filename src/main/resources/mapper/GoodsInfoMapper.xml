@@ -8,8 +8,8 @@
     <result column="goods_category_id" jdbcType="BIGINT" property="goodsCategoryId" />
     <result column="goods_cover_img" jdbcType="VARCHAR" property="goodsCoverImg" />
     <result column="goods_carousel" jdbcType="VARCHAR" property="goodsCarousel" />
-    <result column="original_price" jdbcType="INTEGER" property="originalPrice" />
-    <result column="selling_price" jdbcType="INTEGER" property="sellingPrice" />
+    <result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
+    <result column="selling_price" jdbcType="DECIMAL" property="sellingPrice" />
     <result column="stock_num" jdbcType="INTEGER" property="stockNum" />
     <result column="tag" jdbcType="VARCHAR" property="tag" />
     <result column="goods_sale_status" jdbcType="TINYINT" property="goodsSaleStatus" />
@@ -211,7 +211,7 @@
       goods_detail_content)
     values (#{goodsId,jdbcType=BIGINT}, #{goodsName,jdbcType=VARCHAR}, #{goodsIntro,jdbcType=VARCHAR}, 
       #{goodsCategoryId,jdbcType=BIGINT}, #{goodsCoverImg,jdbcType=VARCHAR}, #{goodsCarousel,jdbcType=VARCHAR}, 
-      #{originalPrice,jdbcType=INTEGER}, #{sellingPrice,jdbcType=INTEGER}, #{stockNum,jdbcType=INTEGER}, 
+      #{originalPrice,jdbcType=DECIMAL}, #{sellingPrice,jdbcType=DECIMAL}, #{stockNum,jdbcType=INTEGER},
       #{tag,jdbcType=VARCHAR}, #{goodsSaleStatus,jdbcType=TINYINT}, #{createUser,jdbcType=INTEGER},
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{goodsDetailContent,jdbcType=LONGVARCHAR})
@@ -288,10 +288,10 @@
         #{goodsCarousel,jdbcType=VARCHAR},
       </if>
       <if test="originalPrice != null">
-        #{originalPrice,jdbcType=INTEGER},
+        #{originalPrice,jdbcType=DECIMAL},
       </if>
       <if test="sellingPrice != null">
-        #{sellingPrice,jdbcType=INTEGER},
+        #{sellingPrice,jdbcType=DECIMAL},
       </if>
       <if test="stockNum != null">
         #{stockNum,jdbcType=INTEGER},
@@ -338,10 +338,10 @@
         goods_carousel = #{goodsCarousel,jdbcType=VARCHAR},
       </if>
       <if test="originalPrice != null">
-        original_price = #{originalPrice,jdbcType=INTEGER},
+        original_price = #{originalPrice,jdbcType=DECIMAL},
       </if>
       <if test="sellingPrice != null">
-        selling_price = #{sellingPrice,jdbcType=INTEGER},
+        selling_price = #{sellingPrice,jdbcType=DECIMAL},
       </if>
       <if test="stockNum != null">
         stock_num = #{stockNum,jdbcType=INTEGER},
@@ -377,8 +377,8 @@
       goods_category_id = #{goodsCategoryId,jdbcType=BIGINT},
       goods_cover_img = #{goodsCoverImg,jdbcType=VARCHAR},
       goods_carousel = #{goodsCarousel,jdbcType=VARCHAR},
-      original_price = #{originalPrice,jdbcType=INTEGER},
-      selling_price = #{sellingPrice,jdbcType=INTEGER},
+      original_price = #{originalPrice,jdbcType=DECIMAL},
+      selling_price = #{sellingPrice,jdbcType=DECIMAL},
       stock_num = #{stockNum,jdbcType=INTEGER},
       tag = #{tag,jdbcType=VARCHAR},
       goods_sale_status = #{goodsSaleStatus,jdbcType=TINYINT},
@@ -396,8 +396,8 @@
       goods_category_id = #{goodsCategoryId,jdbcType=BIGINT},
       goods_cover_img = #{goodsCoverImg,jdbcType=VARCHAR},
       goods_carousel = #{goodsCarousel,jdbcType=VARCHAR},
-      original_price = #{originalPrice,jdbcType=INTEGER},
-      selling_price = #{sellingPrice,jdbcType=INTEGER},
+      original_price = #{originalPrice,jdbcType=DECIMAL},
+      selling_price = #{sellingPrice,jdbcType=DECIMAL},
       stock_num = #{stockNum,jdbcType=INTEGER},
       tag = #{tag,jdbcType=VARCHAR},
       goods_sale_status = #{goodsSaleStatus,jdbcType=TINYINT},

@@ -1,5 +1,6 @@
 package com.tsong.cmall.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -29,9 +30,9 @@ public class GoodsInfo {
 
     private String goodsCarousel;
 
-    private Integer originalPrice;
+    private BigDecimal originalPrice;
 
-    private Integer sellingPrice;
+    private BigDecimal sellingPrice;
 
     private Integer stockNum;
 

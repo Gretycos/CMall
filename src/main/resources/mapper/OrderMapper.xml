@@ -5,7 +5,7 @@
     <id column="order_id" jdbcType="BIGINT" property="orderId" />
     <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
-    <result column="total_price" jdbcType="INTEGER" property="totalPrice" />
+    <result column="total_price" jdbcType="DECIMAL" property="totalPrice" />
     <result column="pay_status" jdbcType="TINYINT" property="payStatus" />
     <result column="pay_type" jdbcType="TINYINT" property="payType" />
     <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
@@ -155,7 +155,7 @@
       is_deleted, create_time, update_time
       )
     values (#{orderId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
-      #{totalPrice,jdbcType=INTEGER}, #{payStatus,jdbcType=TINYINT}, #{payType,jdbcType=TINYINT}, 
+      #{totalPrice,jdbcType=DECIMAL}, #{payStatus,jdbcType=TINYINT}, #{payType,jdbcType=TINYINT},
       #{payTime,jdbcType=TIMESTAMP}, #{orderStatus,jdbcType=TINYINT}, #{extraInfo,jdbcType=VARCHAR},
       #{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
@@ -211,7 +211,7 @@
         #{userId,jdbcType=BIGINT},
       </if>
       <if test="totalPrice != null">
-        #{totalPrice,jdbcType=INTEGER},
+        #{totalPrice,jdbcType=DECIMAL},
       </if>
       <if test="payStatus != null">
         #{payStatus,jdbcType=TINYINT},
@@ -249,7 +249,7 @@
         user_id = #{userId,jdbcType=BIGINT},
       </if>
       <if test="totalPrice != null">
-        total_price = #{totalPrice,jdbcType=INTEGER},
+        total_price = #{totalPrice,jdbcType=DECIMAL},
       </if>
       <if test="payStatus != null">
         pay_status = #{payStatus,jdbcType=TINYINT},
@@ -282,7 +282,7 @@
     update tb_order
     set order_no = #{orderNo,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=BIGINT},
-      total_price = #{totalPrice,jdbcType=INTEGER},
+      total_price = #{totalPrice,jdbcType=DECIMAL},
       pay_status = #{payStatus,jdbcType=TINYINT},
       pay_type = #{payType,jdbcType=TINYINT},
       pay_time = #{payTime,jdbcType=TIMESTAMP},

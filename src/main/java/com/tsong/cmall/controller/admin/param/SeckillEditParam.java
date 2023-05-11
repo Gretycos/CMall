@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -21,14 +22,10 @@ public class SeckillEditParam implements Serializable {
     @NotNull(message = "秒杀id不能为空")
     private Long seckillId;
 
-    @Schema(title = "商品id")
-    @NotNull(message = "商品id不能为空")
-    private Long goodsId;
-
     @Schema(title = "秒杀价格")
     @NotNull(message = "秒杀价格不能为空")
     @Min(value = 0, message = "秒杀价格至少为0")
-    private Integer seckillPrice;
+    private BigDecimal seckillPrice;
 
     @Schema(title = "秒杀数量")
     @NotNull(message = "秒杀数量不能为空")
@@ -37,8 +34,6 @@ public class SeckillEditParam implements Serializable {
 
     @Schema(title = "秒杀状态")
     @NotNull(message = "秒杀状态不能为空")
-    @Max(value = 1, message = "不存在该状态")
-    @Min(value = 0, message = "不存在该状态")
     private Boolean seckillStatus;
 
     @NotNull(message = "开始时间不能为空")

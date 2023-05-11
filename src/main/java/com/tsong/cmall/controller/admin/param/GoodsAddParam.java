@@ -9,6 +9,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Author Tsong
@@ -39,13 +40,13 @@ public class GoodsAddParam implements Serializable {
     @NotNull(message = "originalPrice不能为空")
     @Min(value = 1, message = "originalPrice最低为1")
     @Max(value = 1000000, message = "originalPrice最高为1000000")
-    private Integer originalPrice;
+    private BigDecimal originalPrice;
 
     @Schema(title = "sellingPrice")
     @NotNull(message = "sellingPrice不能为空")
     @Min(value = 1, message = "sellingPrice最低为1")
     @Max(value = 1000000, message = "sellingPrice最高为1000000")
-    private Integer sellingPrice;
+    private BigDecimal sellingPrice;
 
     @Schema(title = "库存")
     @NotNull(message = "库存不能为空")
@@ -58,6 +59,10 @@ public class GoodsAddParam implements Serializable {
     @Length(max = 16,message = "商品标签内容过长")
     private String tag;
 
+    @Schema(title = "商品上架状态")
+    @NotEmpty(message = "商品上架状态不能为空")
+    @Min(value = 0, message = "不存在该状态")
+    @Max(value = 1, message = "不存在该状态")
     private Byte goodsSaleStatus;
 
     @Schema(title = "商品详情")

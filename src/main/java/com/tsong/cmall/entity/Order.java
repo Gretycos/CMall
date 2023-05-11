@@ -1,5 +1,6 @@
 package com.tsong.cmall.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,7 +24,7 @@ public class Order {
 
     private Long userId;
 
-    private Integer totalPrice;
+    private BigDecimal totalPrice;
 
     private Byte payStatus;
 

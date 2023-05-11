@@ -73,6 +73,8 @@ public class AdminSeckillAPI {
             return ResultGenerator.genFailResult("新增秒杀失败");
         }
         // 虚拟库存预热
+        // mapper文件中使用了useGeneratedKeys="true" keyProperty="seckillId"
+        // 所以插入成功后会返回seckillId到对象上
         redisCache.setCacheObject(Constants.SECKILL_GOODS_STOCK_KEY + seckill.getSeckillId(), seckill.getSeckillNum());
         return ResultGenerator.genSuccessResult();
     }
@@ -115,6 +117,7 @@ public class AdminSeckillAPI {
             return ResultGenerator.genFailResult("删除秒杀失败");
         }
         // 从缓存中去除
+        redisCache.deleteObject(Constants.SECKILL_GOODS_STOCK_KEY + id);
         redisCache.deleteObject(Constants.SECKILL_GOODS_DETAIL + id);
         redisCache.deleteObject(Constants.SECKILL_GOODS_LIST);
         return ResultGenerator.genSuccessResult();
