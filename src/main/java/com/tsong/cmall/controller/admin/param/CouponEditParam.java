@@ -63,7 +63,7 @@ public class CouponEditParam implements Serializable {
 
     @Schema(title = "优惠券状态")
     @NotNull(message = "优惠券状态不能为空")
-    @Max(value = 1, message = "不存在该状态")
+    @Max(value = 2, message = "不存在该状态")
     @Min(value = 0, message = "不存在该状态")
     private Byte couponStatus;
 

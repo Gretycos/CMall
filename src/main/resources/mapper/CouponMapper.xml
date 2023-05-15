@@ -60,7 +60,7 @@
 
   <select id="getTotalCoupons" parameterType="Map" resultType="int">
     select count(*)
-    from tb_newbee_mall_coupon
+    from tb_coupon
     where is_deleted = 0
     <if test="couponName != null and couponName != ''">
       and coupon_name LIKE CONCAT('%',#{couponName},'%')

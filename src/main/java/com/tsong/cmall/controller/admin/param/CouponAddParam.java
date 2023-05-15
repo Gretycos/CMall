@@ -60,14 +60,13 @@ public class CouponAddParam implements Serializable {
     @Min(value = 0, message = "不存在该状态")
     private Byte couponStatus;
 
-    @Schema(title = "可用商品类型")
+    @Schema(title = "商品限制类型")
     @NotNull(message = "可用商品类型不能为空")
     @Max(value = 2, message = "不存在该分类")
     @Min(value = 0, message = "不存在该分类")
     private Byte goodsType;
 
-    @Schema(title = "可用商品范围")
-    @NotEmpty(message = "可用商品范围不能为空")
+    @Schema(title = "商品限制值")
     private String goodsValue;
 
     @NotNull(message = "开始时间不能为空")

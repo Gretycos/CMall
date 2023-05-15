@@ -44,7 +44,7 @@ public enum ServiceResultEnum {
 
     SHOPPING_CART_ITEM_EXIST_ERROR("已存在！无需重复添加！"),
 
-    LOGIN_ERROR("登录失败！"),
+    LOGIN_ERROR("账号名或密码错误！"),
 
     LOGIN_NAME_IS_NOT_PHONE("请输入正确的手机号！"),
 
