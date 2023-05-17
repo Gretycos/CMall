@@ -150,7 +150,12 @@ public class MallUserServiceImpl implements MallUserService {
         }
         user.setNickName(mallUserUpdateParam.getNickName());
         user.setIntroduceSign(mallUserUpdateParam.getIntroduceSign());
-        return mallUserMapper.updateByPrimaryKeySelective(user) > 0;
+        if (mallUserMapper.updateByPrimaryKeySelective(user) > 0){
+            String token = userTokenMapper.selectByPrimaryKey(userId).getToken();
+            redisCache.deleteObject(Constants.MALL_USER_TOKEN_KEY + token);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -163,10 +168,8 @@ public class MallUserServiceImpl implements MallUserService {
         String originalPassword = mallUserPasswordParam.getOriginalPassword();
         String newPassword = mallUserPasswordParam.getNewPassword();
 
-        String originalPasswordMD5 = MD5Util.MD5Encode(originalPassword, Constants.UTF_ENCODING);
-        String newPasswordMD5 = MD5Util.MD5Encode(newPassword, Constants.UTF_ENCODING);
-        if (originalPasswordMD5.equals(user.getPasswordMd5())){
-            user.setPasswordMd5(newPasswordMD5);
+        if (originalPassword.equals(user.getPasswordMd5())){
+            user.setPasswordMd5(newPassword);
             if (mallUserMapper.updateByPrimaryKeySelective(user) <= 0){
                 CMallException.fail(ServiceResultEnum.DB_ERROR.getResult());
             }

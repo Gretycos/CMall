@@ -16,12 +16,8 @@ server:
 project:
   # 项目名称
   name: CMall
-  # 上传文件的默认url前缀，根据部署设置自行修改
-  fileUploadPath:
   # 订单未支付超期时间，单位秒
-  orderUnpaidOverTime: 300
-  # 服务器地址
-  serverUrl: http://127.0.0.1:8080
+  orderUnpaidOverTime: 60
 
 
 # 防止XSS攻击

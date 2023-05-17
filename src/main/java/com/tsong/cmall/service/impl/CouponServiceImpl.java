@@ -252,8 +252,10 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public void releaseCoupon(Long orderId) {
         UserCouponRecord userCouponRecord = userCouponRecordMapper.getUserCouponByOrderId(orderId);
-        userCouponRecord.setUseStatus((byte) 0);
-        userCouponRecord.setUpdateTime(new Date());
-        userCouponRecordMapper.updateByPrimaryKey(userCouponRecord);
+        if (userCouponRecord != null){
+            userCouponRecord.setUseStatus((byte) 0);
+            userCouponRecord.setUpdateTime(new Date());
+            userCouponRecordMapper.updateByPrimaryKey(userCouponRecord);
+        }
     }
 }

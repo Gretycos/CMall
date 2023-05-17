@@ -98,7 +98,7 @@ public class MallUserAPI {
         Boolean flag = userService.updateUserInfo(mallUserUpdateParam, loginMallUser.getUserId());
         if (flag) {
             //返回成功
-            return ResultGenerator.genSuccessResult();
+            return ResultGenerator.genSuccessResult("修改信息成功");
         } else {
             //返回失败
             return ResultGenerator.genFailResult("修改信息失败");
@@ -112,10 +112,10 @@ public class MallUserAPI {
         Boolean flag = userService.updateUserPassword(mallUserPasswordParam, loginMallUser.getUserId());
         if (flag) {
             //返回成功
-            return ResultGenerator.genSuccessResult();
+            return ResultGenerator.genSuccessResult("修改密码成功");
         } else {
             //返回失败
-            return ResultGenerator.genFailResult("修改密码失败");
+            return ResultGenerator.genFailResult("原密码错误");
         }
     }
 

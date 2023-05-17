@@ -15,11 +15,9 @@ import java.io.Serializable;
 public class MallUserPasswordParam implements Serializable {
     @Schema(title = "原始密码")
     @NotEmpty(message = "密码不能为空")
-    @Length(max = 32,message = "密码过长")
     private String originalPassword;
 
     @Schema(title = "新密码")
     @NotEmpty(message = "密码不能为空")
-    @Length(max = 32,message = "密码过长")
     private String newPassword;
 }

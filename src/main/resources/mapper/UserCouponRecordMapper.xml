@@ -39,7 +39,6 @@
     WHERE
     r.is_deleted = 0
     AND c.is_deleted = 0
-    AND c.coupon_type = 0
     AND c.coupon_status = 0
     AND r.user_id = #{userId}
     AND DATE_FORMAT( c.coupon_start_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( now(), '%Y-%m-%d' )
@@ -57,7 +56,6 @@
     WHERE
       r.is_deleted = 0
       AND c.is_deleted = 0
-      AND c.coupon_type = 0
       AND c.coupon_status = 0
       AND r.user_id = #{userId}
       AND r.use_status = 0
@@ -80,7 +78,6 @@
     WHERE
       r.is_deleted = 0
       AND c.is_deleted = 0
-      AND c.coupon_type = 0
       AND c.coupon_status = 0
       AND r.user_id = #{userId}
       AND DATE_FORMAT( c.coupon_start_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( now(), '%Y-%m-%d' )

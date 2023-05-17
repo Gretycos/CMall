@@ -17,7 +17,6 @@ public class SaveOrderParam implements Serializable {
     private Long[] cartItemIds;
 
     @Schema(title = "领券记录id")
-    @NotNull(message = "优惠券id不能为空")
     private Long couponUserId;
 
     @Schema(title = "地址id")

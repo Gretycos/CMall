@@ -70,8 +70,9 @@ public class AdminUploadAPI {
             }
             file.transferTo(destFile);
             Result resultSuccess = ResultGenerator.genSuccessResult();
-            resultSuccess.setData(MallUtils.getHost(new URI(httpServletRequest.getRequestURL() + ""))
-                    + "/upload/" + adminUser.getAdminUserId() + "/" + newFileName);
+//            resultSuccess.setData(MallUtils.getHost(new URI(httpServletRequest.getRequestURL() + ""))
+//                    + "/upload/" + adminUser.getAdminUserId() + "/" + newFileName);
+            resultSuccess.setData("/image/" + adminUser.getAdminUserId() + "/" + newFileName);
             return resultSuccess;
         } catch (IOException e) {
             e.printStackTrace();
@@ -127,8 +128,9 @@ public class AdminUploadAPI {
                     }
                 }
                 multipartFile.transferTo(destFile);
-                fileNames.add(MallUtils.getHost(new URI(httpServletRequest.getRequestURL() + ""))
-                        + "/upload/" + adminUser.getAdminUserId() + "/" + newFileName);
+//                fileNames.add(MallUtils.getHost(new URI(httpServletRequest.getRequestURL() + ""))
+//                        + "/upload/" + adminUser.getAdminUserId() + "/" + newFileName);
+                fileNames.add("/image/" + adminUser.getAdminUserId() + "/" + newFileName);
             } catch (IOException e) {
                 e.printStackTrace();
                 return ResultGenerator.genFailResult("文件上传失败");

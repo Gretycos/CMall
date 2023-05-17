@@ -529,6 +529,7 @@ public class OrderServiceImpl implements OrderService {
             return ServiceResultEnum.DB_ERROR.getResult();
         }
         // 支付成功会移除未支付队列的任务
+        // 虽然是new 但是只要订单id相同，他们就是相同的任务
         taskService.removeTask(new OrderUnpaidTask(order.getOrderId()));
         return ServiceResultEnum.SUCCESS.getResult();
     }

@@ -81,7 +81,7 @@
       #{isDeleted,jdbcType=TINYINT}, #{lockedFlag,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.tsong.cmall.entity.MallUser">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="userId" parameterType="com.tsong.cmall.entity.MallUser">
     insert into tb_mall_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="userId != null">

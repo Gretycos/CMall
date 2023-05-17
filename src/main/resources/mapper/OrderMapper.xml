@@ -41,7 +41,7 @@
       <if test="payType!=null and payType!=''">
         and pay_type = #{payType}
       </if>
-      <if test="orderStatus!=null and orderStatus!=''">
+      <if test="orderStatus!=null and orderStatus!='' or orderStatus == 0">
         and order_status = #{orderStatus}
       </if>
       <if test="isDeleted!=null and isDeleted!=''">
@@ -75,7 +75,7 @@
       <if test="payType!=null and payType!=''">
         and pay_type = #{payType}
       </if>
-      <if test="orderStatus!=null and orderStatus!=''">
+      <if test="orderStatus!=null and orderStatus!='' or orderStatus == 0">
         and order_status = #{orderStatus}
       </if>
       <if test="isDeleted!=null and isDeleted!=''">

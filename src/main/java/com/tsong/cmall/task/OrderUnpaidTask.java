@@ -37,6 +37,7 @@ public class OrderUnpaidTask extends Task{
     public OrderUnpaidTask(Long orderId, long delayInMilliseconds) {
         super("OrderUnpaidTask-" + orderId, delayInMilliseconds);
         this.orderId = orderId;
+        log.info("新增订单未支付任务：" + orderId);
     }
 
     public OrderUnpaidTask(Long orderId) {
@@ -55,7 +56,7 @@ public class OrderUnpaidTask extends Task{
 
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order == null || order.getOrderStatus() != OrderStatusEnum.ORDER_PRE_PAY.getOrderStatus()) {
-            log.info("系统结束处理延时任务---订单超时未付款--- {}", this.orderId);
+            log.info("系统结束处理延时任务---订单已付款--- {}", this.orderId);
             return;
         }
 

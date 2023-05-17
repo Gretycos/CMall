@@ -28,10 +28,7 @@ public class TokenToAdminUserMethodArgumentResolver implements HandlerMethodArgu
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        if (parameter.hasParameterAnnotation(TokenToAdminUser.class)) {
-            return true;
-        }
-        return false;
+        return parameter.hasParameterAnnotation(TokenToAdminUser.class);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.tsong.cmall.controller.mall;
 
 import com.tsong.cmall.common.ServiceResultEnum;
 import com.tsong.cmall.config.annotation.TokenToMallUser;
+import com.tsong.cmall.controller.mall.param.CartConfirmParam;
 import com.tsong.cmall.controller.mall.param.SaveCartItemParam;
 import com.tsong.cmall.controller.mall.param.UpdateCartItemParam;
 import com.tsong.cmall.controller.vo.MyCouponVO;
@@ -89,10 +90,11 @@ public class ShoppingCartAPI {
         return ResultGenerator.genFailResult(ServiceResultEnum.OPERATE_ERROR.getResult());
     }
 
-    @GetMapping("/shopping-cart/confirm")
+    @PostMapping("/shopping-cart/confirm")
     @Operation(summary = "根据购物项id数组查询购物项明细和可用优惠券", description = "确认订单页面使用")
-    public Result<ShoppingCartConfirmVO> confirmCartItem(@Parameter(name = "购物车项id列表") @RequestBody Long[] cartItemIds,
+    public Result<ShoppingCartConfirmVO> confirmCartItem(@Parameter(name = "购物车项id列表") @RequestBody @Valid CartConfirmParam cartConfirmParam,
                                                          @TokenToMallUser MallUser loginMallUser) {
+        Long[] cartItemIds = cartConfirmParam.getCartItemIds();
         if (cartItemIds.length < 1) {
             CMallException.fail("参数异常");
         }

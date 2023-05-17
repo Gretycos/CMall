@@ -29,13 +29,13 @@ public interface OrderMapper {
 
     int getTotalOrders(PageQueryUtil pageUtil);
 
-    List<Order> selectByPrimaryKeys(List<Long> orderIds);
+    List<Order> selectByPrimaryKeys(@Param("orderIds")List<Long> orderIds);
 
-    int checkOut(List<Long> orderIds);
+    int checkOut(@Param("orderIds")List<Long> orderIds);
 
-    int closeOrder(List<Long> orderIds, int orderStatus);
+    int closeOrder(@Param("orderIds")List<Long> orderIds, int orderStatus);
 
-    int checkDone(List<Long> asList);
+    int checkDone(@Param("orderIds") List<Long> orderIds);
 
     List<Order> selectPrePaidOrders();
 }
