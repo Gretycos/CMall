@@ -22,4 +22,7 @@ public class OrderItemVO implements Serializable {
 
     @Schema(title = "商品售价")
     private BigDecimal sellingPrice;
+
+    @Schema(title = "实际付款")
+    private BigDecimal paidPrice;
 }

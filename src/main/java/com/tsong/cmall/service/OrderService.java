@@ -12,6 +12,11 @@ import com.tsong.cmall.util.PageResult;
 import java.util.List;
 
 public interface OrderService {
+    /**
+     * @Description 根据查询条件获得订单页
+     * @Param [pageUtil]
+     * @Return com.tsong.cmall.util.PageResult<com.tsong.cmall.entity.Order>
+     */
     PageResult<Order> getOrdersPage(PageQueryUtil pageUtil);
 
     /**
@@ -19,7 +24,6 @@ public interface OrderService {
      * @Param [order]
      * @Return java.lang.String
      */
-
     String updateOrderInfo(Order order);
 
     /**

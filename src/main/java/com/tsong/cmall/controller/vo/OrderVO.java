@@ -1,5 +1,6 @@
 package com.tsong.cmall.controller.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -33,6 +34,7 @@ public class OrderVO implements Serializable {
     @Schema(title = "订单状态字符串")
     private String orderStatusString;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Schema(title = "创建时间")
     private Date createTime;
 

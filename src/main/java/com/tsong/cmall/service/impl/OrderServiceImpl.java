@@ -399,7 +399,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 生成订单细节VO*/
+     * 生成订单细节VO
+     * 细节中要展示每个订单项的实际付款
+     * */
     private OrderDetailVO genOrderDetailVO(Order order){
         // 获取订单项数据
         List<OrderItem> orderItems = orderItemMapper.selectByOrderId(order.getOrderId());
@@ -418,9 +420,33 @@ public class OrderServiceImpl implements OrderService {
         orderDetailVO.setOrderStatusString(OrderStatusEnum.getOrderStatusEnumByStatus(orderDetailVO.getOrderStatus()).getName());
         orderDetailVO.setPayTypeString(PayTypeEnum.getPayTypeEnumByType(orderDetailVO.getPayType()).getName());
         orderDetailVO.setUserAddress(orderAddress.toString());
+        // 计算每个订单项的实际付款价格
+        calPaidPrice(order, orderItemVOList);
         orderDetailVO.setOrderItemVOList(orderItemVOList);
+
+        // 优惠券信息
+        UserCouponRecord userCouponRecord = userCouponRecordMapper.getUserCouponByOrderId(order.getOrderId());
+        if (userCouponRecord != null){
+            Coupon coupon = couponMapper.selectByPrimaryKey(userCouponRecord.getCouponId());
+            orderDetailVO.setDiscount(new BigDecimal(coupon.getDiscount()));
+        }
+
         return orderDetailVO;
     }
+
+
+    private void calPaidPrice(Order order, List<OrderItemVO> orderItemVOList){
+        BigDecimal paidTotal = order.getTotalPrice();
+        BigDecimal totalPrice = orderItemVOList.stream()
+                .map(e -> e.getSellingPrice().multiply(new BigDecimal(e.getGoodsCount())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        for (OrderItemVO orderItemVO : orderItemVOList) {
+            BigDecimal sellingPrice = orderItemVO.getSellingPrice().multiply(new BigDecimal(orderItemVO.getGoodsCount()));
+            orderItemVO.setPaidPrice(sellingPrice.divide(totalPrice,2,RoundingMode.HALF_UP).multiply(paidTotal));
+        }
+    }
+
+
 
     @Override
     public Order getOrderByOrderNo(String orderNo) {

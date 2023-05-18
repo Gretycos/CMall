@@ -41,7 +41,7 @@ public class OrderDetailVO implements Serializable {
     private Date createTime;
 
     @Schema(title = "订单优惠")
-    private Integer discount;
+    private BigDecimal discount;
 
     @Schema(title = "用户地址")
     private String userAddress;
