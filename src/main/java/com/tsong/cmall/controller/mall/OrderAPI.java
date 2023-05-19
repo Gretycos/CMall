@@ -109,6 +109,7 @@ public class OrderAPI {
         }
         params.put("userId", loginMallUser.getUserId());
         params.put("orderStatus", status);
+        params.put("isDeleted", (byte) 0);
         params.put("page", pageNumber);
         params.put("limit", Constants.MY_ORDERS_PAGE_LIMIT);
         //封装分页请求参数
@@ -125,6 +126,18 @@ public class OrderAPI {
             return ResultGenerator.genSuccessResult();
         } else {
             return ResultGenerator.genFailResult(cancelOrderResult);
+        }
+    }
+
+    @PutMapping("/order/delete/{orderNo}")
+    @Operation(summary = "订单删除接口", description = "传参为订单号")
+    public Result deleteOrder(@Parameter(name = "订单号") @PathVariable("orderNo") String orderNo,
+                              @TokenToMallUser MallUser loginMallUser) {
+        String deleteOrderResult = orderService.deleteOrder(orderNo, loginMallUser.getUserId());
+        if (ServiceResultEnum.SUCCESS.getResult().equals(deleteOrderResult)) {
+            return ResultGenerator.genSuccessResult();
+        } else {
+            return ResultGenerator.genFailResult(deleteOrderResult);
         }
     }
 

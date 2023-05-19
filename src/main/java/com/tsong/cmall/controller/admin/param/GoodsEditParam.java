@@ -40,6 +40,9 @@ public class GoodsEditParam {
     @NotEmpty(message = "商品主图不能为空")
     private String goodsCoverImg;
 
+    @Schema(title = "商品轮播图")
+    private String goodsCarousel;
+
     @Schema(title = "originalPrice")
     @NotNull(message = "originalPrice不能为空")
     @Min(value = 1, message = "originalPrice最低为1")
@@ -64,7 +67,7 @@ public class GoodsEditParam {
     private String tag;
 
     @Schema(title = "商品上架状态")
-    @NotEmpty(message = "商品上架状态不能为空")
+    @NotNull(message = "商品上架状态不能为空")
     @Min(value = 0, message = "不存在该状态")
     @Max(value = 1, message = "不存在该状态")
     private Byte goodsSaleStatus;

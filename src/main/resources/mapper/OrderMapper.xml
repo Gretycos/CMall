@@ -44,7 +44,7 @@
       <if test="orderStatus!=null and orderStatus!='' or orderStatus == 0">
         and order_status = #{orderStatus}
       </if>
-      <if test="isDeleted!=null and isDeleted!=''">
+      <if test="isDeleted!=null and isDeleted!='' or isDeleted == 0">
         and is_deleted = #{isDeleted}
       </if>
       <if test="startTime != null and startTime.trim() != ''">

@@ -21,7 +21,7 @@ public class GoodsDetailVO implements Serializable {
     @Schema(title = "商品简介")
     private String goodsIntro;
 
-    @Schema(title = "商品图片地址")
+    @Schema(title = "商品封面")
     private String goodsCoverImg;
 
     @Schema(title = "商品价格")
@@ -30,11 +30,11 @@ public class GoodsDetailVO implements Serializable {
     @Schema(title = "商品标签")
     private String tag;
 
-    @Schema(title = "商品图片")
+    @Schema(title = "商品轮播图")
     private String[] goodsCarouselList;
 
     @Schema(title = "商品原价")
-    private Integer originalPrice;
+    private BigDecimal originalPrice;
 
     @Schema(title = "商品详情字段")
     private String goodsDetailContent;

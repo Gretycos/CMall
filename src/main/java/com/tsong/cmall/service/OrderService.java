@@ -31,7 +31,6 @@ public interface OrderService {
      * @Param [order]
      * @Return boolean
      */
-
     boolean updateByPrimaryKeySelective(Order order);
 
     /**
@@ -108,6 +107,13 @@ public interface OrderService {
      * @Return java.lang.String
      */
     String cancelOrder(String orderNo, Long userId);
+
+    /**
+     * @Description 删除订单（隐藏）
+     * @Param [orderNo, userId]
+     * @Return java.lang.String
+     */
+    String deleteOrder(String orderNo, Long userId);
 
     /**
      * @Description 确认收货

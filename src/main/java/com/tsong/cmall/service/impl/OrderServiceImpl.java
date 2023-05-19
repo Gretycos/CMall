@@ -442,7 +442,11 @@ public class OrderServiceImpl implements OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         for (OrderItemVO orderItemVO : orderItemVOList) {
             BigDecimal sellingPrice = orderItemVO.getSellingPrice().multiply(new BigDecimal(orderItemVO.getGoodsCount()));
-            orderItemVO.setPaidPrice(sellingPrice.divide(totalPrice,2,RoundingMode.HALF_UP).multiply(paidTotal));
+            if (paidTotal.compareTo(totalPrice) == 0){
+                orderItemVO.setPaidPrice(sellingPrice);
+            }else{
+                orderItemVO.setPaidPrice(sellingPrice.divide(totalPrice,2,RoundingMode.HALF_UP).multiply(paidTotal));
+            }
         }
     }
 
@@ -505,6 +509,30 @@ public class OrderServiceImpl implements OrderService {
                     Collections.singletonList(order.getOrderId()),
                     OrderStatusEnum.ORDER_CLOSED_BY_MALLUSER.getOrderStatus()) > 0
             && recoverStockNum(Collections.singletonList(order.getOrderId()))) {
+                return ServiceResultEnum.SUCCESS.getResult();
+            } else {
+                return ServiceResultEnum.DB_ERROR.getResult();
+            }
+        }
+        return ServiceResultEnum.ORDER_NOT_EXIST_ERROR.getResult();
+    }
+
+    @Override
+    public String deleteOrder(String orderNo, Long userId) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order != null){
+            // 验证是否是当前userId下的订单，否则报错
+            if (!userId.equals(order.getUserId())) {
+                return ServiceResultEnum.NO_PERMISSION_ERROR.getResult();
+            }
+            // 订单状态判断，如果不是关闭或完成的状态则报错
+            if (order.getOrderStatus().intValue() >= 0
+                    && order.getOrderStatus().intValue() != OrderStatusEnum.ORDER_SUCCESS.getOrderStatus()) {
+                return ServiceResultEnum.ORDER_STATUS_ERROR.getResult();
+            }
+            order.setIsDeleted((byte) 1);
+            order.setUpdateTime(new Date());
+            if (orderMapper.updateByPrimaryKeySelective(order) > 0) {
                 return ServiceResultEnum.SUCCESS.getResult();
             } else {
                 return ServiceResultEnum.DB_ERROR.getResult();

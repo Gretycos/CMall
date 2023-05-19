@@ -172,7 +172,7 @@
   <update id="recoverStockNum">
     <foreach collection="stockNumDTOS" item="stockNumDTO">
       update tb_goods_info set stock_num = stock_num+#{stockNumDTO.goodsCount}
-      where goods_id = #{stockNumDTO.goodsId} and stock_num>=#{stockNumDTO.goodsCount} and goods_sell_status = 0;
+      where goods_id = #{stockNumDTO.goodsId} and stock_num>=#{stockNumDTO.goodsCount} and goods_sale_status = 1;
     </foreach>
   </update>
 

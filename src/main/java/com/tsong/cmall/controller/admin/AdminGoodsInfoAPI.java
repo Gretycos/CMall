@@ -51,7 +51,7 @@ public class AdminGoodsInfoAPI {
     public Result list(@RequestParam(required = false) @Parameter(name = "页码") Integer pageNumber,
                        @RequestParam(required = false) @Parameter(name = "每页条数") Integer pageSize,
                        @RequestParam(required = false) @Parameter(name = "商品名称") String goodsName,
-                       @RequestParam(required = false) @Parameter(name = "上架状态 0-上架 1-下架") Integer goodsSaleStatus,
+                       @RequestParam(required = false) @Parameter(name = "上架状态 1-上架 0-下架") Integer goodsSaleStatus,
                        @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         if (pageNumber == null || pageNumber < 1) {
