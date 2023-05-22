@@ -218,8 +218,7 @@ public class SeckillServiceImpl implements SeckillService {
 
         // 在redis中记录该用户完成了该秒杀
         redisCache.setCacheSet(Constants.SECKILL_SUCCESS_USER_ID + seckillId, userId);
-        redisCache.expire(Constants.SECKILL_SUCCESS_USER_ID + seckillId,
-                endTime - nowTime, TimeUnit.MILLISECONDS);
+        redisCache.expire(Constants.SECKILL_SUCCESS_USER_ID + seckillId, endTime - nowTime, TimeUnit.MILLISECONDS);
 
         // 获得该用户的秒杀成功
         SeckillSuccess seckillSuccess = seckillSuccessMapper.getSeckillSuccessByUserIdAndSeckillId(
@@ -244,6 +243,7 @@ public class SeckillServiceImpl implements SeckillService {
         seckillGoodsVO.setGoodsName(goodsInfo.getGoodsName());
         seckillGoodsVO.setGoodsIntro(goodsInfo.getGoodsIntro());
         seckillGoodsVO.setGoodsDetailContent(goodsInfo.getGoodsDetailContent());
+        seckillGoodsVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
         seckillGoodsVO.setGoodsCarousel(goodsInfo.getGoodsCarousel().split(","));
         seckillGoodsVO.setSellingPrice(goodsInfo.getSellingPrice());
         seckillGoodsVO.setSeckillBegin(seckillGoodsVO.getSeckillBegin());

@@ -344,7 +344,7 @@ public class OrderServiceImpl implements OrderService {
         String extraInfo = "";
         order.setExtraInfo(extraInfo);
         if (orderMapper.insertSelective(order) <= 0) {
-            throw new CMallException("生成秒杀订单内部异常");
+            CMallException.fail("生成秒杀订单异常");
         }
 
         // 生成订单地址快照，并保存至数据库
@@ -362,12 +362,13 @@ public class OrderServiceImpl implements OrderService {
                 .orderId(order.getOrderId())
                 .seckillId(seckillId)
                 .goodsId(goodsInfo.getGoodsId())
+                .goodsName(goodsInfo.getGoodsName())
                 .goodsCoverImg(goodsInfo.getGoodsCoverImg())
                 .goodsCount(1)
                 .sellingPrice(seckill.getSeckillPrice())
                 .build();
-        if (orderItemMapper.insert(orderItem) <= 0) {
-            throw new CMallException("生成秒杀订单内部异常");
+        if (orderItemMapper.insertSelective(orderItem) <= 0) {
+            CMallException.fail("生成订单项异常");
         }
         // 订单支付超期任务
         taskService.addTask(new OrderUnpaidTask(order.getOrderId(), ProjectConfig.getSeckillOrderUnpaidOverTime() * 1000));

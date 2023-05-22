@@ -26,7 +26,10 @@ public class RedisCache {
      * @return 递增后返回值
      */
     public Long increment(final String key) {
-        return redisTemplate.opsForValue().increment(key);
+        if (redisTemplate.hasKey(key)){
+            return redisTemplate.opsForValue().increment(key);
+        }
+        return 0L;
     }
 
     /**
@@ -180,15 +183,13 @@ public class RedisCache {
     }
 
     /**
-     * 缓存Set
-     *
-     * @param key   缓存键值
-     * @param value 缓存的数据
-     * @return 缓存数据的对象
+     *  移除缓存Set中的元素
+     * @param key
+     * @param value
+     * @return
      */
-    public <T> long setCacheSet(final String key, final Object value, final long timeout, final TimeUnit unit) {
-        Long count = redisTemplate.opsForSet().add(key, value, timeout, unit);
-        return count == null ? 0 : count;
+    public Long deleteCacheSetMember(final String key, final Object value) {
+        return redisTemplate.opsForSet().remove(key,value);
     }
 
     /**

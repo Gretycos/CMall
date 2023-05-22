@@ -95,7 +95,7 @@ public class SeckillAPI {
         if (seckillGoodsVOList == null) {
             seckillGoodsVOList = seckillService.getSeckillGoodsList();
             // 放入redis
-            redisCache.setCacheObject(Constants.SECKILL_GOODS_LIST, seckillGoodsVOList, 60 * 60 * 100, TimeUnit.SECONDS);
+            redisCache.setCacheObject(Constants.SECKILL_GOODS_LIST, seckillGoodsVOList, 60 * 60 * 2, TimeUnit.SECONDS);
         }
         return ResultGenerator.genSuccessResult(seckillGoodsVOList);
     }

@@ -17,10 +17,6 @@ public class UpdateUserAddressParam implements Serializable {
     @NotNull(message = "地址id不能为空")
     private Long addressId;
 
-    @Schema(title = "用户id")
-    @NotNull(message = "用户id不能为空")
-    private Long userId;
-
     @Schema(title = "收件人名称")
     @NotNull(message = "收件人名称不能为空")
     @NotEmpty(message = "收件人名称不能为空")

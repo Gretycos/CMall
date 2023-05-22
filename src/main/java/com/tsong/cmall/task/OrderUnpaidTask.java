@@ -2,12 +2,10 @@ package com.tsong.cmall.task;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.OrderStatusEnum;
-import com.tsong.cmall.dao.GoodsInfoMapper;
-import com.tsong.cmall.dao.OrderItemMapper;
-import com.tsong.cmall.dao.OrderMapper;
-import com.tsong.cmall.dao.SeckillMapper;
+import com.tsong.cmall.dao.*;
 import com.tsong.cmall.entity.Order;
 import com.tsong.cmall.entity.OrderItem;
+import com.tsong.cmall.entity.SeckillSuccess;
 import com.tsong.cmall.redis.RedisCache;
 import com.tsong.cmall.service.CouponService;
 import com.tsong.cmall.util.SpringContextUtil;
@@ -71,6 +69,8 @@ public class OrderUnpaidTask extends Task{
             throw new RuntimeException("更新数据已失效");
         }
 
+        // 用户id
+        Long userId = order.getUserId();
         // 商品货品数量增加
         List<OrderItem> orderItemList = orderItemMapper.selectByOrderId(orderId);
         for (OrderItem orderItem : orderItemList) {
@@ -78,13 +78,19 @@ public class OrderUnpaidTask extends Task{
             if (orderItem.getSeckillId() != null) {
                 Long seckillId = orderItem.getSeckillId();
                 SeckillMapper seckillMapper = SpringContextUtil.getBean(SeckillMapper.class);
-                // 获得缓存
-                RedisCache redisCache = SpringContextUtil.getBean(RedisCache.class);
                 if (!seckillMapper.addStock(seckillId)) {
                     throw new RuntimeException("秒杀商品货品库存增加失败");
                 }
+                SeckillSuccessMapper seckillSuccessMapper = SpringContextUtil.getBean(SeckillSuccessMapper.class);
+                SeckillSuccess seckillSuccess = seckillSuccessMapper.getSeckillSuccessByUserIdAndSeckillId(userId, seckillId);
+                if (seckillSuccessMapper.deleteByPrimaryKey(seckillSuccess.getSecId()) <= 0){
+                    throw new RuntimeException("秒杀商品货品用户记录清除失败");
+                }
+                // 获得缓存
+                RedisCache redisCache = SpringContextUtil.getBean(RedisCache.class);
                 // 自动取消订单的商品数恢复
                 redisCache.increment(Constants.SECKILL_GOODS_STOCK_KEY + seckillId);
+                redisCache.deleteCacheSetMember(Constants.SECKILL_SUCCESS_USER_ID + seckillId, userId);
             } else {
                 Long goodsId = orderItem.getGoodsId();
                 Integer goodsCount = orderItem.getGoodsCount();
