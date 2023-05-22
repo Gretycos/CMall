@@ -1,9 +1,6 @@
 package com.tsong.cmall.service;
 
-import com.tsong.cmall.controller.vo.SeckillGoodsVO;
-import com.tsong.cmall.controller.vo.SeckillSuccessVO;
-import com.tsong.cmall.controller.vo.SeckillVO;
-import com.tsong.cmall.controller.vo.UrlExposerVO;
+import com.tsong.cmall.controller.vo.*;
 import com.tsong.cmall.entity.Seckill;
 import com.tsong.cmall.util.PageQueryUtil;
 import com.tsong.cmall.util.PageResult;

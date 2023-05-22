@@ -2,6 +2,7 @@ package com.tsong.cmall.dao;
 
 import com.tsong.cmall.entity.Seckill;
 import com.tsong.cmall.util.PageQueryUtil;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -34,4 +35,6 @@ public interface SeckillMapper {
     void killByProcedure(Map<String, Object> map);
 
     boolean addStock(Long seckillId);
+
+    int putOffBatch(@Param("seckillIds") List<Long> seckillIds);
 }

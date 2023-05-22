@@ -38,7 +38,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         // 已存在该购物车项目
         if (temp != null) {
             UpdateCartItemParam updateCartItemParam = new UpdateCartItemParam();
-            updateCartItemParam.setCartItemId(saveCartItemParam.getGoodsId());
+            updateCartItemParam.setCartItemId(temp.getCartItemId());
             // 叠加数量
             updateCartItemParam.setGoodsCount(temp.getGoodsCount() + saveCartItemParam.getGoodsCount());
             return updateShoppingCartItem(updateCartItemParam, userId);

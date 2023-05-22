@@ -7,9 +7,11 @@ import com.tsong.cmall.controller.admin.param.BatchIdParam;
 import com.tsong.cmall.controller.admin.param.GoodsAddParam;
 import com.tsong.cmall.controller.admin.param.GoodsEditParam;
 import com.tsong.cmall.controller.vo.GoodsAndCategoryVO;
+import com.tsong.cmall.controller.vo.GoodsNameVO;
 import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.entity.GoodsCategory;
 import com.tsong.cmall.entity.GoodsInfo;
+import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.GoodsCategoryService;
 import com.tsong.cmall.service.GoodsInfoService;
 import com.tsong.cmall.util.BeanUtil;
@@ -159,5 +161,22 @@ public class AdminGoodsInfoAPI {
         } else {
             return ResultGenerator.genFailResult("修改失败");
         }
+    }
+
+    @GetMapping("/goods/name/{goodsId}")
+    @Operation(summary = "商品名接口", description = "传参为商品id")
+    public Result<GoodsNameVO> goodsName(@Parameter(name = "商品id") @PathVariable("goodsId") Long goodsId,
+                                         @TokenToAdminUser AdminUserToken adminUser) {
+        logger.info("adminUser:{}", adminUser.toString());
+        if (goodsId < 1) {
+            return ResultGenerator.genFailResult("参数异常");
+        }
+        GoodsInfo goods = goodsInfoService.getGoodsInfoById(goodsId);
+        if (Constants.SALE_STATUS_UP != goods.getGoodsSaleStatus()) {
+            CMallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
+        }
+        GoodsNameVO goodsNameVO = new GoodsNameVO();
+        BeanUtil.copyProperties(goods, goodsNameVO);
+        return ResultGenerator.genSuccessResult(goodsNameVO);
     }
 }

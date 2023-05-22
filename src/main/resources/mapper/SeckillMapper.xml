@@ -89,6 +89,16 @@
     set seckill_num = seckill_num + 1
     where seckill_id = #{seckillId}
   </insert>
+  
+  <update id="putOffBatch">
+    update tb_seckill
+    set seckill_status = 0
+    where seckill_id in
+    <foreach collection="seckillIds" item="item" index="index"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 

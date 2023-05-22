@@ -17,7 +17,9 @@ project:
   # 项目名称
   name: CMall
   # 订单未支付超期时间，单位秒
-  orderUnpaidOverTime: 60
+  orderUnpaidOverTime: 180
+  # 秒杀订单未支付超期时间，单位秒
+  seckillOrderUnpaidOverTime: 120
 
 
 # 防止XSS攻击

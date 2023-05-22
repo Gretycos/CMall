@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 public class HomePageInfoVO implements Serializable {
     @Schema(title = "轮播图(列表)")
-    private List<HomePageCarouselVO> carousels;
+    private List<HomePageCarouselVO> carouselList;
 
     @Schema(title = "首页热销商品(列表)")
     private List<HomePageConfigGoodsVO> hotGoodsList;

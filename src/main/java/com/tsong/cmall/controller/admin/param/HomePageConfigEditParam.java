@@ -35,6 +35,9 @@ public class HomePageConfigEditParam implements Serializable {
     @Min(value = 1, message = "商品id不能为空")
     private Long goodsId;
 
+    @Schema(title = "配置项链接")
+    private String redirectUrl;
+
     @Schema(title = "排序值")
     @Min(value = 1, message = "configRank最低为1")
     @Max(value = 200, message = "configRank最高为200")

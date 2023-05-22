@@ -34,6 +34,9 @@ public class SeckillGoodsVO implements Serializable {
     @Schema(title = "商品封面图")
     private String goodsCoverImg;
 
+    @Schema(title = "商品轮播图")
+    private String[] goodsCarousel;
+
     @Schema(title = "商品售价")
     private BigDecimal sellingPrice;
 

@@ -19,6 +19,11 @@ public class ProjectConfig {
      */
     private static Integer orderUnpaidOverTime;
 
+    /**
+     * 秒杀订单超期未支付时间，单位秒
+     */
+    private static Integer seckillOrderUnpaidOverTime;
+
     public static String getName() {
         return name;
     }
@@ -35,5 +40,14 @@ public class ProjectConfig {
     @Value("${project.orderUnpaidOverTime}")
     public void setOrderUnpaidOverTime(Integer orderUnpaidOverTime) {
         ProjectConfig.orderUnpaidOverTime = orderUnpaidOverTime;
+    }
+
+    public static Integer getSeckillOrderUnpaidOverTime(){
+        return ProjectConfig.seckillOrderUnpaidOverTime;
+    }
+
+    @Value("${project.seckillOrderUnpaidOverTime}")
+    public void setSeckillOrderUnpaidOverTime(Integer seckillOrderUnpaidOverTime) {
+        ProjectConfig.seckillOrderUnpaidOverTime = seckillOrderUnpaidOverTime;
     }
 }

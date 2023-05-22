@@ -72,10 +72,11 @@ public class SeckillAPI {
 
     @PostMapping("/seckill/execute")
     @Operation(summary = "处理秒杀", description = "")
-    public Result execute(@Parameter(name = "秒杀事件参数") @RequestBody @Valid SeckillExeParam seckillExeParam){
+    public Result execute(@Parameter(name = "秒杀事件参数") @RequestBody @Valid SeckillExeParam seckillExeParam,
+                          @TokenToMallUser MallUser loginMallUser){
         String md5 = seckillExeParam.getMd5();
         Long seckillId = seckillExeParam.getSeckillId();
-        Long mallUserId = seckillExeParam.getMallUserId();
+        Long mallUserId = loginMallUser.getUserId();
         // 判断md5信息是否合法
         if (!md5.equals(MD5Util.MD5Encode(seckillId.toString(), Constants.UTF_ENCODING))) {
             throw new CMallException("秒杀商品不存在");

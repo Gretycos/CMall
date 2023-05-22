@@ -339,9 +339,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderNo(orderNo)
                 .totalPrice(seckill.getSeckillPrice())
                 .userId(userId)
-                .orderStatus((byte) OrderStatusEnum.ORDER_PAID.getOrderStatus())
-                .payType((byte) PayTypeEnum.NOT_PAY.getPayType())
-                .payTime(new Date())
+                .orderStatus((byte) OrderStatusEnum.ORDER_PRE_PAY.getOrderStatus())
                 .build();
         String extraInfo = "";
         order.setExtraInfo(extraInfo);
@@ -372,7 +370,7 @@ public class OrderServiceImpl implements OrderService {
             throw new CMallException("生成秒杀订单内部异常");
         }
         // 订单支付超期任务
-        taskService.addTask(new OrderUnpaidTask(order.getOrderId(), 30 * 1000));
+        taskService.addTask(new OrderUnpaidTask(order.getOrderId(), ProjectConfig.getSeckillOrderUnpaidOverTime() * 1000));
         return orderNo;
     }
 

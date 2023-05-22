@@ -36,7 +36,7 @@ public class HomePageAPI {
     @Operation(summary = "获取首页数据", description = "轮播图、新品、推荐等")
     public Result<HomePageInfoVO> indexInfo() {
         HomePageInfoVO homePageInfoVO = new HomePageInfoVO();
-        List<HomePageCarouselVO> carousels = carouselService
+        List<HomePageCarouselVO> carouselList = carouselService
                 .getCarouselsForHomePage(Constants.HOME_PAGE_CAROUSEL_NUMBER);
         List<HomePageConfigGoodsVO> hotGoodsList = homePageConfigService.getConfigGoodsForHomePage(
                         HomePageConfigTypeEnum.HOME_PAGE_GOODS_HOT.getType(),
@@ -47,7 +47,7 @@ public class HomePageAPI {
         List<HomePageConfigGoodsVO> recommendGoodsList = homePageConfigService.getConfigGoodsForHomePage(
                 HomePageConfigTypeEnum.HOME_PAGE_GOODS_RECOMMENDED.getType(),
                 Constants.HOME_PAGE_GOODS_RECOMMENDED_NUMBER);
-        homePageInfoVO.setCarousels(carousels);
+        homePageInfoVO.setCarouselList(carouselList);
         homePageInfoVO.setHotGoodsList(hotGoodsList);
         homePageInfoVO.setNewGoodsList(newGoodsList);
         homePageInfoVO.setRecommendGoodsList(recommendGoodsList);

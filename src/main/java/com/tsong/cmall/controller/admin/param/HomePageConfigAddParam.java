@@ -27,8 +27,11 @@ public class HomePageConfigAddParam implements Serializable {
 
     @Schema(title = "商品id")
     @NotNull(message = "商品id不能为空")
-    @Min(value = 1, message = "商品id不能为空")
+    @Min(value = 0, message = "商品id不能是负数")
     private Long goodsId;
+
+    @Schema(title = "配置项链接")
+    private String redirectUrl;
 
     @Schema(title = "排序值")
     @Min(value = 1, message = "configRank最低为1")

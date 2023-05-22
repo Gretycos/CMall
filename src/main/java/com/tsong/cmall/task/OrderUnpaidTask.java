@@ -56,7 +56,11 @@ public class OrderUnpaidTask extends Task{
 
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order == null || order.getOrderStatus() != OrderStatusEnum.ORDER_PRE_PAY.getOrderStatus()) {
-            log.info("系统结束处理延时任务---订单已付款--- {}", this.orderId);
+            if (order.getOrderStatus() > 0){
+                log.info("系统结束处理延时任务---订单已付款--- {}", this.orderId);
+            } else {
+                log.info("系统结束处理延时任务---订单已关闭--- {}", this.orderId);
+            }
             return;
         }
 

@@ -4,10 +4,7 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.SeckillStatusEnum;
 import com.tsong.cmall.common.ServiceResultEnum;
-import com.tsong.cmall.controller.vo.SeckillGoodsVO;
-import com.tsong.cmall.controller.vo.SeckillSuccessVO;
-import com.tsong.cmall.controller.vo.SeckillVO;
-import com.tsong.cmall.controller.vo.UrlExposerVO;
+import com.tsong.cmall.controller.vo.*;
 import com.tsong.cmall.dao.GoodsInfoMapper;
 import com.tsong.cmall.dao.SeckillMapper;
 import com.tsong.cmall.dao.SeckillSuccessMapper;
@@ -26,11 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.tsong.cmall.common.ServiceResultEnum.DATA_NOT_EXIST;
 
 /**
  * @Author Tsong
@@ -58,9 +56,12 @@ public class SeckillServiceImpl implements SeckillService {
     public PageResult getSeckillPage(PageQueryUtil pageUtil) {
         List<Seckill> seckillList = seckillMapper.findSeckillList(pageUtil);
         int total = seckillMapper.getTotalSeckills(pageUtil);
+        // 更新过期
+        List<SeckillVO> expiredSeckillList = new ArrayList<>();
         // 返回结果
         List<SeckillVO> seckillVOList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(seckillList)){
+            Date now = new Date();
             // 映射商品id列表
             List<Long> goodsIdList = seckillList.stream().map(Seckill::getGoodsId).toList();
             // 查询商品列表
@@ -71,12 +72,25 @@ public class SeckillServiceImpl implements SeckillService {
 
             seckillVOList = BeanUtil.copyList(seckillList, SeckillVO.class);
             for (SeckillVO seckillVO : seckillVOList) {
+                if (seckillVO.getSeckillEnd().getTime() < now.getTime()){
+                    if (seckillVO.getSeckillStatus()){
+                        seckillVO.setSeckillStatus(false);
+                        expiredSeckillList.add(seckillVO);
+                    }
+                }
                 GoodsInfo goodsInfo = goodsInfoMap.get(seckillVO.getGoodsId());
                 if (goodsInfo == null){
                     CMallException.fail(ServiceResultEnum.GOODS_NOT_EXIST.getResult());
                 }
                 seckillVO.setGoodsName(goodsInfo.getGoodsName());
                 seckillVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
+            }
+            if (!expiredSeckillList.isEmpty()){
+                List<Long> seckillIds = expiredSeckillList.stream().map(SeckillVO::getSeckillId).toList();
+                if (seckillMapper.putOffBatch(seckillIds) <= 0){
+                    CMallException.fail("无法设置秒杀过期下架");
+                }
+                deleteSeckillFromCache(seckillIds);
             }
         }
         return new PageResult(seckillVOList, total, pageUtil.getLimit(), pageUtil.getPage());
@@ -108,7 +122,7 @@ public class SeckillServiceImpl implements SeckillService {
     public boolean updateSeckill(Seckill seckill) {
         Seckill temp = seckillMapper.selectByPrimaryKey(seckill.getSeckillId());
         if (temp == null) {
-            CMallException.fail(ServiceResultEnum.DATA_NOT_EXIST.getResult());
+            CMallException.fail(DATA_NOT_EXIST.getResult());
         }
         // 更新时间
         seckill.setUpdateTime(new Date());
@@ -230,7 +244,7 @@ public class SeckillServiceImpl implements SeckillService {
         seckillGoodsVO.setGoodsName(goodsInfo.getGoodsName());
         seckillGoodsVO.setGoodsIntro(goodsInfo.getGoodsIntro());
         seckillGoodsVO.setGoodsDetailContent(goodsInfo.getGoodsDetailContent());
-        seckillGoodsVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
+        seckillGoodsVO.setGoodsCarousel(goodsInfo.getGoodsCarousel().split(","));
         seckillGoodsVO.setSellingPrice(goodsInfo.getSellingPrice());
         seckillGoodsVO.setSeckillBegin(seckillGoodsVO.getSeckillBegin());
         seckillGoodsVO.setSeckillEnd(seckillGoodsVO.getSeckillEnd());
@@ -240,9 +254,15 @@ public class SeckillServiceImpl implements SeckillService {
     @Override
     public List<SeckillGoodsVO> getSeckillGoodsList() {
         List<Seckill> seckillList = seckillMapper.findHomePageSeckillList();
-        return seckillList.stream().map(seckill -> {
+        Date now = new Date();
+        List<Seckill> expiredSeckillList = new ArrayList<>();
+        List<SeckillGoodsVO> res = seckillList.stream().map(seckill -> {
             SeckillGoodsVO seckillGoodsVO = new SeckillGoodsVO();
             BeanUtil.copyProperties(seckill, seckillGoodsVO);
+            if (seckill.getSeckillEnd().getTime() < now.getTime()){
+                expiredSeckillList.add(seckill);
+                return null;
+            }
             GoodsInfo goodsInfo = goodsInfoMapper.selectByPrimaryKey(seckill.getGoodsId());
             if (goodsInfo == null) {
                 return null;
@@ -250,9 +270,25 @@ public class SeckillServiceImpl implements SeckillService {
             seckillGoodsVO.setGoodsName(goodsInfo.getGoodsName());
             seckillGoodsVO.setGoodsCoverImg(goodsInfo.getGoodsCoverImg());
             seckillGoodsVO.setSellingPrice(goodsInfo.getSellingPrice());
-            seckillGoodsVO.setSeckillBegin(seckillGoodsVO.getSeckillBegin());
-            seckillGoodsVO.setSeckillEnd(seckillGoodsVO.getSeckillEnd());
             return seckillGoodsVO;
         }).filter(Objects::nonNull).toList();
+        // 每次查询时会自动过滤已经过期的秒杀
+        // 并且把过期的秒杀设置为下架状态
+        if (!expiredSeckillList.isEmpty()){
+            List<Long> seckillIds = expiredSeckillList.stream().map(Seckill::getSeckillId).toList();
+            if (seckillMapper.putOffBatch(seckillIds) <= 0){
+                CMallException.fail("无法设置秒杀过期下架");
+            }
+            deleteSeckillFromCache(seckillIds);
+        }
+        return res;
+    }
+
+    private void deleteSeckillFromCache(List<Long> seckillIds){
+        for (Long seckillId : seckillIds) {
+            redisCache.deleteObject(Constants.SECKILL_GOODS_STOCK_KEY + seckillId);
+            redisCache.deleteObject(Constants.SECKILL_GOODS_DETAIL + seckillId);
+        }
+        redisCache.deleteObject(Constants.SECKILL_GOODS_LIST);
     }
 }
