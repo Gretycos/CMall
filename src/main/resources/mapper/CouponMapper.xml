@@ -100,8 +100,8 @@
     from tb_coupon t
     <where>
       t.is_deleted = 0
-      AND t.coupon_type = 0
-      AND t.coupon_status = 0
+      and t.coupon_type = 0
+      and t.coupon_status = 0
       and DATE_FORMAT(t.coupon_start_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
       and DATE_FORMAT(t.coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
     </where>
@@ -122,8 +122,8 @@
     <include refid="Base_Column_List"/>
     from tb_coupon
     where is_deleted = 0 and coupon_type = 1
-    and coupon_start_time <![CDATA[ < ]]> now()
-    and coupon_end_time <![CDATA[ > ]]> now()
+    and DATE_FORMAT(coupon_start_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
+    and DATE_FORMAT(coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

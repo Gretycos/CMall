@@ -18,49 +18,42 @@
   </sql>
 
   <select id="getUserCouponCount" resultType="java.lang.Integer">
-    select count(coupon_user_id)
+    select count(1)
     from tb_user_coupon_record
     where is_deleted = 0
       and user_id = #{userId}
       and coupon_id = #{couponId}
   </select>
 
-  <select id="getCouponCount" resultType="java.lang.Integer">
-    select count(coupon_user_id)
+  <select id="selectMyCouponRecords" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
     from tb_user_coupon_record
     where is_deleted = 0
-      and coupon_id = #{couponId}
-  </select>
-
-  <select id="selectMyCoupons" resultMap="BaseResultMap">
-    select r.*
-    from tb_user_coupon_record r
-    join tb_coupon c on r.coupon_id = c.coupon_id
-    WHERE
-    r.is_deleted = 0
-    AND c.is_deleted = 0
-    AND c.coupon_status = 0
-    AND r.user_id = #{userId}
-    AND DATE_FORMAT( c.coupon_start_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( now(), '%Y-%m-%d' )
-    AND DATE_FORMAT( c.coupon_end_time, '%Y-%m-%d' ) <![CDATA[ >= ]]> DATE_FORMAT(now(), '%Y-%m-%d')
-    order by r.use_status asc, r.create_time desc, r.coupon_user_id desc
+      and user_id = #{userId}
+      and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_SUB(CURRENT_DATE,INTERVAL 1 MONTH)
+    order by use_status asc, create_time desc, coupon_user_id desc
     <if test="start!=null and limit!=null">
       limit #{start},#{limit}
     </if>
   </select>
 
-  <select id="selectMyAvailableCoupons" resultMap="BaseResultMap">
-    select r.*
-    from tb_user_coupon_record r
-    join tb_coupon c on r.coupon_id = c.coupon_id
+  <select id="countMyCoupons" resultType="java.lang.Integer">
+    select count(1)
+    from tb_user_coupon_record
     WHERE
-      r.is_deleted = 0
-      AND c.is_deleted = 0
-      AND c.coupon_status = 0
-      AND r.user_id = #{userId}
-      AND r.use_status = 0
-      AND DATE_FORMAT( c.coupon_start_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT(now(), '%Y-%m-%d' )
-      AND DATE_FORMAT( c.coupon_end_time, '%Y-%m-%d' ) <![CDATA[ >= ]]> DATE_FORMAT(now(), '%Y-%m-%d')
+      is_deleted = 0
+      and user_id = #{userId}
+  </select>
+
+  <select id="selectMyAvailableCoupons" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_user_coupon_record
+    where
+      is_deleted = 0
+      and user_id = #{userId}
+      and use_status = 0
     order by create_time
   </select>
 
@@ -71,18 +64,15 @@
     where is_deleted = 0 and order_id = #{orderId}
   </select>
 
-  <select id="countMyCoupons" resultType="java.lang.Integer">
-    select count(1)
-    from tb_user_coupon_record r
-    join tb_coupon c on r.coupon_id = c.coupon_id
-    WHERE
-      r.is_deleted = 0
-      AND c.is_deleted = 0
-      AND c.coupon_status = 0
-      AND r.user_id = #{userId}
-      AND DATE_FORMAT( c.coupon_start_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( now(), '%Y-%m-%d' )
-      AND DATE_FORMAT( c.coupon_end_time, '%Y-%m-%d' ) <![CDATA[ >= ]]> DATE_FORMAT(now(), '%Y-%m-%d')
-  </select>
+  <update id="expireBatch">
+    update tb_user_coupon_record
+    set use_status = 2
+    where coupon_user_id in
+    <foreach collection="userCouponIds" item="item" index="index"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 

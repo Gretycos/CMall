@@ -24,6 +24,9 @@ public class MyCouponVO implements Serializable {
     @Schema(title = "优惠券id")
     private Long couponId;
 
+    @Schema(title = "用户优惠券状态",description = "-1：失效，0：未使用，1：已使用")
+    private Byte useStatus;
+
     @Schema(title = "优惠券名称")
     private String couponName;
 
@@ -36,15 +39,15 @@ public class MyCouponVO implements Serializable {
     @Schema(title = "优惠券最低消费")
     private Integer min;
 
-    @Schema(title = "商品类型")
+    @Schema(title = "商品限制类型")
     private Byte goodsType;
 
-    @Schema(title = "商品")
+    @Schema(title = "商品限制值")
     private String goodsValue;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date startTime;
+    private Date couponStartTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date endTime;
+    private Date couponEndTime;
 }

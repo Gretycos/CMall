@@ -15,9 +15,6 @@ public class CouponVO implements Serializable {
     @Schema(title = "优惠券id")
     private Long couponId;
 
-    @Schema(title = "优惠券用户id")
-    private Long couponUserId;
-
     @Schema(title = "优惠券名字")
     private String couponName;
 
@@ -29,9 +26,6 @@ public class CouponVO implements Serializable {
 
     @Schema(title = "优惠券领完")
     private boolean soldOut;
-
-    @Schema(title = "优惠券已用")
-    private boolean isUsed;
 
     @Schema(title = "优惠券折扣")
     private Integer discount;

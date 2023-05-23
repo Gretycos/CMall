@@ -24,7 +24,7 @@ public class OrderUnpaidTask extends Task{
     /**
      * 默认延迟时间30分钟，单位毫秒
      */
-    private static final long DELAY_TIME = 30 * 60 * 1000;
+    private static final long DELAY_TIME = 60 * 30 * 1000;
 
     private final Logger log = LoggerFactory.getLogger(OrderUnpaidTask.class);
     /**
@@ -50,6 +50,7 @@ public class OrderUnpaidTask extends Task{
         OrderMapper orderMapper = SpringContextUtil.getBean(OrderMapper.class);
         OrderItemMapper orderItemMapper = SpringContextUtil.getBean(OrderItemMapper.class);
         GoodsInfoMapper goodsInfoMapper = SpringContextUtil.getBean(GoodsInfoMapper.class);
+        SeckillSuccessMapper seckillSuccessMapper = SpringContextUtil.getBean(SeckillSuccessMapper.class);
         CouponService couponService = SpringContextUtil.getBean(CouponService.class);
 
         Order order = orderMapper.selectByPrimaryKey(orderId);
@@ -81,7 +82,6 @@ public class OrderUnpaidTask extends Task{
                 if (!seckillMapper.addStock(seckillId)) {
                     throw new RuntimeException("秒杀商品货品库存增加失败");
                 }
-                SeckillSuccessMapper seckillSuccessMapper = SpringContextUtil.getBean(SeckillSuccessMapper.class);
                 SeckillSuccess seckillSuccess = seckillSuccessMapper.getSeckillSuccessByUserIdAndSeckillId(userId, seckillId);
                 if (seckillSuccessMapper.deleteByPrimaryKey(seckillSuccess.getSecId()) <= 0){
                     throw new RuntimeException("秒杀商品货品用户记录清除失败");

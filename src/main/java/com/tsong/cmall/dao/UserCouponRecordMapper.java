@@ -2,6 +2,7 @@ package com.tsong.cmall.dao;
 
 import com.tsong.cmall.entity.UserCouponRecord;
 import com.tsong.cmall.util.PageQueryUtil;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -24,13 +25,14 @@ public interface UserCouponRecordMapper {
 
     int getUserCouponCount(Long userId, Long couponId);
 
-    int getCouponCount(Long couponId);
-
-    List<UserCouponRecord> selectMyCoupons(PageQueryUtil pageQueryUtil);
+    List<UserCouponRecord> selectMyCouponRecords(PageQueryUtil pageQueryUtil);
 
     Integer countMyCoupons(PageQueryUtil pageQueryUtil);
 
     List<UserCouponRecord> selectMyAvailableCoupons(Long userId);
 
     UserCouponRecord getUserCouponByOrderId(Long orderId);
+
+    int expireBatch(@Param("userCouponIds") List<Long> userCouponIds);
+
 }

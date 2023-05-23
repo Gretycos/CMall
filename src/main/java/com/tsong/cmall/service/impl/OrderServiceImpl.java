@@ -8,6 +8,7 @@ import com.tsong.cmall.entity.*;
 import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.OrderService;
 import com.tsong.cmall.task.OrderUnpaidTask;
+import com.tsong.cmall.task.SeckillOrderUnsubmitTask;
 import com.tsong.cmall.task.TaskService;
 import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.NumberUtil;
@@ -326,7 +327,7 @@ public class OrderServiceImpl implements OrderService {
     public String seckillSaveOrder(Long seckillSuccessId, Long userId, UserAddress address) {
         SeckillSuccess seckillSuccess = seckillSuccessMapper.selectByPrimaryKey(seckillSuccessId);
         if (!seckillSuccess.getUserId().equals(userId)) {
-            throw new CMallException("当前登陆用户与抢购秒杀商品的用户不匹配");
+            CMallException.fail("当前登陆用户与抢购秒杀商品的用户不匹配");
         }
         Long seckillId = seckillSuccess.getSeckillId();
         Seckill seckill = seckillMapper.selectByPrimaryKey(seckillId);
@@ -370,6 +371,8 @@ public class OrderServiceImpl implements OrderService {
         if (orderItemMapper.insertSelective(orderItem) <= 0) {
             CMallException.fail("生成订单项异常");
         }
+        // 秒杀订单提交后移除未提交的定时任务
+        taskService.removeTask(new SeckillOrderUnsubmitTask(seckillSuccessId));
         // 订单支付超期任务
         taskService.addTask(new OrderUnpaidTask(order.getOrderId(), ProjectConfig.getSeckillOrderUnpaidOverTime() * 1000));
         return orderNo;

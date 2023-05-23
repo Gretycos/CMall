@@ -14,6 +14,8 @@ import com.tsong.cmall.entity.SeckillSuccess;
 import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.redis.RedisCache;
 import com.tsong.cmall.service.SeckillService;
+import com.tsong.cmall.task.SeckillOrderUnsubmitTask;
+import com.tsong.cmall.task.TaskService;
 import com.tsong.cmall.util.BeanUtil;
 import com.tsong.cmall.util.MD5Util;
 import com.tsong.cmall.util.PageQueryUtil;
@@ -21,6 +23,7 @@ import com.tsong.cmall.util.PageResult;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -51,6 +54,9 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Autowired
     private RedisCache redisCache;
+
+    @Autowired
+    private TaskService taskService;
 
     @Override
     public PageResult getSeckillPage(PageQueryUtil pageUtil) {
@@ -165,6 +171,7 @@ public class SeckillServiceImpl implements SeckillService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SeckillSuccessVO executeSeckill(Long seckillId, Long userId) {
         // 判断能否在500毫秒内得到令牌，如果不能则立即返回false，不会阻塞程序
         if (!rateLimiter.tryAcquire(500, TimeUnit.MILLISECONDS)) {
@@ -206,7 +213,7 @@ public class SeckillServiceImpl implements SeckillService {
         try {
             seckillMapper.killByProcedure(map);
         } catch (Exception e) {
-            throw new CMallException(e.getMessage());
+            CMallException.fail(e.getMessage());
         }
         // 获取result -2sql执行失败 -1未插入数据 0未更新数据 1sql执行成功
         // map.get("result");
@@ -230,6 +237,8 @@ public class SeckillServiceImpl implements SeckillService {
         seckillSuccessVO.setMd5(
                 MD5Util.MD5Encode(
                         seckillSuccessId + Constants.SECKILL_ORDER_SALT, Constants.UTF_ENCODING));
+        // 秒杀成功后未提交订单
+        taskService.addTask(new SeckillOrderUnsubmitTask(seckillSuccessId,60 * 1 * 1000));
         return seckillSuccessVO;
     }
 

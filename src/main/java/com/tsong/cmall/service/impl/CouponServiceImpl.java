@@ -112,27 +112,27 @@ public class CouponServiceImpl implements CouponService {
         Coupon coupon = couponMapper.selectByPrimaryKey(couponId);
         if (coupon.getCouponType() == 2){
             if (couponCode == null){
-                throw new CMallException("优惠券码为空！");
+                CMallException.fail("优惠券码为空！");
             }
             if (!couponCode.equals(coupon.getCouponCode())){
-                throw new CMallException("优惠券码不正确！");
+                CMallException.fail("优惠券码不正确！");
             }
         }
         if (coupon.getCouponLimit() != 0) { // 0 是该用户可以不限次数领该券
             // 查询该用户获得该券的数量
             int num = userCouponRecordMapper.getUserCouponCount(userId, couponId);
             if (num != 0) {
-                throw new CMallException("优惠券已经领过了,无法再次领取！");
+                CMallException.fail("优惠券已经领过了,无法再次领取！");
             }
         }
         if (coupon.getCouponTotal() == 1) {
-            throw new CMallException("优惠券已经领完了！");
+            CMallException.fail("优惠券已经领完了！");
         }
         if (coupon.getCouponTotal() != 0) { // 0 是无限张数
             // couponTotal -= 1;
             // 这里where total > 1
             if (couponMapper.reduceCouponTotal(couponId) <= 0) {
-                throw new CMallException("优惠券领取失败！");
+                CMallException.fail("优惠券领取失败！");
             }
         }
         // coupon.total > 1 || coupon.total == 0
@@ -143,70 +143,33 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public PageResult<CouponVO> selectMyCoupons(PageQueryUtil pageUtil) {
-        Integer total = userCouponRecordMapper.countMyCoupons(pageUtil);
-        List<CouponVO> couponVOList = new ArrayList<>();
+    public PageResult selectMyCoupons(PageQueryUtil pageUtil) {
+        int total = userCouponRecordMapper.countMyCoupons(pageUtil);
+        List<MyCouponVO> myCouponVOList = new ArrayList<>();
         if (total > 0) {
             // 从拿券记录中查询我领过的券
-            List<UserCouponRecord> userCouponRecordList = userCouponRecordMapper.selectMyCoupons(pageUtil);
-            // 获取我领过的券的id集合
-            List<Long> couponIdList = userCouponRecordList.stream().map(UserCouponRecord::getCouponId).toList();
-            if (!CollectionUtils.isEmpty(couponIdList)) {
-                // 用id集合查询券
-                List<Coupon> couponList = couponMapper.selectByIds(couponIdList);
-                // map，用id找coupon
-                // 因为couponVO需要coupon的属性，以及userCoupon的属性
-                Map<Long, Coupon> couponMap = couponList.stream().collect(toMap(Coupon::getCouponId, coupon -> coupon));
-                for (UserCouponRecord userCouponRecord : userCouponRecordList) {
-                    CouponVO couponVO = new CouponVO();
-                    Coupon coupon = couponMap.get(userCouponRecord.getCouponId());
-                    BeanUtil.copyProperties(coupon, couponVO);
-                    couponVO.setCouponUserId(userCouponRecord.getCouponUserId());
-                    couponVO.setUsed(userCouponRecord.getUsedTime() != null);
-                    couponVOList.add(couponVO);
-                }
-            }
+            List<UserCouponRecord> userCouponRecordList = userCouponRecordMapper.selectMyCouponRecords(pageUtil);
+            // 从领券记录转化成用户领券视图
+            getMyCouponVOList(myCouponVOList, userCouponRecordList);
         }
-        return new PageResult<>(couponVOList, total, pageUtil.getLimit(), pageUtil.getPage());
+        return new PageResult(myCouponVOList, total, pageUtil.getLimit(), pageUtil.getPage());
     }
 
     @Override
     public List<MyCouponVO> selectCouponsForOrder(List<ShoppingCartItemVO> myShoppingCartItems, BigDecimal priceTotal, Long userId) {
         List<UserCouponRecord> userCouponRecordList = userCouponRecordMapper.selectMyAvailableCoupons(userId);
-        List<MyCouponVO> myCouponVOList = BeanUtil.copyList(userCouponRecordList, MyCouponVO.class);
         List<Long> couponIds = userCouponRecordList.stream().map(UserCouponRecord::getCouponId).toList();
+        List<MyCouponVO> myCouponVOList = new ArrayList<>();
         if (!couponIds.isEmpty()) {
-            // 时区
-            ZoneId zone = ZoneId.systemDefault();
-            List<Coupon> couponList = couponMapper.selectByIds(couponIds);
-            Map<Long, Coupon> couponMap = couponList.stream().collect(toMap(Coupon::getCouponId, coupon -> coupon));
-            // 把coupon的值传递给myCouponVO
-            for (MyCouponVO myCouponVO : myCouponVOList) {
-                Coupon coupon = couponMap.get(myCouponVO.getCouponId());
-                if (coupon != null){
-                    myCouponVO.setCouponName(coupon.getCouponName());
-                    myCouponVO.setCouponDesc(coupon.getCouponDesc());
-                    myCouponVO.setDiscount(coupon.getDiscount());
-                    myCouponVO.setMin(coupon.getMin());
-                    myCouponVO.setGoodsType(coupon.getGoodsType());
-                    myCouponVO.setGoodsValue(coupon.getGoodsValue());
-                    ZonedDateTime startZonedDateTime =
-                            coupon.getCouponStartTime().toInstant().atZone(zone).toLocalDate().atStartOfDay(zone);
-                    ZonedDateTime endZonedDateTime =
-                            coupon.getCouponEndTime().toInstant().atZone(zone).toLocalDate().atStartOfDay(zone);
-                    myCouponVO.setStartTime(Date.from(startZonedDateTime.toInstant()));
-                    myCouponVO.setEndTime(Date.from(endZonedDateTime.toInstant()));
-                }
-            }
+            // 从领券记录转化成用户领券视图
+            getMyCouponVOList(myCouponVOList, userCouponRecordList);
         }
 
-        long nowTime = System.currentTimeMillis();
+        long nowTime = new Date().getTime();
         // 筛选可用的券
         return myCouponVOList.stream().filter(item -> {
-            // 判断有效期
-            Date startTime = item.getStartTime();
-            Date endTime = item.getEndTime();
-            if (startTime == null || endTime == null || nowTime < startTime.getTime() || nowTime > endTime.getTime()) {
+            // 排除过期的和未开始的券
+            if (item.getUseStatus() != 0 || nowTime < item.getCouponStartTime().getTime()) {
                 return false;
             }
             // 判断使用条件
@@ -223,7 +186,8 @@ public class CouponServiceImpl implements CouponService {
 
                     if (item.getGoodsType() == 1) { // 指定分类可用
                         List<GoodsInfo> goodsList = goodsInfoMapper.selectByPrimaryKeys(goodsIds);
-                        List<Long> categoryIds = goodsList.stream().map(GoodsInfo::getGoodsCategoryId).toList();
+                        // 分类id集
+                        Set<Long> categoryIds = goodsList.stream().map(GoodsInfo::getGoodsCategoryId).collect(toSet());
                         for (Long categoryId : categoryIds) {
                             if (goodsValueSet.contains(categoryId)) {
                                 isValid = true;
@@ -242,6 +206,44 @@ public class CouponServiceImpl implements CouponService {
             }
             return isValid;
         }).sorted(Comparator.comparingInt(MyCouponVO::getDiscount)).toList();
+    }
+
+    private void getMyCouponVOList(List<MyCouponVO> myCouponVOList, List<UserCouponRecord> userCouponRecordList){
+        // 获取用户领券的id集合
+        List<Long> couponIdList = userCouponRecordList.stream().map(UserCouponRecord::getCouponId).toList();
+        if (!CollectionUtils.isEmpty(couponIdList)) {
+            Date now = new Date();
+            // 用id集合查询券
+            List<Coupon> couponList = couponMapper.selectByIds(couponIdList);
+            // 未使用但过期的已领券
+            List<UserCouponRecord> expiredAndNotUsedUserCouponRecordList = new ArrayList<>();
+            // map，用id找coupon
+            // 因为couponVO需要coupon的属性，以及userCoupon的属性
+            Map<Long, Coupon> couponMap = couponList.stream().collect(toMap(Coupon::getCouponId, coupon -> coupon));
+            for (UserCouponRecord userCouponRecord : userCouponRecordList) {
+                MyCouponVO myCouponVO = new MyCouponVO();
+                Coupon coupon = couponMap.get(userCouponRecord.getCouponId());
+                if (coupon != null){
+                    BeanUtil.copyProperties(coupon, myCouponVO);
+                    myCouponVO.setCouponUserId(userCouponRecord.getCouponUserId());
+                    // 优惠券过期未使用
+                    if (userCouponRecord.getUseStatus() != 1 && now.getTime() > coupon.getCouponEndTime().getTime()){
+                        myCouponVO.setUseStatus((byte) 2);
+                        expiredAndNotUsedUserCouponRecordList.add(userCouponRecord);
+                    } else {
+                        myCouponVO.setUseStatus(userCouponRecord.getUseStatus());
+                    }
+                    myCouponVOList.add(myCouponVO);
+                }
+            }
+            if (!expiredAndNotUsedUserCouponRecordList.isEmpty()){
+                List<Long> userCouponRecordIds = expiredAndNotUsedUserCouponRecordList.stream()
+                        .map(UserCouponRecord::getCouponUserId).toList();
+                if (userCouponRecordMapper.expireBatch(userCouponRecordIds) <= 0){
+                    CMallException.fail("设置用户已领券失效失败");
+                }
+            }
+        }
     }
 
     @Override

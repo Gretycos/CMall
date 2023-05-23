@@ -38,7 +38,7 @@ public class CouponAPI {
     }
 
     @GetMapping("/coupon/my")
-    @Operation(summary = "我的优惠券列表", description = "")
+    @Operation(summary = "我的优惠券列表", description = "能够查询到领券后一个月内的记录")
     public Result<PageResult<CouponVO>> myCouponList(@Parameter(name = "页码") @RequestParam(required = false) Integer pageNumber,
                                @TokenToMallUser MallUser loginMallUser){
         Map<String, Object> params = new HashMap<>(8);

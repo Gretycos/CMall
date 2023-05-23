@@ -40,7 +40,7 @@ public interface CouponService {
      * @Param [pageQueryUtil]
      * @Return com.tsong.cmall.util.PageResult<com.tsong.cmall.controller.vo.CouponVO>
      */
-    PageResult<CouponVO> selectMyCoupons(PageQueryUtil pageQueryUtil);
+    PageResult<MyCouponVO> selectMyCoupons(PageQueryUtil pageQueryUtil);
 
     /**
      * @Description 查询当前订单可用的优惠券
