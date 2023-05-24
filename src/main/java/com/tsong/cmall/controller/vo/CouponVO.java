@@ -1,10 +1,11 @@
 package com.tsong.cmall.controller.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * @Author Tsong
@@ -52,10 +53,12 @@ public class CouponVO implements Serializable {
     private String code;
 
     @Schema(title = "优惠券开始时间")
-    private LocalDate couponStartTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date couponStartTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Schema(title = "优惠券结束时间")
-    private LocalDate couponEndTime;
+    private Date couponEndTime;
 
     @Schema(title = "优惠券已领取过")
     private boolean hasReceived;

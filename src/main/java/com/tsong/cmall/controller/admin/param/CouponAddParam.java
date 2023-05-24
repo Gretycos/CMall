@@ -69,11 +69,9 @@ public class CouponAddParam implements Serializable {
     @Schema(title = "商品限制值")
     private String goodsValue;
 
-    @NotNull(message = "开始时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date couponStartTime;
 
-    @NotNull(message = "结束时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date couponEndTime;
 }

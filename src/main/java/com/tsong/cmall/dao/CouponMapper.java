@@ -22,13 +22,17 @@ public interface CouponMapper {
 
     int updateByPrimaryKey(Coupon row);
 
+    Coupon selectByCode(String code);
+
     int deleteBatch(Integer[] couponIds);
 
     List<Coupon> findCouponList(PageQueryUtil pageUtil);
 
     int getTotalCoupons(PageQueryUtil pageUtil);
 
-    List<Coupon> selectAvailableCoupon();
+    List<Coupon> selectAvailableCoupon(PageQueryUtil pageUtil);
+
+    int getTotalAvailableCoupons(PageQueryUtil pageUtil);
 
     int reduceCouponTotal(Long couponId);
 

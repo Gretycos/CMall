@@ -30,6 +30,12 @@
     <include refid="Base_Column_List"/>
     from tb_user_coupon_record
     where is_deleted = 0
+      <if test="useStatus != null and useStatus == 0">
+        and use_status = 0
+      </if>
+      <if test="useStatus != null and useStatus != 0">
+        and use_status != 0
+      </if>
       and user_id = #{userId}
       and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_SUB(CURRENT_DATE,INTERVAL 1 MONTH)
     order by use_status asc, create_time desc, coupon_user_id desc
@@ -41,9 +47,15 @@
   <select id="countMyCoupons" resultType="java.lang.Integer">
     select count(1)
     from tb_user_coupon_record
-    WHERE
-      is_deleted = 0
+    WHERE is_deleted = 0
+    <if test="useStatus != null and useStatus == 0">
+      and use_status = 0
+    </if>
+    <if test="useStatus != null and useStatus != 0">
+      and use_status != 0
+    </if>
       and user_id = #{userId}
+      and DATE_FORMAT(create_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_SUB(CURRENT_DATE,INTERVAL 1 MONTH)
   </select>
 
   <select id="selectMyAvailableCoupons" resultMap="BaseResultMap">

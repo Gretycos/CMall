@@ -26,7 +26,7 @@ public interface CouponService {
      * @Param [userId]
      * @Return java.util.List<com.tsong.cmall.controller.vo.CouponVO>
      */
-    List<CouponVO> selectAvailableCoupon(Long userId);
+    PageResult selectAvailableCoupon(Long userId, PageQueryUtil pageQueryUtil);
 
     /**
      * @Description 用户领取优惠券
@@ -41,6 +41,8 @@ public interface CouponService {
      * @Return com.tsong.cmall.util.PageResult<com.tsong.cmall.controller.vo.CouponVO>
      */
     PageResult<MyCouponVO> selectMyCoupons(PageQueryUtil pageQueryUtil);
+
+    List<MyCouponVO> selectAllMyAvailableCoupons(Long userId);
 
     /**
      * @Description 查询当前订单可用的优惠券

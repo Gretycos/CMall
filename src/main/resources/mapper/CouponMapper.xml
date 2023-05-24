@@ -25,11 +25,15 @@
     coupon_status, goods_type, goods_value, coupon_code, coupon_start_time, coupon_end_time, 
     create_time, update_time, is_deleted
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
+
+  <select id="selectByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
     from tb_coupon
-    where coupon_id = #{couponId,jdbcType=BIGINT}
+    where coupon_code = #{code,jdbcType=VARCHAR}
+      and coupon_status = 0
+      and is_deleted = 0
+    limit 1
   </select>
 
   <select id="findCouponList" parameterType="Map" resultMap="BaseResultMap">
@@ -40,10 +44,10 @@
     <if test="couponName != null and couponName != ''">
       and coupon_name LIKE CONCAT('%',#{couponName},'%')
     </if>
-    <if test="couponType != null and couponType != ''">
+    <if test="couponType != null and couponType != '' or couponType == 0">
       and coupon_type = #{couponType}
     </if>
-    <if test="couponStatus != null and couponStatus != ''">
+    <if test="couponStatus != null and couponStatus != '' or couponStatus == 0">
       and coupon_status = #{couponStatus}
     </if>
     <if test="startTime != null and startTime != ''">
@@ -65,10 +69,10 @@
     <if test="couponName != null and couponName != ''">
       and coupon_name LIKE CONCAT('%',#{couponName},'%')
     </if>
-    <if test="couponType != null and couponType != ''">
+    <if test="couponType != null and couponType != '' or couponType == 0">
       and coupon_type = #{couponType}
     </if>
-    <if test="couponStatus != null and couponStatus != ''">
+    <if test="couponStatus != null and couponStatus != '' or couponStatus == 0">
       and coupon_status = #{couponStatus}
     </if>
     <if test="startTime != null and startTime != ''">
@@ -94,17 +98,31 @@
       and coupon_total > 1
   </update>
 
-  <select id="selectAvailableCoupon" resultMap="BaseResultMap">
+  <select id="selectAvailableCoupon" parameterType="Map" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
-    from tb_coupon t
-    <where>
-      t.is_deleted = 0
-      and t.coupon_type = 0
-      and t.coupon_status = 0
-      and DATE_FORMAT(t.coupon_start_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
-      and DATE_FORMAT(t.coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
-    </where>
+    from tb_coupon
+    where is_deleted = 0
+      and coupon_type = 0
+      and coupon_status = 0
+      and DATE_FORMAT(coupon_start_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
+      and DATE_FORMAT(coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="getTotalAvailableCoupons" parameterType="Map" resultType="int">
+    select count(1)
+    from tb_coupon
+    where is_deleted = 0
+    and coupon_type = 0
+    and coupon_status = 0
+    and DATE_FORMAT(coupon_start_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
+    and DATE_FORMAT(coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
   </select>
 
   <select id="selectByIds" resultMap="BaseResultMap">
@@ -126,6 +144,12 @@
     and DATE_FORMAT(coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
   </select>
 
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_coupon
+    where coupon_id = #{couponId,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from tb_coupon
     where coupon_id = #{couponId,jdbcType=BIGINT}

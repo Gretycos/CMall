@@ -77,11 +77,9 @@ public class CouponEditParam implements Serializable {
     @NotEmpty(message = "可用商品范围不能为空")
     private String goodsValue;
 
-    @NotNull(message = "开始时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date couponStartTime;
 
-    @NotNull(message = "结束时间不能为空")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date couponEndTime;
 }
