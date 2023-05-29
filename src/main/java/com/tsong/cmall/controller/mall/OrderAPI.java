@@ -112,6 +112,8 @@ public class OrderAPI {
         params.put("isDeleted", (byte) 0);
         params.put("page", pageNumber);
         params.put("limit", Constants.MY_ORDERS_PAGE_LIMIT);
+        params.put("sortField", "create_time"); // 要写数据库中的字段
+        params.put("order", "desc");
         //封装分页请求参数
         PageQueryUtil pageUtil = new PageQueryUtil(params);
         return ResultGenerator.genSuccessResult(orderService.getMyOrders(pageUtil));

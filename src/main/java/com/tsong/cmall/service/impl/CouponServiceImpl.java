@@ -351,9 +351,12 @@ public class CouponServiceImpl implements CouponService {
                 }
             }
         }
-        List<GoodsInfo> goodsInfoList = goodsInfoMapper.selectByPrimaryKeys(goodsIds.stream().toList());
-        for (GoodsInfo goodsInfo : goodsInfoList) {
-            categoryIds.add(goodsInfo.getGoodsCategoryId());
+        List<GoodsInfo> goodsInfoList = new ArrayList<>();
+        if (!goodsIds.isEmpty()){
+            goodsInfoList = goodsInfoMapper.selectByPrimaryKeys(goodsIds.stream().toList());
+            for (GoodsInfo goodsInfo : goodsInfoList) {
+                categoryIds.add(goodsInfo.getGoodsCategoryId());
+            }
         }
         List<GoodsCategory> goodsCategoryList = goodsCategoryMapper.selectByPrimaryKeys(categoryIds.stream().toList());
 
