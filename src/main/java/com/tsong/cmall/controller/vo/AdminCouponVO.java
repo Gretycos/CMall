@@ -9,10 +9,10 @@ import java.util.Date;
 
 /**
  * @Author Tsong
- * @Date 2023/3/22 00:24
+ * @Date 2023/5/29 15:32
  */
 @Data
-public class CouponVO implements Serializable {
+public class AdminCouponVO implements Serializable {
     @Schema(title = "优惠券id")
     private Long couponId;
 
@@ -24,9 +24,6 @@ public class CouponVO implements Serializable {
 
     @Schema(title = "优惠券总数")
     private Integer couponTotal;
-
-    @Schema(title = "优惠券领完")
-    private boolean soldOut;
 
     @Schema(title = "优惠券折扣")
     private Integer discount;
@@ -63,6 +60,11 @@ public class CouponVO implements Serializable {
     @Schema(title = "优惠券结束时间")
     private Date couponEndTime;
 
-    @Schema(title = "优惠券已领取过")
-    private boolean hasReceived;
+    @Schema(title = "优惠券创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
+
+    @Schema(title = "优惠券更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
 }

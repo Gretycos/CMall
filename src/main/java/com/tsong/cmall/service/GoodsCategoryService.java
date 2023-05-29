@@ -1,5 +1,6 @@
 package com.tsong.cmall.service;
 
+import com.tsong.cmall.controller.vo.CategoryNamesVO;
 import com.tsong.cmall.controller.vo.CategoryResultVO;
 import com.tsong.cmall.controller.vo.HomePageCategoryVO;
 import com.tsong.cmall.controller.vo.SearchPageCategoryVO;
@@ -15,7 +16,6 @@ public interface GoodsCategoryService {
      * @Param [pageUtil]
      * @Return com.tsong.cmall.util.PageResult
      */
-
     PageResult getCategoriesPage(PageQueryUtil pageUtil);
 
     String saveCategory(GoodsCategory goodsCategory);
@@ -31,7 +31,6 @@ public interface GoodsCategoryService {
      * @Param []
      * @Return java.util.List<com.tsong.cmall.controller.vo.HomePageCategoryVO>
      */
-
     List<HomePageCategoryVO> getCategoriesForHomePage();
 
     /**
@@ -54,4 +53,6 @@ public interface GoodsCategoryService {
      * @Return java.util.List<com.tsong.cmall.entity.GoodsCategory>
      */
     List<GoodsCategory> selectByLevelAndParentIdsAndNumber(List<Long> parentIds, int categoryLevel);
+
+    List<CategoryNamesVO> getAllLevel3Categories();
 }

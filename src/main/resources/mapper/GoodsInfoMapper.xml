@@ -13,9 +13,9 @@
     <result column="stock_num" jdbcType="INTEGER" property="stockNum" />
     <result column="tag" jdbcType="VARCHAR" property="tag" />
     <result column="goods_sale_status" jdbcType="TINYINT" property="goodsSaleStatus" />
-    <result column="create_user" jdbcType="INTEGER" property="createUser" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_user" jdbcType="INTEGER" property="updateUser" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.tsong.cmall.entity.GoodsInfo">
@@ -44,6 +44,9 @@
     <include refid="Base_Column_List"/>
     from tb_goods_info
     <where>
+      <if test="createUser!=null and createUser != 1">
+        and create_user = #{createUser}
+      </if>
       <if test="goodsName!=null and goodsName!=''">
         and goods_name like CONCAT('%',#{goodsName},'%')
       </if>
@@ -66,6 +69,9 @@
   <select id="getTotalGoods" parameterType="Map" resultType="int">
     select count(*) from tb_goods_info
     <where>
+      <if test="createUser!=null and createUser != 1">
+        and create_user = #{createUser}
+      </if>
       <if test="goodsName!=null and goodsName!=''">
         and goods_name like CONCAT('%',#{goodsName},'%')
       </if>
@@ -79,6 +85,25 @@
         and create_time &lt; #{endTime}
       </if>
     </where>
+  </select>
+
+  <select id="selectByIdAndCreateUser" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_goods_info
+    where goods_id = #{goodsId,jdbcType=BIGINT}
+    <if test="createUser!=null and createUser != 1">
+      and create_user = #{createUser}
+    </if>
+  </select>
+
+  <select id="selectByCreateUser" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_goods_info
+    where create_user = #{createUser}
   </select>
 
   <select id="selectByPrimaryKeys" resultMap="BaseResultMap">
@@ -178,10 +203,14 @@
 
   <update id="batchUpdateSaleStatus">
     update tb_goods_info
-    set goods_sale_status=#{saleStatus},update_time=now() where goods_id in
+    set goods_sale_status=#{saleStatus},update_time=now()
+    where goods_id in
     <foreach item="id" collection="orderIds" open="(" separator="," close=")">
       #{id}
     </foreach>
+    <if test="createUser!=null and createUser != 1">
+      and create_user = #{createUser}
+    </if>
   </update>
 
   <insert id="addStock">
@@ -212,8 +241,8 @@
     values (#{goodsId,jdbcType=BIGINT}, #{goodsName,jdbcType=VARCHAR}, #{goodsIntro,jdbcType=VARCHAR}, 
       #{goodsCategoryId,jdbcType=BIGINT}, #{goodsCoverImg,jdbcType=VARCHAR}, #{goodsCarousel,jdbcType=VARCHAR}, 
       #{originalPrice,jdbcType=DECIMAL}, #{sellingPrice,jdbcType=DECIMAL}, #{stockNum,jdbcType=INTEGER},
-      #{tag,jdbcType=VARCHAR}, #{goodsSaleStatus,jdbcType=TINYINT}, #{createUser,jdbcType=INTEGER},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{tag,jdbcType=VARCHAR}, #{goodsSaleStatus,jdbcType=TINYINT}, #{createUser,jdbcType=BIGINT},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP},
       #{goodsDetailContent,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.tsong.cmall.entity.GoodsInfo">
@@ -303,13 +332,13 @@
         #{goodsSaleStatus,jdbcType=TINYINT},
       </if>
       <if test="createUser != null">
-        #{createUser,jdbcType=INTEGER},
+        #{createUser,jdbcType=BIGINT},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateUser != null">
-        #{updateUser,jdbcType=INTEGER},
+        #{updateUser,jdbcType=BIGINT},
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
@@ -353,13 +382,13 @@
         goods_sale_status = #{goodsSaleStatus,jdbcType=TINYINT},
       </if>
       <if test="createUser != null">
-        create_user = #{createUser,jdbcType=INTEGER},
+        create_user = #{createUser,jdbcType=BIGINT},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateUser != null">
-        update_user = #{updateUser,jdbcType=INTEGER},
+        update_user = #{updateUser,jdbcType=BIGINT},
       </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
@@ -382,9 +411,9 @@
       stock_num = #{stockNum,jdbcType=INTEGER},
       tag = #{tag,jdbcType=VARCHAR},
       goods_sale_status = #{goodsSaleStatus,jdbcType=TINYINT},
-      create_user = #{createUser,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_user = #{updateUser,jdbcType=INTEGER},
+      update_user = #{updateUser,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       goods_detail_content = #{goodsDetailContent,jdbcType=LONGVARCHAR}
     where goods_id = #{goodsId,jdbcType=BIGINT}
@@ -401,9 +430,9 @@
       stock_num = #{stockNum,jdbcType=INTEGER},
       tag = #{tag,jdbcType=VARCHAR},
       goods_sale_status = #{goodsSaleStatus,jdbcType=TINYINT},
-      create_user = #{createUser,jdbcType=INTEGER},
+      create_user = #{createUser,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_user = #{updateUser,jdbcType=INTEGER},
+      update_user = #{updateUser,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where goods_id = #{goodsId,jdbcType=BIGINT}
   </update>

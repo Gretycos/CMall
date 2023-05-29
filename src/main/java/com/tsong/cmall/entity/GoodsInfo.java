@@ -40,12 +40,12 @@ public class GoodsInfo {
 
     private Byte goodsSaleStatus;
 
-    private Integer createUser;
+    private Long createUser;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
-    private Integer updateUser;
+    private Long updateUser;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;

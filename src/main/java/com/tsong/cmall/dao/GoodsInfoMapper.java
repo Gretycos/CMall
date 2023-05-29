@@ -32,6 +32,10 @@ public interface GoodsInfoMapper {
 
     int getTotalGoods(PageQueryUtil pageUtil);
 
+    GoodsInfo selectByIdAndCreateUser(Long id, Long createUser);
+
+    List<GoodsInfo> selectByCreateUser(Long createUser);
+
     List<GoodsInfo> selectByPrimaryKeys(List<Long> goodsIds);
 
     List<GoodsInfo> findGoodsListBySearch(PageQueryUtil pageUtil);
@@ -44,7 +48,7 @@ public interface GoodsInfoMapper {
 
     int recoverStockNum(List<StockNumDTO> stockNumDTOS);
 
-    int batchUpdateSaleStatus(Long[] orderIds, int saleStatus);
+    int batchUpdateSaleStatus(Long[] orderIds, int saleStatus, Long createUser);
 
     boolean addStock(Long goodsId, Integer goodsCount);
 }

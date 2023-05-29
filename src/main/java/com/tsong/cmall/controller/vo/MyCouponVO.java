@@ -45,6 +45,9 @@ public class MyCouponVO implements Serializable {
     @Schema(title = "商品限制值")
     private String goodsValue;
 
+    @Schema(title = "商品限制值名称")
+    private String goodsValueNames;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date couponStartTime;
 

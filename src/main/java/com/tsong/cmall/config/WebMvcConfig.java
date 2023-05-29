@@ -3,6 +3,8 @@ package com.tsong.cmall.config;
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.config.requestHandler.TokenToAdminUserMethodArgumentResolver;
 import com.tsong.cmall.config.requestHandler.TokenToMallUserMethodArgumentResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -18,6 +20,7 @@ import java.util.List;
  */
 @Configuration
 public class WebMvcConfig extends WebMvcConfigurationSupport {
+    private static final Logger logger = LoggerFactory.getLogger(WebMvcConfig.class);
     @Autowired
     private TokenToMallUserMethodArgumentResolver tokenToMallUserMethodArgumentResolver;
     @Autowired
@@ -33,9 +36,10 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     }
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/upload/**").addResourceLocations("file:" + Constants.FILE_UPLOAD_DIC);
-        registry.addResourceHandler("/goods-img/**").addResourceLocations("file:" + Constants.FILE_UPLOAD_DIC);
-
+        String path = "file:" + Constants.FILE_UPLOAD_DIC;
+        logger.info("registry static resource path: " + path);
+        registry.addResourceHandler("/upload/**").addResourceLocations(path);
+        registry.addResourceHandler("/goods-img/**").addResourceLocations(path);
         registry.
                 addResourceHandler("/swagger-ui/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/4.18.2/")

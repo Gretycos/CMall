@@ -204,4 +204,10 @@ public class GoodsCategoryServiceImpl implements GoodsCategoryService {
     public List<GoodsCategory> selectByLevelAndParentIdsAndNumber(List<Long> parentIds, int categoryLevel) {
         return goodsCategoryMapper.selectByLevelAndParentIdsAndNumber(parentIds, categoryLevel, 0); // 0代表查询所有
     }
+
+    @Override
+    public List<CategoryNamesVO> getAllLevel3Categories() {
+        List<GoodsCategory> categoryList = goodsCategoryMapper.selectByLevel(3);
+        return BeanUtil.copyList(categoryList, CategoryNamesVO.class);
+    }
 }

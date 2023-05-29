@@ -22,13 +22,9 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author Tsong
@@ -145,5 +141,12 @@ public class AdminGoodsCategoryAPI {
         } else {
             return ResultGenerator.genFailResult("删除失败");
         }
+    }
+
+    @GetMapping(value = "/categories/all")
+    @Operation(summary = "三级分类列表", description = "")
+    public Result searchAllCategories(@TokenToAdminUser AdminUserToken adminUser) {
+        logger.info("adminUser:{}", adminUser.toString());
+        return ResultGenerator.genSuccessResult(goodsCategoryService.getAllLevel3Categories());
     }
 }

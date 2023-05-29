@@ -2,6 +2,7 @@ package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.CategoryLevelEnum;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.controller.vo.GoodsNameVO;
 import com.tsong.cmall.controller.vo.SearchPageGoodsVO;
 import com.tsong.cmall.dao.GoodsCategoryMapper;
 import com.tsong.cmall.dao.GoodsInfoMapper;
@@ -90,6 +91,15 @@ public class GoodsInfoServiceImpl implements GoodsInfoService {
     }
 
     @Override
+    public GoodsInfo getGoodsInfoById(Long id, Long createUser) {
+        GoodsInfo goodsInfo = goodsInfoMapper.selectByIdAndCreateUser(id, createUser);
+        if (goodsInfo == null) {
+            CMallException.fail(ServiceResultEnum.GOODS_NOT_EXIST.getResult());
+        }
+        return goodsInfo;
+    }
+
+    @Override
     public GoodsInfo getGoodsInfoById(Long id) {
         GoodsInfo goodsInfo = goodsInfoMapper.selectByPrimaryKey(id);
         if (goodsInfo == null) {
@@ -99,8 +109,8 @@ public class GoodsInfoServiceImpl implements GoodsInfoService {
     }
 
     @Override
-    public Boolean batchUpdateSaleStatus(Long[] ids, int saleStatus) {
-        return goodsInfoMapper.batchUpdateSaleStatus(ids, saleStatus) > 0;
+    public Boolean batchUpdateSaleStatus(Long[] ids, int saleStatus, Long createUser) {
+        return goodsInfoMapper.batchUpdateSaleStatus(ids, saleStatus, createUser) > 0;
     }
 
     @Override
@@ -125,5 +135,11 @@ public class GoodsInfoServiceImpl implements GoodsInfoService {
             }
         }
         return new PageResult(searchPageGoodsVOList, total, pageUtil.getLimit(), pageUtil.getPage());
+    }
+
+    @Override
+    public List<GoodsNameVO> getAllGoods(Long createUser) {
+        List<GoodsInfo> goodsList = goodsInfoMapper.selectByCreateUser(createUser);
+        return BeanUtil.copyList(goodsList, GoodsNameVO.class);
     }
 }

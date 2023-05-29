@@ -1,13 +1,16 @@
 package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.Constants;
+import com.tsong.cmall.controller.vo.AdminCouponVO;
 import com.tsong.cmall.controller.vo.CouponVO;
 import com.tsong.cmall.controller.vo.MyCouponVO;
 import com.tsong.cmall.controller.vo.ShoppingCartItemVO;
 import com.tsong.cmall.dao.CouponMapper;
+import com.tsong.cmall.dao.GoodsCategoryMapper;
 import com.tsong.cmall.dao.GoodsInfoMapper;
 import com.tsong.cmall.dao.UserCouponRecordMapper;
 import com.tsong.cmall.entity.Coupon;
+import com.tsong.cmall.entity.GoodsCategory;
 import com.tsong.cmall.entity.GoodsInfo;
 import com.tsong.cmall.entity.UserCouponRecord;
 import com.tsong.cmall.exception.CMallException;
@@ -22,9 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Collectors.toMap;
@@ -42,12 +44,35 @@ public class CouponServiceImpl implements CouponService {
     private UserCouponRecordMapper userCouponRecordMapper;
     @Autowired
     private GoodsInfoMapper goodsInfoMapper;
+    @Autowired
+    private GoodsCategoryMapper goodsCategoryMapper;
 
     @Override
     public PageResult getCouponPage(PageQueryUtil pageUtil) {
-        List<Coupon> carousels = couponMapper.findCouponList(pageUtil);
+        List<Coupon> couponList = couponMapper.findCouponList(pageUtil);
+        List<AdminCouponVO> couponVOList = BeanUtil.copyList(couponList, AdminCouponVO.class);
         int total = couponMapper.getTotalCoupons(pageUtil);
-        return new PageResult(carousels, total, pageUtil.getLimit(), pageUtil.getPage());
+        if (total > 0){
+            Map[] maps = getCategoryOrGoodsNamesMap(couponList);
+            Map<Long, String> categoryNamesMap = maps[0];
+            Map<Long, String> goodsCategoryNamesMap = maps[1];
+            for (AdminCouponVO adminCouponVO : couponVOList) {
+                StringBuilder namesBuilder = new StringBuilder();
+                for (String id : adminCouponVO.getGoodsValue().split(",")) {
+                    if (adminCouponVO.getGoodsType() == 1){
+                        namesBuilder.append(categoryNamesMap.get(Long.valueOf(id))+"分区");
+                    } else if (adminCouponVO.getGoodsType() == 2){
+                        namesBuilder.append(goodsCategoryNamesMap.get(Long.valueOf(id)) + "分区指定商品");
+                    }
+                    namesBuilder.append(",");
+                }
+                if (!namesBuilder.isEmpty()){
+                    namesBuilder.deleteCharAt(namesBuilder.length() - 1);
+                }
+                adminCouponVO.setGoodsValueNames(namesBuilder.toString());
+            }
+        }
+        return new PageResult(couponVOList, total, pageUtil.getLimit(), pageUtil.getPage());
     }
 
     @Override
@@ -82,10 +107,15 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public PageResult selectAvailableCoupon(Long userId, PageQueryUtil pageUtil) {
+        // 查询当前上架的普通券
         List<Coupon> coupons = couponMapper.selectAvailableCoupon(pageUtil);
         List<CouponVO> couponVOList = BeanUtil.copyList(coupons, CouponVO.class);
         int total = couponMapper.getTotalAvailableCoupons(pageUtil);
         if (total > 0){
+            Map[] maps = getCategoryOrGoodsNamesMap(coupons);
+            Map<Long, String> categoryNamesMap = maps[0];
+            Map<Long, String> goodsCategoryNamesMap = maps[1];
+
             for (CouponVO couponVO : couponVOList) {
                 if (userId != null) {
                     // 查找领券记录
@@ -101,6 +131,20 @@ public class CouponServiceImpl implements CouponService {
                         couponVO.setSoldOut(true);
                     }
                 }
+                // 处理限制值的名字
+                StringBuilder namesBuilder = new StringBuilder();
+                for (String id : couponVO.getGoodsValue().split(",")) {
+                    if (couponVO.getGoodsType() == 1){
+                        namesBuilder.append(categoryNamesMap.get(Long.valueOf(id)) + "分区");
+                    } else if (couponVO.getGoodsType() == 2){
+                        namesBuilder.append(goodsCategoryNamesMap.get(Long.valueOf(id)) + "分区指定商品");
+                    }
+                    namesBuilder.append(",");
+                }
+                if (!namesBuilder.isEmpty()){
+                    namesBuilder.deleteCharAt(namesBuilder.length() - 1);
+                }
+                couponVO.setGoodsValueNames(namesBuilder.toString());
             }
         }
         return new PageResult(couponVOList, total, pageUtil.getLimit(), pageUtil.getPage());
@@ -233,8 +277,14 @@ public class CouponServiceImpl implements CouponService {
             Calendar sevenDaysAgo = Calendar.getInstance();
             sevenDaysAgo.setTime(now);
             sevenDaysAgo.add(Calendar.DATE, -7);
+
             // 用id集合查询券
             List<Coupon> couponList = couponMapper.selectByIds(couponIdList);
+
+            Map[] maps = getCategoryOrGoodsNamesMap(couponList);
+            Map<Long, String> categoryNamesMap = maps[0];
+            Map<Long, String> goodsCategoryNamesMap = maps[1];
+
             // 未使用但过期的已领券
             List<UserCouponRecord> expiredAndNotUsedUserCouponRecordList = new ArrayList<>();
             // map，用id找coupon
@@ -259,6 +309,20 @@ public class CouponServiceImpl implements CouponService {
                     } else {
                         myCouponVO.setUseStatus(userCouponRecord.getUseStatus());
                     }
+                    // 处理限制值的名字
+                    StringBuilder namesBuilder = new StringBuilder();
+                    for (String id : myCouponVO.getGoodsValue().split(",")) {
+                        if (myCouponVO.getGoodsType() == 1){
+                            namesBuilder.append(categoryNamesMap.get(Long.valueOf(id))+"分区");
+                        } else if (myCouponVO.getGoodsType() == 2){
+                            namesBuilder.append(goodsCategoryNamesMap.get(Long.valueOf(id)) + "分区指定商品");
+                        }
+                        namesBuilder.append(",");
+                    }
+                    if (!namesBuilder.isEmpty()){
+                        namesBuilder.deleteCharAt(namesBuilder.length() - 1);
+                    }
+                    myCouponVO.setGoodsValueNames(namesBuilder.toString());
                     myCouponVOList.add(myCouponVO);
                 }
             }
@@ -270,6 +334,34 @@ public class CouponServiceImpl implements CouponService {
                 }
             }
         }
+    }
+
+    private Map[] getCategoryOrGoodsNamesMap(List<Coupon> couponList){
+        Set<Long> categoryIds = new HashSet<>();
+        Set<Long> goodsIds = new HashSet<>();
+
+        for (Coupon coupon : couponList) {
+            if (coupon.getGoodsType() == 1){
+                for (String id : coupon.getGoodsValue().split(",")) {
+                    categoryIds.add(Long.valueOf(id));
+                }
+            } else if (coupon.getGoodsType() == 2){
+                for (String id : coupon.getGoodsValue().split(",")) {
+                    goodsIds.add(Long.valueOf(id));
+                }
+            }
+        }
+        List<GoodsInfo> goodsInfoList = goodsInfoMapper.selectByPrimaryKeys(goodsIds.stream().toList());
+        for (GoodsInfo goodsInfo : goodsInfoList) {
+            categoryIds.add(goodsInfo.getGoodsCategoryId());
+        }
+        List<GoodsCategory> goodsCategoryList = goodsCategoryMapper.selectByPrimaryKeys(categoryIds.stream().toList());
+
+        Map<Long, String> categoryNamesMap = goodsCategoryList.stream().collect(
+                Collectors.toMap(GoodsCategory::getCategoryId, GoodsCategory::getCategoryName));
+        Map<Long, String> goodsCategoryNamesMap = goodsInfoList.stream().collect(
+                Collectors.toMap(GoodsInfo::getGoodsId, e -> categoryNamesMap.get(e.getGoodsCategoryId())));
+        return new Map[]{categoryNamesMap, goodsCategoryNamesMap};
     }
 
     @Override

@@ -32,4 +32,8 @@ public interface GoodsCategoryMapper {
     int deleteBatch(Long[] ids);
 
     List<GoodsCategory> selectByLevelAndParentIdsAndNumber(List<Long> parentIds, int categoryLevel, int number);
+
+    List<GoodsCategory> selectByPrimaryKeys(List<Long> ids);
+
+    List<GoodsCategory> selectByLevel(int categoryLevel);
 }

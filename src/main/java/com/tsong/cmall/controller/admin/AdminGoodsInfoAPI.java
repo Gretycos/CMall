@@ -28,8 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author Tsong
@@ -71,6 +70,7 @@ public class AdminGoodsInfoAPI {
         if (goodsSaleStatus != null) {
             params.put("goodsSaleStatus", goodsSaleStatus);
         }
+        params.put("createUser", adminUser.getAdminUserId());
         PageQueryUtil pageUtil = new PageQueryUtil(params);
         return ResultGenerator.genSuccessResult(goodsInfoService.getGoodsInfoPage(pageUtil));
     }
@@ -84,6 +84,7 @@ public class AdminGoodsInfoAPI {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsInfo goodsInfo = new GoodsInfo();
         BeanUtil.copyProperties(goodsAddParam, goodsInfo);
+        goodsInfo.setCreateUser(adminUser.getAdminUserId());
         String result = goodsInfoService.saveGoodsInfo(goodsInfo);
         if (ServiceResultEnum.SUCCESS.getResult().equals(result)) {
             return ResultGenerator.genSuccessResult();
@@ -102,6 +103,8 @@ public class AdminGoodsInfoAPI {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsInfo goodsInfo = new GoodsInfo();
         BeanUtil.copyProperties(goodsEditParam, goodsInfo);
+        goodsInfo.setUpdateUser(adminUser.getAdminUserId());
+        goodsInfo.setUpdateTime(new Date());
         String result = goodsInfoService.updateGoodsInfo(goodsInfo);
         if (ServiceResultEnum.SUCCESS.getResult().equals(result)) {
             return ResultGenerator.genSuccessResult();
@@ -118,7 +121,7 @@ public class AdminGoodsInfoAPI {
     public Result info(@PathVariable("id") Long id, @TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
         GoodsAndCategoryVO goodsAndCategoryVO = new GoodsAndCategoryVO();
-        GoodsInfo goodsInfo = goodsInfoService.getGoodsInfoById(id);
+        GoodsInfo goodsInfo = goodsInfoService.getGoodsInfoById(id, adminUser.getAdminUserId());
         if (goodsInfo == null) {
             return ResultGenerator.genFailResult(ServiceResultEnum.DATA_NOT_EXIST.getResult());
         }
@@ -156,7 +159,7 @@ public class AdminGoodsInfoAPI {
         if (saleStatus != Constants.SALE_STATUS_UP && saleStatus != Constants.SALE_STATUS_DOWN) {
             return ResultGenerator.genFailResult("状态异常！");
         }
-        if (goodsInfoService.batchUpdateSaleStatus(batchIdParam.getIds(), saleStatus)) {
+        if (goodsInfoService.batchUpdateSaleStatus(batchIdParam.getIds(), saleStatus, adminUser.getAdminUserId())) {
             return ResultGenerator.genSuccessResult();
         } else {
             return ResultGenerator.genFailResult("修改失败");
@@ -171,12 +174,20 @@ public class AdminGoodsInfoAPI {
         if (goodsId < 1) {
             return ResultGenerator.genFailResult("参数异常");
         }
-        GoodsInfo goods = goodsInfoService.getGoodsInfoById(goodsId);
+        GoodsInfo goods = goodsInfoService.getGoodsInfoById(goodsId, adminUser.getAdminUserId());
         if (Constants.SALE_STATUS_UP != goods.getGoodsSaleStatus()) {
             CMallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
         }
         GoodsNameVO goodsNameVO = new GoodsNameVO();
         BeanUtil.copyProperties(goods, goodsNameVO);
         return ResultGenerator.genSuccessResult(goodsNameVO);
+    }
+
+    @GetMapping("/goods/all")
+    @Operation(summary = "管理员商品查询列表接口", description = "")
+    public Result searchAllGoods(@TokenToAdminUser AdminUserToken adminUser) {
+        logger.info("adminUser:{}", adminUser.toString());
+
+        return ResultGenerator.genSuccessResult(goodsInfoService.getAllGoods(adminUser.getAdminUserId()));
     }
 }
