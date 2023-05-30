@@ -32,7 +32,7 @@ public interface GoodsInfoMapper {
 
     int getTotalGoods(PageQueryUtil pageUtil);
 
-    GoodsInfo selectByIdAndCreateUser(Long id, Long createUser);
+    GoodsInfo selectByIdAndCreateUser(Long goodsId, Long createUser);
 
     List<GoodsInfo> selectByCreateUser(Long createUser);
 

@@ -138,7 +138,7 @@ public class GoodsInfoServiceImpl implements GoodsInfoService {
     }
 
     @Override
-    public List<GoodsNameVO> getAllGoods(Long createUser) {
+    public List<GoodsNameVO> getAllGoodsIdsAndNames(Long createUser) {
         List<GoodsInfo> goodsList = goodsInfoMapper.selectByCreateUser(createUser);
         return BeanUtil.copyList(goodsList, GoodsNameVO.class);
     }

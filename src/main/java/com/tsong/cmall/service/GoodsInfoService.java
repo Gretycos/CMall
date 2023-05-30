@@ -64,5 +64,5 @@ public interface GoodsInfoService {
      * @Param [createUser]
      * @Return java.util.List<com.tsong.cmall.controller.vo.GoodsNameVO>
      */
-    List<GoodsNameVO> getAllGoods(Long createUser);
+    List<GoodsNameVO> getAllGoodsIdsAndNames(Long createUser);
 }

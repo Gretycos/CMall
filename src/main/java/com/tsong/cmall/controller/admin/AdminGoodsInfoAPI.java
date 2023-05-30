@@ -7,6 +7,7 @@ import com.tsong.cmall.controller.admin.param.BatchIdParam;
 import com.tsong.cmall.controller.admin.param.GoodsAddParam;
 import com.tsong.cmall.controller.admin.param.GoodsEditParam;
 import com.tsong.cmall.controller.vo.GoodsAndCategoryVO;
+import com.tsong.cmall.controller.vo.GoodsCarouselVO;
 import com.tsong.cmall.controller.vo.GoodsNameVO;
 import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.entity.GoodsCategory;
@@ -185,9 +186,26 @@ public class AdminGoodsInfoAPI {
 
     @GetMapping("/goods/all")
     @Operation(summary = "管理员商品查询列表接口", description = "")
-    public Result searchAllGoods(@TokenToAdminUser AdminUserToken adminUser) {
+    public Result searchAllGoodsIdsAndNames(@TokenToAdminUser AdminUserToken adminUser) {
         logger.info("adminUser:{}", adminUser.toString());
 
-        return ResultGenerator.genSuccessResult(goodsInfoService.getAllGoods(adminUser.getAdminUserId()));
+        return ResultGenerator.genSuccessResult(goodsInfoService.getAllGoodsIdsAndNames(adminUser.getAdminUserId()));
+    }
+
+    @GetMapping("/goods/carousel/{goodsId}")
+    @Operation(summary = "商品轮播图接口", description = "传参为商品id")
+    public Result<GoodsCarouselVO> goodsCarousel(@Parameter(name = "商品id") @PathVariable("goodsId") Long goodsId,
+                                                 @TokenToAdminUser AdminUserToken adminUser) {
+        logger.info("adminUser:{}", adminUser.toString());
+        if (goodsId < 1) {
+            return ResultGenerator.genFailResult("参数异常");
+        }
+        GoodsInfo goods = goodsInfoService.getGoodsInfoById(goodsId, adminUser.getAdminUserId());
+        if (Constants.SALE_STATUS_UP != goods.getGoodsSaleStatus()) {
+            CMallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
+        }
+        GoodsCarouselVO goodsCarouselVO = new GoodsCarouselVO();
+        BeanUtil.copyProperties(goods, goodsCarouselVO);
+        return ResultGenerator.genSuccessResult(goodsCarouselVO);
     }
 }
