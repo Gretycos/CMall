@@ -53,7 +53,7 @@ public class CouponVO implements Serializable {
     private String goodsValueNames;
 
     @Schema(title = "优惠券兑换码")
-    private String code;
+    private String couponCode;
 
     @Schema(title = "优惠券开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
