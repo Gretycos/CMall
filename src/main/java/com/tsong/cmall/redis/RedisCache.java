@@ -62,12 +62,12 @@ public class RedisCache {
      * lua原子自减脚本
      */
     private String buildLuaDecrScript() {
-        // 大于等于0才自减
+        // 大于0才自减
         return """
                 local c
                 c = redis.call('get',KEYS[1])
-                if c and tonumber(c) < 0 then
-                return c;
+                if c and tonumber(c) == 0 then
+                return -1;
                 end
                 c = redis.call('decr',KEYS[1])
                 return c;""";

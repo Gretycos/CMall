@@ -1,6 +1,7 @@
 package com.tsong.cmall.controller.mall;
 
 import com.tsong.cmall.common.Constants;
+import com.tsong.cmall.config.annotation.NoRepeatSubmit;
 import com.tsong.cmall.config.annotation.TokenToMallUser;
 import com.tsong.cmall.controller.mall.param.SeckillExeParam;
 import com.tsong.cmall.controller.vo.SeckillGoodsVO;
@@ -72,6 +73,7 @@ public class SeckillAPI {
 
     @PostMapping("/seckill/execute")
     @Operation(summary = "处理秒杀", description = "")
+    @NoRepeatSubmit
     public Result execute(@Parameter(name = "秒杀事件参数") @RequestBody @Valid SeckillExeParam seckillExeParam,
                           @TokenToMallUser MallUser loginMallUser){
         String md5 = seckillExeParam.getMd5();

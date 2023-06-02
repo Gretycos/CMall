@@ -182,6 +182,7 @@ public class SeckillServiceImpl implements SeckillService {
             CMallException.fail("您已经购买过秒杀商品，请勿重复购买");
         }
         // 更新秒杀商品虚拟库存
+        // 剩余库存
         Long stock = redisCache.luaDecrement(Constants.SECKILL_GOODS_STOCK_KEY + seckillId);
         if (stock < 0) {
             CMallException.fail("秒杀商品已售空");
@@ -196,8 +197,12 @@ public class SeckillServiceImpl implements SeckillService {
         // 判断秒杀商品是否在有效期内
         long beginTime = seckill.getSeckillBegin().getTime();
         long endTime = seckill.getSeckillEnd().getTime();
-        Date now = new Date();
-        long nowTime = now.getTime();
+        long nowTime = System.currentTimeMillis();
+
+        // 在redis中记录该用户完成了该秒杀
+        redisCache.setCacheSet(Constants.SECKILL_SUCCESS_USER_ID + seckillId, userId);
+        redisCache.expire(Constants.SECKILL_SUCCESS_USER_ID + seckillId, endTime - nowTime, TimeUnit.MILLISECONDS);
+
         if (nowTime < beginTime) {
             CMallException.fail("秒杀未开启");
         } else if (nowTime > endTime) {
@@ -213,7 +218,8 @@ public class SeckillServiceImpl implements SeckillService {
         try {
             seckillMapper.killByProcedure(map);
         } catch (Exception e) {
-            CMallException.fail(e.getMessage());
+            e.printStackTrace();
+            CMallException.fail("服务器异常");
         }
         // 获取result -2sql执行失败 -1未插入数据 0未更新数据 1sql执行成功
         // map.get("result");
@@ -223,13 +229,17 @@ public class SeckillServiceImpl implements SeckillService {
         }
         // result == 1 说明秒杀成功，并且秒杀成功表插入了一条该用户秒杀成功的数据
 
-        // 在redis中记录该用户完成了该秒杀
-        redisCache.setCacheSet(Constants.SECKILL_SUCCESS_USER_ID + seckillId, userId);
-        redisCache.expire(Constants.SECKILL_SUCCESS_USER_ID + seckillId, endTime - nowTime, TimeUnit.MILLISECONDS);
-
         // 获得该用户的秒杀成功
-        SeckillSuccess seckillSuccess = seckillSuccessMapper.getSeckillSuccessByUserIdAndSeckillId(
-                userId, seckillId);
+        SeckillSuccess seckillSuccess = null;
+        try{
+            seckillSuccess = seckillSuccessMapper.getSeckillSuccessByUserIdAndSeckillId(
+                    userId, seckillId);
+        }catch (Exception e){
+            e.printStackTrace();
+            // 恢复虚拟缓存库存
+            redisCache.increment(Constants.SECKILL_GOODS_STOCK_KEY + seckillId);
+            CMallException.fail("您已经成功购买，请前往付款");
+        }
         // 传回前端结果
         SeckillSuccessVO seckillSuccessVO = new SeckillSuccessVO();
         Long seckillSuccessId = seckillSuccess.getSecId();

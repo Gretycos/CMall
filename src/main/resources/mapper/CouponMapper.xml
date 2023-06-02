@@ -140,8 +140,8 @@
     <include refid="Base_Column_List"/>
     from tb_coupon
     where is_deleted = 0 and coupon_type = 1
-    and DATE_FORMAT(coupon_start_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
-    and DATE_FORMAT(coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d')
+    and IF(coupon_start_time == null, true, DATE_FORMAT(coupon_start_time,'%Y-%m-%d') <![CDATA[ <= ]]> DATE_FORMAT(now(),'%Y-%m-%d'))
+    and IF(coupon_end_time == null, true, DATE_FORMAT(coupon_end_time,'%Y-%m-%d') <![CDATA[ >= ]]> DATE_FORMAT(now(),'%Y-%m-%d'))
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">

@@ -32,7 +32,7 @@ public class NoRepeatSubmitInterceptor implements HandlerInterceptor {
             String token = request.getHeader("token");
             String url = request.getRequestURL().toString();
             if (redisCache.containsCacheSet(Constants.REQUEST_KEY + token, url)){
-                CMallException.fail("请勿重复提交");
+                CMallException.fail("请勿频繁提交");
             }
             redisCache.setCacheSet(Constants.REQUEST_KEY + token, url);
             redisCache.expire(Constants.REQUEST_KEY + token, noRepeatSubmit.lockTime(), TimeUnit.SECONDS);

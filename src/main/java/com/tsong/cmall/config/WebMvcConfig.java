@@ -1,6 +1,7 @@
 package com.tsong.cmall.config;
 
 import com.tsong.cmall.common.Constants;
+import com.tsong.cmall.config.requestHandler.NoRepeatSubmitInterceptor;
 import com.tsong.cmall.config.requestHandler.TokenToAdminUserMethodArgumentResolver;
 import com.tsong.cmall.config.requestHandler.TokenToMallUserMethodArgumentResolver;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
@@ -25,14 +27,25 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     private TokenToMallUserMethodArgumentResolver tokenToMallUserMethodArgumentResolver;
     @Autowired
     private TokenToAdminUserMethodArgumentResolver tokenToAdminUserMethodArgumentResolver;
+    @Autowired
+    private NoRepeatSubmitInterceptor noRepeatSubmitInterceptor;
 
     /**
      * @param argumentResolvers
-     * @tip @TokenToMallUser @TokenToAdminUser 注解处理方法
+     * @tip @TokenToMallUser @TokenToAdminUser 添加方法参数注解处理方法
      */
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(tokenToMallUserMethodArgumentResolver);
         argumentResolvers.add(tokenToAdminUserMethodArgumentResolver);
+    }
+
+    /**
+     * @Description 添加方法注解处理方法
+     * @Param [interceptor]
+     * @Return void
+     */
+    public void addInterceptors(InterceptorRegistry interceptor){
+        interceptor.addInterceptor(noRepeatSubmitInterceptor).addPathPatterns("/api/**");
     }
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
