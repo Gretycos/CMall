@@ -1,3 +1,15 @@
+# 服务器配置
+server:
+  port: 8080
+  tomcat:
+    threads:
+      min-spare: 50
+      max: 500
+    accept-count: 250
+    max-connections: 10000
+    connection-timeout: 30000ms
+    uri-encoding: UTF-8
+
 # 数据源配置
 spring:
   datasource:
@@ -9,13 +21,18 @@ spring:
     #    连接池
     hikari:
       pool-name: hikariCP
-      minimum-idle: 40
-      maximum-pool-size: 100
       auto-commit: true
-      idle-timeout: 10000
+      # 空闲连接的最小数量
+      # minimum-idle: 40
+      # 控制池允许达到的最大大小，包括两者空闲和正在使用的连接
+      maximum-pool-size: 500
+      # 连接在池中允许空闲的最长时间
+      idle-timeout: 600000
+      # 连接池中连接的最长生命周期
       max-lifetime: 30000
-      connection-timeout: 30000
-      connection-test-query: SELECT 1
+      # 客户端向池子请求连接的超时时间
+      connection-timeout: 10000
+#      connection-test-query: SELECT 1
   data:
     redis:
       host: redis

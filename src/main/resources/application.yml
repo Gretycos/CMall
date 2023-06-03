@@ -1,17 +1,5 @@
 # Author: Tsong
 
-# 服务器配置
-server:
-  port: 8080
-  tomcat:
-    threads:
-      max: 800
-      min-spare: 50
-    uri-encoding: UTF-8
-    accept-count: 500
-    max-connections: 8192
-    connection-timeout: 30000ms
-
 # 项目全局配置
 project:
   # 项目名称
