@@ -55,7 +55,7 @@ public class SeckillAPI {
                                     @TokenToMallUser MallUser loginMallUser) {
         logger.info("seckill seckillCheckStock api,userId={}", loginMallUser.getUserId());
         Integer stock = redisCache.getCacheObject(Constants.SECKILL_GOODS_STOCK_KEY + seckillId);
-        if (stock == null || stock < 0) {
+        if (stock == null || stock <= 0) {
             return ResultGenerator.genFailResult("秒杀商品库存不足");
         }
         // redis虚拟库存大于等于0时，可以执行秒杀

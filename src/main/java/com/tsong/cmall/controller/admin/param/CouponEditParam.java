@@ -74,7 +74,6 @@ public class CouponEditParam implements Serializable {
     private Byte goodsType;
 
     @Schema(title = "可用商品范围")
-    @NotEmpty(message = "可用商品范围不能为空")
     private String goodsValue;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

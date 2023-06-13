@@ -162,7 +162,7 @@ public class SeckillServiceImpl implements SeckillService {
         }
         // 检查虚拟库存
         Integer stock = redisCache.getCacheObject(Constants.SECKILL_GOODS_STOCK_KEY + seckillId);
-        if (stock == null || stock < 0) {
+        if (stock == null || stock <= 0) {
             return new UrlExposerVO(SeckillStatusEnum.STARTED_SHORTAGE_STOCK, seckillId);
         }
         // 加密
