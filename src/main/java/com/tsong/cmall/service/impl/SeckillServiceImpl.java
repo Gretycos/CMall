@@ -174,7 +174,7 @@ public class SeckillServiceImpl implements SeckillService {
     @Transactional(rollbackFor = Exception.class)
     public SeckillSuccessVO executeSeckill(Long seckillId, Long userId) {
         // 判断能否在500毫秒内得到令牌，如果不能则立即返回false，不会阻塞程序
-        if (!rateLimiter.tryAcquire(500, TimeUnit.MILLISECONDS)) {
+        if (!rateLimiter.tryAcquire(200, TimeUnit.MILLISECONDS)) {
             CMallException.fail("秒杀失败");
         }
         // 判断用户是否购买过秒杀商品
