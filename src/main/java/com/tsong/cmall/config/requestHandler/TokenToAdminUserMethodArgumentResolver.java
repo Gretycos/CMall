@@ -2,6 +2,7 @@ package com.tsong.cmall.config.requestHandler;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.Slave;
 import com.tsong.cmall.config.annotation.TokenToAdminUser;
 import com.tsong.cmall.dao.AdminUserTokenMapper;
 import com.tsong.cmall.entity.AdminUserToken;
@@ -32,6 +33,7 @@ public class TokenToAdminUserMethodArgumentResolver implements HandlerMethodArgu
     }
 
     @Override
+    @Slave
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         if (parameter.getParameterAnnotation(TokenToAdminUser.class) instanceof TokenToAdminUser) {
             String token = webRequest.getHeader("token");

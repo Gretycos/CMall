@@ -1,5 +1,6 @@
 package com.tsong.cmall.dao;
 
+import com.tsong.cmall.config.annotation.Master;
 import com.tsong.cmall.entity.UserCouponRecord;
 import com.tsong.cmall.util.PageQueryUtil;
 import org.apache.ibatis.annotations.Param;
@@ -33,6 +34,7 @@ public interface UserCouponRecordMapper {
 
     UserCouponRecord getUserCouponByOrderId(Long orderId);
 
+    @Master
     int expireBatch(@Param("userCouponIds") List<Long> userCouponIds);
 
 }

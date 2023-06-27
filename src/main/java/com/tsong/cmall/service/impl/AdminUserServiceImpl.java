@@ -1,14 +1,13 @@
 package com.tsong.cmall.service.impl;
 
-import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.Master;
 import com.tsong.cmall.dao.AdminUserMapper;
 import com.tsong.cmall.dao.AdminUserTokenMapper;
 import com.tsong.cmall.entity.AdminUser;
 import com.tsong.cmall.entity.AdminUserToken;
 import com.tsong.cmall.exception.CMallException;
 import com.tsong.cmall.service.AdminUserService;
-import com.tsong.cmall.util.MD5Util;
 import com.tsong.cmall.util.NumberUtil;
 import com.tsong.cmall.util.SystemUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +24,12 @@ public class AdminUserServiceImpl implements AdminUserService {
     private AdminUserTokenMapper adminUserTokenMapper;
 
     @Override
+    @Master
     public String login(String userName, String password) {
         AdminUser loginAdminUser = adminUserMapper.login(userName, password);
         if (loginAdminUser != null) {
             //登录后即执行修改token的操作
-            String token = getNewToken(System.currentTimeMillis() + "", loginAdminUser.getAdminUserId());
+            String token = genNewToken(System.currentTimeMillis() + "", loginAdminUser.getAdminUserId());
             AdminUserToken adminUserToken = adminUserTokenMapper.selectByPrimaryKey(loginAdminUser.getAdminUserId());
             //当前时间
             Date now = new Date();
@@ -67,7 +67,7 @@ public class AdminUserServiceImpl implements AdminUserService {
      * @Param [timeStr, userId]
      * @Return java.lang.String
      */
-    private String getNewToken(String timeStr, Long userId) {
+    private String genNewToken(String timeStr, Long userId) {
         String src = timeStr + userId + NumberUtil.genRandomNum(6);
         return SystemUtil.genToken(src);
     }
@@ -79,6 +79,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Override
     @Transactional
+    @Master
     public Boolean updatePassword(Long loginUserId, String originalPassword, String newPassword) {
         AdminUser adminUser = adminUserMapper.selectByPrimaryKey(loginUserId);
         // 当前用户非空才可以进行更改
@@ -116,6 +117,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
+    @Master
     public Boolean logout(Long adminUserId) {
         return adminUserTokenMapper.deleteByPrimaryKey(adminUserId) > 0;
     }

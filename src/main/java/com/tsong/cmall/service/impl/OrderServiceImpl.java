@@ -2,6 +2,7 @@ package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.*;
 import com.tsong.cmall.config.ProjectConfig;
+import com.tsong.cmall.config.annotation.Master;
 import com.tsong.cmall.controller.vo.*;
 import com.tsong.cmall.dao.*;
 import com.tsong.cmall.entity.*;
@@ -92,6 +93,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Master
     public String checkDone(Long[] ids) {
         // 查询所有的订单 判断状态 修改状态和更新时间
         List<Order> orderList = orderMapper.selectByPrimaryKeys(Arrays.asList(ids));
@@ -127,6 +129,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Master
     public String checkOut(Long[] ids) {
         // 查询所有的订单 判断状态 修改状态和更新时间
         List<Order> orderList = orderMapper.selectByPrimaryKeys(Arrays.asList(ids));
@@ -162,6 +165,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Master
     public String closeOrder(Long[] ids) {
         // 查询所有的订单 判断状态 修改状态和更新时间
         List<Order> orderList = orderMapper.selectByPrimaryKeys(Arrays.asList(ids));
@@ -324,6 +328,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @Master
     public String seckillSaveOrder(Long seckillSuccessId, Long userId, UserAddress address) {
         SeckillSuccess seckillSuccess = seckillSuccessMapper.selectByPrimaryKey(seckillSuccessId);
         if (!seckillSuccess.getUserId().equals(userId)) {
@@ -452,8 +457,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-
-
     @Override
     public Order getOrderByOrderNo(String orderNo) {
         return orderMapper.selectByOrderNo(orderNo);
@@ -492,6 +495,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    @Master
     public String cancelOrder(String orderNo, Long userId) {
         Order order = orderMapper.selectByOrderNo(orderNo);
         if (order != null) {
@@ -544,6 +548,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Master
     public String finishOrder(String orderNo, Long userId) {
         Order order = orderMapper.selectByOrderNo(orderNo);
         if (order != null) {
@@ -567,6 +572,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Master
     public String paySuccess(String orderNo, int payType) {
         Order order = orderMapper.selectByOrderNo(orderNo);
         if (order == null) {

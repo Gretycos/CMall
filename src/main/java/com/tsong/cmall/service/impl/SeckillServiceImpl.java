@@ -4,6 +4,8 @@ import com.google.common.util.concurrent.RateLimiter;
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.SeckillStatusEnum;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.Master;
+import com.tsong.cmall.config.annotation.Slave;
 import com.tsong.cmall.controller.vo.*;
 import com.tsong.cmall.dao.GoodsInfoMapper;
 import com.tsong.cmall.dao.SeckillMapper;
@@ -151,6 +153,7 @@ public class SeckillServiceImpl implements SeckillService {
     }
 
     @Override
+    @Slave
     public UrlExposerVO exposeUrl(Long seckillId) {
         SeckillGoodsVO seckillGoodsVO = redisCache.getCacheObject(Constants.SECKILL_GOODS_DETAIL + seckillId);
         Date startTime = seckillGoodsVO.getSeckillBegin();
@@ -172,6 +175,7 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @Master
     public SeckillSuccessVO executeSeckill(Long seckillId, Long userId) {
         // 判断能否在500毫秒内得到令牌，如果不能则立即返回false，不会阻塞程序
         if (!rateLimiter.tryAcquire(500, TimeUnit.MILLISECONDS)) {

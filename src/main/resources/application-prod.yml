@@ -13,28 +13,48 @@ server:
 # 数据源配置
 spring:
   datasource:
-    name: cmall-datasource
-    driverClassName: org.apache.shardingsphere.driver.ShardingSphereDriver
-    url: jdbc:shardingsphere:classpath:shardingsphere-prod.yml
-#    driverClassName: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://mysql:3306/CMall?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=true
-#    username: root
-#    password: AaZz112211
-#    #    连接池
-#    hikari:
-#      pool-name: hikariCP
-#      auto-commit: true
-#      # 空闲连接的最小数量
-#      # minimum-idle: 40
-#      # 控制池允许达到的最大大小，包括两者空闲和正在使用的连接
-#      maximum-pool-size: 500
-#      # 连接在池中允许空闲的最长时间
-#      idle-timeout: 600000
-#      # 连接池中连接的最长生命周期
-#      max-lifetime: 30000
-#      # 客户端向池子请求连接的超时时间
-#      connection-timeout: 10000
-##      connection-test-query: SELECT 1
+    # 主数据源
+    master:
+      name: cmall-datasource
+      driverClassName: com.mysql.cj.jdbc.Driver
+      jdbcUrl: jdbc:mysql://mysql:3306/CMall?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=true
+      username: root
+      password: AaZz112211
+      #    连接池
+      hikari:
+        pool-name: hikariCP
+        auto-commit: true
+        # 空闲连接的最小数量
+        # minimum-idle: 40
+        # 控制池允许达到的最大大小，包括两者空闲和正在使用的连接
+        maximum-pool-size: 500
+        # 连接在池中允许空闲的最长时间
+        idle-timeout: 600000
+        # 连接池中连接的最长生命周期
+        max-lifetime: 30000
+        # 客户端向池子请求连接的超时时间
+        connection-timeout: 10000
+    slave:
+      name: cmall-datasource
+      driverClassName: com.mysql.cj.jdbc.Driver
+      jdbcUrl: jdbc:mysql://mysql_slave:3306/CMall?useUnicode=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=true
+      username: root
+      password: AaZz112211
+      #    连接池
+      hikari:
+        pool-name: hikariCP
+        auto-commit: true
+        # 空闲连接的最小数量
+        # minimum-idle: 40
+        # 控制池允许达到的最大大小，包括两者空闲和正在使用的连接
+        maximum-pool-size: 500
+        # 连接在池中允许空闲的最长时间
+        idle-timeout: 600000
+        # 连接池中连接的最长生命周期
+        max-lifetime: 30000
+        # 客户端向池子请求连接的超时时间
+        connection-timeout: 10000
+
   data:
     redis:
       host: redis

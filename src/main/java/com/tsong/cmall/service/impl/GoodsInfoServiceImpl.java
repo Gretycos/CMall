@@ -2,6 +2,7 @@ package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.CategoryLevelEnum;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.Master;
 import com.tsong.cmall.controller.vo.GoodsNameVO;
 import com.tsong.cmall.controller.vo.SearchPageGoodsVO;
 import com.tsong.cmall.dao.GoodsCategoryMapper;

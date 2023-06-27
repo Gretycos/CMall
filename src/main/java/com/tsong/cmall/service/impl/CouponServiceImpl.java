@@ -1,6 +1,7 @@
 package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.Constants;
+import com.tsong.cmall.config.annotation.Master;
 import com.tsong.cmall.controller.vo.AdminCouponVO;
 import com.tsong.cmall.controller.vo.CouponVO;
 import com.tsong.cmall.controller.vo.MyCouponVO;
@@ -358,7 +359,10 @@ public class CouponServiceImpl implements CouponService {
                 categoryIds.add(goodsInfo.getGoodsCategoryId());
             }
         }
-        List<GoodsCategory> goodsCategoryList = goodsCategoryMapper.selectByPrimaryKeys(categoryIds.stream().toList());
+        List<GoodsCategory> goodsCategoryList = new ArrayList<>();
+        if (!categoryIds.isEmpty()){
+            goodsCategoryList = goodsCategoryMapper.selectByPrimaryKeys(categoryIds.stream().toList());
+        }
 
         Map<Long, String> categoryNamesMap = goodsCategoryList.stream().collect(
                 Collectors.toMap(GoodsCategory::getCategoryId, GoodsCategory::getCategoryName));
@@ -373,6 +377,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
+    @Master
     public void releaseCoupon(Long orderId) {
         UserCouponRecord userCouponRecord = userCouponRecordMapper.getUserCouponByOrderId(orderId);
         if (userCouponRecord != null){

@@ -1,5 +1,6 @@
 package com.tsong.cmall.dao;
 
+import com.tsong.cmall.config.annotation.Master;
 import com.tsong.cmall.entity.Seckill;
 import com.tsong.cmall.util.PageQueryUtil;
 import org.apache.ibatis.annotations.Param;
@@ -36,5 +37,6 @@ public interface SeckillMapper {
 
     boolean addStock(Long seckillId);
 
+    @Master
     int putOffBatch(@Param("seckillIds") List<Long> seckillIds);
 }

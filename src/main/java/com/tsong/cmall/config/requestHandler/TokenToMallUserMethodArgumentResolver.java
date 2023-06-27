@@ -2,6 +2,7 @@ package com.tsong.cmall.config.requestHandler;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.Slave;
 import com.tsong.cmall.config.annotation.TokenToMallUser;
 import com.tsong.cmall.dao.MallUserMapper;
 import com.tsong.cmall.dao.UserTokenMapper;
@@ -42,6 +43,7 @@ public class TokenToMallUserMethodArgumentResolver implements HandlerMethodArgum
     }
 
     @Override
+    @Slave
     public Object resolveArgument(MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest,

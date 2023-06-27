@@ -2,6 +2,7 @@ package com.tsong.cmall.service.impl;
 
 import com.tsong.cmall.common.Constants;
 import com.tsong.cmall.common.ServiceResultEnum;
+import com.tsong.cmall.config.annotation.Master;
 import com.tsong.cmall.controller.mall.param.MallUserPasswordParam;
 import com.tsong.cmall.controller.mall.param.MallUserUpdateParam;
 import com.tsong.cmall.dao.CouponMapper;
@@ -53,6 +54,7 @@ public class MallUserServiceImpl implements MallUserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    @Master
     public String register(String loginName, String password) {
         if (mallUserMapper.selectByLoginName(loginName) != null) {
             return ServiceResultEnum.SAME_LOGIN_NAME_EXIST.getResult();
@@ -83,6 +85,7 @@ public class MallUserServiceImpl implements MallUserService {
     }
 
     @Override
+    @Master
     public String login(String loginName, String passwordMD5) {
         MallUser user = mallUserMapper.selectByLoginNameAndPasswd(loginName, passwordMD5);
         if (user != null) {
@@ -90,7 +93,7 @@ public class MallUserServiceImpl implements MallUserService {
                 return ServiceResultEnum.LOGIN_USER_LOCKED_ERROR.getResult();
             }
             // 新token
-            String token = getNewToken(System.currentTimeMillis() + "", user.getUserId());
+            String token = genNewToken(System.currentTimeMillis() + "", user.getUserId());
             // 当前时间
             Date now = new Date();
             // 过期时间
@@ -137,7 +140,7 @@ public class MallUserServiceImpl implements MallUserService {
      * @Param [timeStr, userId]
      * @Return java.lang.String
      */
-    private String getNewToken(String timeStr, Long userId) {
+    private String genNewToken(String timeStr, Long userId) {
         String src = timeStr + userId + NumberUtil.genRandomNum(4);
         return SystemUtil.genToken(src);
     }
@@ -182,6 +185,7 @@ public class MallUserServiceImpl implements MallUserService {
     }
 
     @Override
+    @Master
     public Boolean logout(Long userId) {
         String token = userTokenMapper.selectByPrimaryKey(userId).getToken();
         redisCache.deleteObject(Constants.MALL_USER_TOKEN_KEY + token);
@@ -189,6 +193,7 @@ public class MallUserServiceImpl implements MallUserService {
     }
 
     @Override
+    @Master
     public Boolean lockUsers(Long[] ids, int lockStatus) {
         if (ids.length < 1) {
             return false;
